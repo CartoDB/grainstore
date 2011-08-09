@@ -1,0 +1,31 @@
+{
+    "name": "grainstore",
+    "version": "0.0.1",
+    "main": "./lib/grainstore/index.js",
+    "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
+    "url": "https://github.com/tokumine/grainstore",
+    "licenses": [{ "type": "MIT" }],
+    "repositories": [{
+        "type": "git",
+        "url": "git://github.com/tokumine/grainstore.git"
+    }],
+    "author": {
+      "name": "Simon Tokumine",
+      "url": "http://tokumine.com/",
+      "email": "si@tinypla.net"
+    },
+    "dependencies": {
+        "underscore"  : "1.1.x",
+        "step": "0.0.x",
+        "generic-pool": "1.0.x",
+        "carto": "0.2.3",
+        "redis": "0.6.7",
+        "hiredis": "0.1.12"        
+    },
+    "devDependencies": {
+        "expresso": "0.8.x"
+    },
+    "scripts": {
+        "test": "which expresso | sh"
+    }
+}
