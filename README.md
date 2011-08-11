@@ -12,6 +12,17 @@ The generated Mapnik XML stylesheet plugs directly into Mapnik or Mapnik based t
 Grainstore is braindead simple: 1 db + 1 table/query + 1 style =  1 Mapnik XML stylesheet.
 
 
+Typical use
+-----------
+1. initialise grainstore with PostGIS DB and table name
+2. generate Mapnik XML for table with default styles
+3. set custom style with carto 
+4. get carto errors returned if present, else store style
+5. generate Mapnik XML with custom style
+6. initialise with PostGIS DB, table name and sql query
+7. generate Mapnik XML with stored style for table name and sql query
+
+
 Install
 --------
 npm install grainstore
@@ -31,8 +42,8 @@ Additional test dependencies
 * libxml2-devel
 
 
-Usage
-------
+Examples
+---------
 
 ```javascript
 
