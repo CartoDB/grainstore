@@ -1,7 +1,9 @@
 Grainstore
 ===========
 
-Have you ever wanted to simply generate a Mapnik map from a dynamic PostGIS table with interactivity layer? If so, this is for you. Grainstore is an opinionated MML builder for _single_ PostGIS tables, views or sql queries that outputs Mapnik XML stylesheets. 
+Need to simply generate a Mapnik map from a dynamic PostGIS table? 
+
+Grainstore is an opinionated MML builder for _single_ PostGIS tables, views or sql queries that outputs Mapnik XML stylesheets. 
 
 Map styles can be defined in the 'Carto' language. Grainstore also has default styles to get you up and running. Your Carto styles are persisted and mapnik XML output cached (in Redis), making it a good choice for use in map tile servers.
 
@@ -48,7 +50,7 @@ var mmls = new GrainStore.MMLStore({host:'10.0.0.1'});
 var render_target = {
   db_name: 'my_db', 
   table_name:'my_tb', 
-  sql:'select * from my_tb where age < 100
+  sql:'select * from my_tb where age < 100'
 }
 
 // see mml_store.js for more customisation detail 
