@@ -42,8 +42,9 @@ var GrainStore = require('grainstore');
 // fully default.
 var mmls = new GrainStore.MMLStore();
 var mmlb = mmls.mml_builder({db_name: 'my_database', table_name:'my_table'});
-mmlb.toXML(); // => Mapnik XML for your database with default styles
-
+mmlb.toXML(function(err, data){
+  console.log(data); // => Mapnik XML for your database with default styles
+}); 
 
 
 // custom redis and pg settings.
