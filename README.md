@@ -99,6 +99,6 @@ For more examples, see the tests.
 
 TODO
 -----
-multilayer api ;)
-make storage pluggable
-Fix init lag in mml_builder
+* multilayer api ;)
+* make storage pluggable
+* Fix init lag in mml_builder
