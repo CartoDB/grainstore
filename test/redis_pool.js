@@ -34,7 +34,7 @@ tests['pool object has an aquire function'] = function(){
 }
 
 tests['calling aquire returns a redis client object that can get/set'] = function(){
-  redis_pool.acquire(0, function(client){
+  redis_pool.acquire(0, function(err, client){
     client.set("key","value")
     client.get("key", function(err,data){      
       assert.eql(data, "value");      
@@ -44,15 +44,8 @@ tests['calling aquire returns a redis client object that can get/set'] = functio
 }
 
 tests['calling aquire on another DB returns a redis client object that can get/set'] = function(){
-  redis_pool.acquire(2, function(client){
+  redis_pool.acquire(2, function(err, client){
     client.set("key","value")
-    client.get("key", function(err,data){      
-      assert.eql(data, "value");      
-      redis_pool.release(2, client); // needed to exit tests
-    })
-  });    
-  
-  redis_pool.acquire(2, function(client){
     client.get("key", function(err,data){      
       assert.eql(data, "value");      
       redis_pool.release(2, client); // needed to exit tests

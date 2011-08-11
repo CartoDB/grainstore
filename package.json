@@ -20,10 +20,12 @@
         "generic-pool": "1.0.x",
         "carto": "0.2.3",
         "redis": "0.6.7",
-        "hiredis": "0.1.12"        
+        "hiredis": "0.1.12",
+        "srs": "0.2.4"        
     },
     "devDependencies": {
-        "expresso": "0.8.x"
+        "expresso": "0.8.x",
+        "libxmljs": "0.4.2"
     },
     "scripts": {
         "test": "which expresso | sh"
