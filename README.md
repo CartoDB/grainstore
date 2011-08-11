@@ -19,6 +19,8 @@ npm install grainstore
 
 Dependencies
 ------------
+* node.js
+* npm
 * Redis
 * libosr (or libgdal)
 
