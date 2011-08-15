@@ -22,16 +22,16 @@ tests['cannot create new mml_builders with blank opts'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   assert.throws(function(){ 
     mml_store.mml_builder();
-  }, Error, "Options must include db_name and table_name");
+  }, Error, "Options must include dbname and table");
 }
 
 tests['can create new mml_builders with normal ops'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts)
-  var mml_builder = mml_store.mml_builder({db_name: 'my_database', table_name:'my_table'});
+  var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
 }
 
 tests['can create new mml_builders with normal ops and sql'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
-  var mml_builder = mml_store.mml_builder({db_name: 'my_database', table_name:'my_table', sql: "select * from whatever"});
+  var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', sql: "select * from whatever"});
 }
 
