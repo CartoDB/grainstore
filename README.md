@@ -52,7 +52,7 @@ var GrainStore = require('grainstore');
 
 // fully default.
 var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({db_name: 'my_database', table_name:'my_table'});
+var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'});
 mmlb.toXML(function(err, data){
   console.log(data); // => Mapnik XML for your database with default styles
 }); 
@@ -62,8 +62,8 @@ mmlb.toXML(function(err, data){
 var mmls = new GrainStore.MMLStore({host:'10.0.0.1'}); 
 
 var render_target = {
-  db_name: 'my_db', 
-  table_name:'my_tb', 
+  dbname: 'my_db', 
+  table:'my_tb', 
   sql:'select * from my_tb where age < 100'
 }
 
@@ -85,7 +85,7 @@ mmlb.toXML(function(err, data){
 
 // custom styles.
 var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({db_name: 'my_database', table_name:'my_table'});
+var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'});
 
 var my_style = "#my_table{marker-fill: #FF6600;}"
 
