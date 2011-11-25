@@ -98,7 +98,20 @@ tests['store a good style and retrieve it'] = function() {
       assert.eql(data.style, style);
     });    
   });
-}
+};
+
+tests['store a good style and delete it, resetting to default'] = function() {
+  var style = "#my_table {\n  background-color: #fff;\n}"
+  var mml_store = new grainstore.MMLStore(redis_opts);
+  var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_tableismo'});
+  mml_builder.setStyle(style, function(err, output){
+    mml_builder.delStyle(function(err, data){
+      mml_builder.getStyle(function(err, data){
+        assert.eql(data.style, "#my_tableismo {marker-fill: #FF6600;marker-opacity: 1;marker-width: 8;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}");
+      });
+    });
+  });
+};
 
 tests['retrieves a non-existant style should return default style'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
