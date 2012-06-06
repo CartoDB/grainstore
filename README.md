@@ -109,6 +109,16 @@ mmlb.setStyle(my_style, function(err, data){
 For more examples, see the tests.
 
 
+Tests
+-----
+To run the tests, from the project root:
+
+```
+> npm install
+> npm test
+```
+
+
 TODO
 -----
 * multilayer api ;)
