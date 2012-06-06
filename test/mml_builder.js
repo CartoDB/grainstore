@@ -218,3 +218,12 @@ tests["can set style and then retrieve XML specifying sql, then update style and
     });
   });
 };
+
+tests['by default datasource has full webmercator extent'] = function() {
+  var mml_store = new grainstore.MMLStore(redis_opts);
+  var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
+  var baseMML = mml_builder.baseMML();
+
+  assert.ok(_.isArray(baseMML.Layer));
+  assert.equal(baseMML.Layer[0].Datasource.extent, '-20005048.4188,-20005048.4188,20005048.4188,20005048.4188');
+};
