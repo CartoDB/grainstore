@@ -54,7 +54,7 @@ tests['can render XML from full mml with style'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
   mml_builder.render("#my_table {\n  background-color: #fff;\n}", function(err, output){
-    assert.ok(_.isNull(err));
+    assert.ok(_.isNull(err), _.isNull(err) ? '' : err.message);
     assert.ok(output);
   });
 };
