@@ -53,7 +53,7 @@ tests['can generate full mml with style'] = function() {
 tests['can render XML from full mml with style'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
-  mml_builder.render("#my_table {\n  background-color: #fff;\n}", function(err, output){
+  mml_builder.render("#my_table {\n  polygon-fill: #fff;\n}", function(err, output){
     assert.ok(_.isNull(err), _.isNull(err) ? '' : err.message);
     assert.ok(output);
   });
@@ -86,11 +86,11 @@ tests['storing a bad style throws errors'] = function() {
 tests['store a good style'] = function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
-  mml_builder.setStyle("#my_table {\n  background-color: #fff;\n}", function(err, output){});
+  mml_builder.setStyle("#my_table {\n  polygon-fill: #fff;\n}", function(err, output){});
 };
 
 tests['store a good style and retrieve it'] = function() {
-  var style = "#my_table {\n  background-color: #fff;\n}";
+  var style = "#my_table {\n  polygon-fill: #fff;\n}";
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
   mml_builder.setStyle(style, function(err, output){
@@ -101,7 +101,7 @@ tests['store a good style and retrieve it'] = function() {
 };
 
 tests['store a good style and delete it, resetting to default'] = function() {
-  var style = "#my_table {\n  background-color: #fff;\n}";
+  var style = "#my_table {\n  polygon-fill: #fff;\n}";
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_tableismo'});
   mml_builder.setStyle(style, function(err, output){
@@ -172,12 +172,12 @@ tests["can set style and then retrieve XML"] = function(){
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'my_special_design'});
 
-  var style = "#my_special_design {\n  background-color: #fff;\n}";
+  var style = "#my_special_design {\n  polygon-fill: #fff;\n}";
   mml_builder.setStyle(style, function(err, output){
     mml_builder.toXML(function(err, data){
       var xmlDoc = libxmljs.parseXmlString(data);
-      var style = xmlDoc.get("//MapSymbolizer");
-      assert.eql(style.attr('background-color').value(), "#ffffff");
+      var style = xmlDoc.get("//PolygonSymbolizer");
+      assert.eql(style.attr('fill').value(), "#ffffff");
     });
   });
 };
@@ -186,12 +186,12 @@ tests["can set style and then retrieve XML specifying sql"] = function(){
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'big_test', sql: "select * from my_fish"});
 
-  var style = "#big_test {\n  background-color: #000;\n}";
+  var style = "#big_test {\n  polygon-fill: #000;\n}";
   mml_builder.setStyle(style, function(err, output){
     mml_builder.toXML(function(err, data){
       var xmlDoc = libxmljs.parseXmlString(data);
-      var style = xmlDoc.get("//MapSymbolizer");
-      assert.eql(style.attr('background-color').value(), "#000000");
+      var style = xmlDoc.get("//PolygonSymbolizer");
+      assert.eql(style.attr('fill').value(), "#000000");
     });
   });
 };
@@ -200,19 +200,19 @@ tests["can set style and then retrieve XML specifying sql, then update style and
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'big_tester', sql: "select * from my_fish"});
 
-  var style = "#big_tester {\n  background-color: #000;\n}";
+  var style = "#big_tester {\n  polygon-fill: #000;\n}";
   mml_builder.setStyle(style, function(err, output){
     mml_builder.toXML(function(err, data){
       var xmlDoc = libxmljs.parseXmlString(data);
-      var style = xmlDoc.get("//MapSymbolizer");
-      assert.eql(style.attr('background-color').value(), "#000000");
+      var style = xmlDoc.get("//PolygonSymbolizer");
+      assert.eql(style.attr('fill').value(), "#000000");
 
-      var style2 = "#big_tester {\n  background-color: #999999;\n}";
+      var style2 = "#big_tester {\n  polygon-fill: #999999;\n}";
       mml_builder.setStyle(style2, function(err, output){
         mml_builder.toXML(function(err, data){
           var xmlDoc = libxmljs.parseXmlString(data);
-          var style = xmlDoc.get("//MapSymbolizer");
-          assert.eql(style.attr('background-color').value(), "#999999");
+          var style = xmlDoc.get("//PolygonSymbolizer");
+          assert.eql(style.attr('fill').value(), "#999999");
         });
       });
     });
