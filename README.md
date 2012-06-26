@@ -1,15 +1,23 @@
 Grainstore
 ===========
 
-Need to simply generate a Mapnik map from a dynamic PostGIS table? 
+Need to simply generate a Mapnik map from a dynamic PostGIS table?
 
-Grainstore is an opinionated [Carto](https://github.com/mapbox/carto) MML style store for _single_ PostGIS tables, views or sql queries that outputs Mapnik XML stylesheets. 
+Grainstore is an opinionated [Carto](https://github.com/mapbox/carto)
+MML style store for _single_ PostGIS tables, views or sql queries that
+outputs Mapnik XML stylesheets.
 
-Map styles can be defined in the [Carto](https://github.com/mapbox/carto) map styling language or use default styles. The Carto styles are persisted and Mapnik XML output cached in Redis, making it a good choice for use in map tile servers.
+Map styles can be defined in the [Carto](https://github.com/mapbox/carto)
+map styling language or use default styles. The Carto styles are persisted
+and Mapnik XML output cached in Redis, making it a good choice for use
+in map tile servers.
 
-The generated Mapnik XML stylesheet plugs directly into Mapnik or Mapnik based tile server to render a map and interactivity layer.
+The generated Mapnik XML stylesheet plugs directly into Mapnik or Mapnik
+based tile server to render a map and interactivity layer.
 
-Grainstore is braindead simple: 1 db + 1 table/query + 1 style =  1 Mapnik XML stylesheet.
+Grainstore is braindead simple:
+
+ 1 db + 1 table/query + 1 style =  1 Mapnik XML stylesheet.
 
 
 Typical use
@@ -25,7 +33,7 @@ Typical use
 
 Install
 --------
-npm install grainstore
+npm install
 
 
 Dependencies
@@ -114,8 +122,7 @@ Tests
 To run the tests, from the project root:
 
 ```
-> npm install
-> npm test
+npm test
 ```
 
 
