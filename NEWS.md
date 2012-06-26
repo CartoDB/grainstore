@@ -1,5 +1,5 @@
 Version 0.2.2 
-2012-06-??
+2012-06-26
 
  - Require leaks free 'carto' 0.7.0 and 'srs' 0.2.14 (#12)
  - Testsuite improvements:
