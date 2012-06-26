@@ -14,10 +14,6 @@ var redis_pool = new RedisPool(test_opts);
 
 suite('redis_pool', function() {
 
-test('truth', function(){
-    assert.ok(true,  'it is');
-});
-
 test('RedisPool object exists', function(){
   assert.ok(RedisPool);
 });

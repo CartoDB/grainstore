@@ -12,10 +12,6 @@ var redis_opts = {
 
 suite('mml_builder', function() {
 
-  test('true', function() {
-    assert.ok(true);
-  });
-
   test('can generate base mml with normal ops', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});

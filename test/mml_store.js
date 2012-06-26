@@ -11,10 +11,6 @@ var redis_opts = {
 
 suite('mml_store', function() {
 
-test('true', function() {
-  assert.ok(true);
-});
-
 test('can create new instance of mml_store', function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   assert.ok(_.functions(mml_store).indexOf('mml_builder') >= 0, "mml_store doesn't include 'mml_builder'");
