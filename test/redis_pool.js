@@ -12,42 +12,46 @@ var test_opts = {
 
 var redis_pool = new RedisPool(test_opts);
 
-tests['truth'] = function(){
+suite('redis_pool', function() {
+
+test('truth', function(){
     assert.ok(true,  'it is');
-};
+});
 
-tests['RedisPool object exists'] = function(){
+test('RedisPool object exists', function(){
   assert.ok(RedisPool);
-};
+});
 
-tests['RedisPool can create new redis_pool objects with default settings'] = function(){
+test('RedisPool can create new redis_pool objects with default settings', function(){
   var redis_pool = new RedisPool();
-};
+});
 
-tests['RedisPool can create new redis_pool objects with specific settings'] = function(){
+test('RedisPool can create new redis_pool objects with specific settings', function(){
   var redis_pool = new RedisPool(_.extend({host:'127.0.0.1', port: '6379'}, test_opts));
-};
+});
 
-tests['pool object has an aquire function'] = function(){
-  assert.includes(_.functions(redis_pool), 'acquire');
-};
+test('pool object has an aquire function', function(){
+  assert.ok(_.functions(redis_pool).indexOf('acquire') >= 0, "redis_pool doesn't include 'acquire'");
+});
 
-tests['calling aquire returns a redis client object that can get/set'] = function(){
+test('calling aquire returns a redis client object that can get/set', function(){
   redis_pool.acquire(0, function(err, client){
     client.set("key","value");
     client.get("key", function(err,data){      
-      assert.eql(data, "value");      
+      assert.equal(data, "value");      
       redis_pool.release(0, client); // needed to exit tests
     })
   });    
-};
+});
 
-tests['calling aquire on another DB returns a redis client object that can get/set'] = function(){
+test('calling aquire on another DB returns a redis client object that can get/set', function(){
   redis_pool.acquire(2, function(err, client){
     client.set("key","value");
     client.get("key", function(err,data){      
-      assert.eql(data, "value");      
+      assert.equal(data, "value");      
       redis_pool.release(2, client); // needed to exit tests
     })
   });      
-};
+});
+
+});

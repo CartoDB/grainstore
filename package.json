@@ -28,6 +28,6 @@
         "libxmljs": "0.4.2"
     },
     "scripts": {
-        "test": "which expresso | sh"
+        "test": "mocha -u tdd"
     }
 }

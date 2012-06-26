@@ -1,3 +1,8 @@
+Version 0.2.3
+2012-MM-DD
+
+ - Tests ported to mocha (#11)
+
 Version 0.2.2 
 2012-06-26
 

@@ -9,29 +9,32 @@ var redis_opts = {
   reapIntervalMillis: 1
 };
 
-tests['true'] = function() {
+suite('mml_store', function() {
+
+test('true', function() {
   assert.ok(true);
-};
+});
 
-tests['can create new instance of mml_store'] = function() {
+test('can create new instance of mml_store', function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
-  assert.includes(_.functions(mml_store), 'mml_builder');
-};
+  assert.ok(_.functions(mml_store).indexOf('mml_builder') >= 0, "mml_store doesn't include 'mml_builder'");
+});
 
-tests['cannot create new mml_builders with blank opts'] = function() {
+test('cannot create new mml_builders with blank opts', function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   assert.throws(function(){ 
     mml_store.mml_builder();
   }, Error, "Options must include dbname and table");
-};
+});
 
-tests['can create new mml_builders with normal ops'] = function() {
+test('can create new mml_builders with normal ops', function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'});
-};
+});
 
-tests['can create new mml_builders with normal ops and sql'] = function() {
+test('can create new mml_builders with normal ops and sql', function() {
   var mml_store = new grainstore.MMLStore(redis_opts);
   var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', sql: "select * from whatever"});
-};
+});
 
+});
