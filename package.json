@@ -24,7 +24,7 @@
         "srs": "0.2.14"
     },
     "devDependencies": {
-        "expresso": "0.8.x",
+        "mocha": "1.2.x",
         "libxmljs": "0.4.2"
     },
     "scripts": {
