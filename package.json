@@ -20,7 +20,7 @@
         "generic-pool": "1.0.x",
         "carto": "0.7.x",
         "redis": "0.7.2",
-        "hiredis": "0.1.12",
+        "hiredis": "0.1.14",
         "srs": "0.2.14"
     },
     "devDependencies": {
