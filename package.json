@@ -29,5 +29,8 @@
     },
     "scripts": {
         "test": "mocha -u tdd"
+    },
+    "engines": {
+        "node": ">= 0.4.0"
     }
 }
