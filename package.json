@@ -24,7 +24,7 @@
         "srs": "0.2.14"
     },
     "devDependencies": {
-        "mocha": "1.2.x",
+        "mocha": "1.2.1",
         "libxmljs": "0.5.x"
     },
     "scripts": {

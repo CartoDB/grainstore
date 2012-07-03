@@ -1,6 +1,9 @@
 Version 0.2.4
 2012-MM-DD
 
+ - Require mocha 1.2.1 as 1.2.2 doesn't work with node-0.4
+   ( https://github.com/visionmedia/mocha/issues/489 )
+
 Version 0.2.3
 2012-07-03
 
