@@ -1,5 +1,5 @@
 Version 0.2.3
-2012-MM-DD
+2012-07-03
 
  - Tests ported to mocha (#11)
  - Require libxmljs-0.5.x and redis-0.7.2 (for node-0.8.x compatibility)
