@@ -60,10 +60,11 @@ var GrainStore = require('grainstore');
 
 // fully default.
 var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'});
-mmlb.toXML(function(err, data){
-  console.log(data); // => Mapnik XML for your database with default styles
-}); 
+var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'}, function(err, payload) {
+	mmlb.toXML(function(err, data){
+	  console.log(data); // => Mapnik XML for your database with default styles
+	}); 
+});
 
 
 // custom redis and pg settings.
@@ -84,34 +85,38 @@ var mapnik_config = {
   }   
 }
 
-mmlb = mmls.mml_builder(render_target, mapnik_config);
-mmlb.toXML(function(err, data){
-  console.log(data); // => Mapnik XML of custom database with default style
-}); 
+mmlb = mmls.mml_builder(render_target, mapnik_config, function(err, payload) {
+	mmlb.toXML(function(err, data){
+	  console.log(data); // => Mapnik XML of custom database with default style
+	}); 
+});
 
 
 
 // custom styles.
 var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'});
+var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'},
+function(err, payload)
+{
+	var my_style = "#my_table{marker-fill: #FF6600;}"
 
-var my_style = "#my_table{marker-fill: #FF6600;}"
-
-mmlb.setStyle(my_style, function(err, data){
-  if err throw err; // any Carto Compile errors
-  
-  mmlb.toMML(function(err, data){
-    console.log(data) // => Carto ready MML
-  }); 
-  
-  mmlb.toXML(function(err, data){
-    console.log(data); // => Mapnik XML of database with custom style
-  }); 
-  
-  mmlb.getStyle(function(err, data){
-    console.log(data); // => "#my_table{marker-fill: #FF6600;}"
-  });
+	mmlb.setStyle(my_style, function(err, data){
+	  if err throw err; // any Carto Compile errors
+	  
+	  mmlb.toMML(function(err, data){
+	    console.log(data) // => Carto ready MML
+	  }); 
+	  
+	  mmlb.toXML(function(err, data){
+	    console.log(data); // => Mapnik XML of database with custom style
+	  }); 
+	  
+	  mmlb.getStyle(function(err, data){
+	    console.log(data); // => "#my_table{marker-fill: #FF6600;}"
+	  });
+	});
 });
+
 ```
 
 For more examples, see the tests.

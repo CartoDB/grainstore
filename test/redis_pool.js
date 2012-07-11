@@ -32,7 +32,7 @@ test('calling aquire returns a redis client object that can get/set', function(d
     client.get("key", function(err,data){      
       assert.ok(data, err);
       assert.equal(data, "value");      
-      redis_pool.release(0, client); // needed to exit tests
+      client.del("key");
       done();
     })
   });    
@@ -45,7 +45,7 @@ test('calling aquire on another DB returns a redis client object that can get/se
     client.get("key", function(err,data){      
       assert.ok(data, err);
       assert.equal(data, "value");      
-      redis_pool.release(2, client); // needed to exit tests
+      client.del("key");
       done();
     })
   });      
