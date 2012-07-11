@@ -69,6 +69,31 @@ suite('mml_builder', function() {
     });
   });
 
+  test('can override authentication with mml_builder constructor', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {
+        datasource: { user:'shadow_user', password:'shadow_password' }});
+    var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            table:'my_table',
+            dbuser:'overridden_user', dbpassword:'overridden_password' }, function() {
+
+      var baseMML = mml_builder.baseMML();
+
+      assert.ok(_.isArray(baseMML.Layer));
+      assert.equal(baseMML.Layer[0].id, 'my_table');
+      assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
+      assert.equal(baseMML.Layer[0].Datasource.user, 'overridden_user');
+      assert.equal(baseMML.Layer[0].Datasource.password, 'overridden_password');
+
+      redis_client.keys("*", function(err, matches) {
+          assert.equal(matches.length, 1);
+          assert.equal(matches[0], 'map_style|my_database|overridden_user|my_table');
+          mml_builder.delStyle(done);
+      });
+
+    });
+  });
+
   test('can generate base mml with sql ops, maintain id', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', sql: 'SELECT * from my_table'},
