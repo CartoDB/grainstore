@@ -1,8 +1,8 @@
-Version 0.2.5 -- should this be 0.3.0 due to mml_builder API extension ?
+Version 0.3.0
 2012-07-??
 
- - Add optional callback parameter to MMLBuilder constructors
- - Properly run async tests in async mode (closes #16)
+ API changes:
+   - Add optional callback parameter to MMLBuilder constructors
 
 Version 0.2.4
 2012-07-11
