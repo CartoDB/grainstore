@@ -88,7 +88,19 @@ suite('mml_builder', function() {
       redis_client.keys("*", function(err, matches) {
           assert.equal(matches.length, 1);
           assert.equal(matches[0], 'map_style|my_database|overridden_user|my_table');
-          mml_builder.delStyle(done);
+
+          // Test that new mml_builder, with no overridden user/password, uses the default ones
+          var mml_builder2 = mml_store.mml_builder({dbname:'my_database', table:'my_table'}, function() {
+              var baseMML = mml_builder2.baseMML();
+              assert.equal(baseMML.Layer[0].id, 'my_table');
+              assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
+              assert.equal(baseMML.Layer[0].Datasource.user, 'shadow_user');
+              assert.equal(baseMML.Layer[0].Datasource.password, 'shadow_password');
+
+              mml_builder.delStyle(function() {
+                 mml_builder2.delStyle(done);
+              });
+          });
       });
 
     });
