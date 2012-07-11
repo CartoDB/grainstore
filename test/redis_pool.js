@@ -25,22 +25,24 @@ test('pool object has an aquire function', function(){
   assert.ok(_.functions(redis_pool).indexOf('acquire') >= 0, "redis_pool doesn't include 'acquire'");
 });
 
-test('calling aquire returns a redis client object that can get/set', function(){
+test('calling aquire returns a redis client object that can get/set', function(done){
   redis_pool.acquire(0, function(err, client){
     client.set("key","value");
     client.get("key", function(err,data){      
       assert.equal(data, "value");      
       redis_pool.release(0, client); // needed to exit tests
+      done();
     })
   });    
 });
 
-test('calling aquire on another DB returns a redis client object that can get/set', function(){
+test('calling aquire on another DB returns a redis client object that can get/set', function(done){
   redis_pool.acquire(2, function(err, client){
     client.set("key","value");
     client.get("key", function(err,data){      
       assert.equal(data, "value");      
       redis_pool.release(2, client); // needed to exit tests
+      done();
     })
   });      
 });

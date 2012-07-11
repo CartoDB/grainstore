@@ -1,3 +1,8 @@
+Version 0.2.5
+2012-07-??
+
+ - Properly run async tests in async mode (closes #16)
+
 Version 0.2.4
 2012-07-11
 
