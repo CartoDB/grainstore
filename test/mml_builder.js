@@ -10,7 +10,12 @@ var redis_client = redis.createClient(redis_opts.port);
 
 suite('mml_builder', function() {
 
-  suiteSetup(function() { });
+  suiteSetup(function() {
+    // Check that we start with an empty redis db 
+    redis_client.keys("*", function(err, matches) {
+        assert.equal(matches.length, 0);
+    });
+  });
 
   test('can generate base mml with normal ops', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
@@ -26,7 +31,8 @@ suite('mml_builder', function() {
 
         redis_client.keys("*", function(err, matches) {
             assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|my_database|my_table');
+            // Note: "postgres" is the default user in mml_builder
+            assert.equal(matches[0], 'map_style|my_database|postgres|my_table');
             mml_builder.delStyle(done);
         });
       }
@@ -56,7 +62,7 @@ suite('mml_builder', function() {
 
       redis_client.keys("*", function(err, matches) {
           assert.equal(matches.length, 1);
-          assert.equal(matches[0], 'map_style|my_database|my_table');
+          assert.equal(matches[0], 'map_style|my_database|overridden_user|my_table');
           mml_builder.delStyle(done);
       });
 
@@ -313,6 +319,7 @@ suite('mml_builder', function() {
     redis_client.keys("*", function(err, matches) {
         assert.equal(matches.length, 0);
     });
+    redis_client.flushall();
   });
 
 });

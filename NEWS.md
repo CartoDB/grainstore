@@ -3,6 +3,7 @@ Version 0.3.0
 
  API changes:
    - Add optional callback parameter to MMLBuilder constructors
+   - Include database username in redis style cache key
 
 Version 0.2.4
 2012-07-11
