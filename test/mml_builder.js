@@ -3,6 +3,7 @@ var _          = require('underscore');
 var grainstore = require('../lib/grainstore');
 var libxmljs   = require('libxmljs');
 var tests      = module.exports = {};
+var redis      = require('redis');
 
 var redis_opts = require('./support/redis_opts');
 
@@ -298,6 +299,8 @@ suite('mml_builder', function() {
         mml_builder.delStyle(done);
       });
   });
+
+  // TODO: add test inspecting redis DB, and testing delStyle
 
   suiteTeardown(function() {});
 
