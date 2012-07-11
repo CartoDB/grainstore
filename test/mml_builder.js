@@ -6,6 +6,7 @@ var tests      = module.exports = {};
 var redis      = require('redis');
 
 var redis_opts = require('./support/redis_opts');
+var redis_client = redis.createClient(redis_opts.port);
 
 suite('mml_builder', function() {
 
@@ -23,8 +24,11 @@ suite('mml_builder', function() {
         assert.equal(baseMML.Layer[0].id, 'my_table');
         assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
 
-        // cleanup
-        mml_builder.delStyle(function() { done(); });
+        redis_client.keys("*", function(err, matches) {
+            assert.equal(matches.length, 1);
+            assert.equal(matches[0], 'map_style|my_database|my_table');
+            mml_builder.delStyle(done);
+        });
       }
     );
   });
@@ -50,7 +54,11 @@ suite('mml_builder', function() {
       assert.equal(baseMML.Layer[0].Datasource.user, 'overridden_user');
       assert.equal(baseMML.Layer[0].Datasource.password, 'overridden_password');
 
-      mml_builder.delStyle(done);
+      redis_client.keys("*", function(err, matches) {
+          assert.equal(matches.length, 1);
+          assert.equal(matches[0], 'map_style|my_database|my_table');
+          mml_builder.delStyle(done);
+      });
 
     });
   });
@@ -300,8 +308,11 @@ suite('mml_builder', function() {
       });
   });
 
-  // TODO: add test inspecting redis DB, and testing delStyle
-
-  suiteTeardown(function() {});
+  suiteTeardown(function() {
+    // Check that we left the redis db empty
+    redis_client.keys("*", function(err, matches) {
+        assert.equal(matches.length, 0);
+    });
+  });
 
 });
