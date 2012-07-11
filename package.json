@@ -15,7 +15,7 @@
       "email": "si@tinypla.net"
     },
     "dependencies": {
-        "underscore"  : "1.1.x",
+        "underscore"  : ">= 1.1 < 1.4",
         "step": "0.0.x",
         "generic-pool": "1.0.x",
         "carto": "0.7.x",

@@ -1,6 +1,7 @@
 Version 0.2.4
 2012-MM-DD
 
+ - Loosen undescrore requirements to 1.1 - 1.3
  - Require mocha 1.2.1 as 1.2.2 doesn't work with node-0.4
    ( https://github.com/visionmedia/mocha/issues/489 )
  - Require hiredis 0.1.14 for OSX 10.7 support
