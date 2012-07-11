@@ -4,11 +4,7 @@ var grainstore = require('../lib/grainstore');
 var libxmljs   = require('libxmljs');
 var tests      = module.exports = {};
 
-var redis_opts = {
-  max: 10, 
-  idleTimeoutMillis: 1, 
-  reapIntervalMillis: 1, 
-};
+var redis_opts = require('./support/redis_opts');
 
 suite('mml_builder', function() {
 

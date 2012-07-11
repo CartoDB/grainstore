@@ -31,7 +31,7 @@
         "libxmljs": "0.5.x"
     },
     "scripts": {
-        "test": "mocha -u tdd"
+        "test": "test/support/run_tests.sh"
     },
     "engines": {
         "node": ">= 0.4.0"

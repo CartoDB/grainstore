@@ -3,14 +3,9 @@ var assert = require('assert')
   , RedisPool = require('../lib/grainstore/redis_pool')
   , tests = module.exports = {};
 
-// configure redis pool instance to use in tests
-var test_opts = {
-  max: 10, 
-  idleTimeoutMillis: 1, 
-  reapIntervalMillis: 1
-};
+var redis_opts = require('./support/redis_opts');
 
-var redis_pool = new RedisPool(test_opts);
+var redis_pool = new RedisPool(redis_opts);
 
 suite('redis_pool', function() {
 
@@ -23,7 +18,7 @@ test('RedisPool can create new redis_pool objects with default settings', functi
 });
 
 test('RedisPool can create new redis_pool objects with specific settings', function(){
-  var redis_pool = new RedisPool(_.extend({host:'127.0.0.1', port: '6379'}, test_opts));
+  var redis_pool = new RedisPool(_.extend({host:'127.0.0.1', port: '6379'}, redis_opts));
 });
 
 test('pool object has an aquire function', function(){
