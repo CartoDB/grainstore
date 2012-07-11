@@ -1,5 +1,5 @@
 Version 0.2.4
-2012-MM-DD
+2012-07-11
 
  - Improve testsuite to automatically start redis (#14)
  - Clarify licensing terms (#15)
