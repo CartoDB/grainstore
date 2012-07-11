@@ -4,7 +4,10 @@
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
     "url": "https://github.com/tokumine/grainstore",
-    "licenses": [{ "type": "MIT" }],
+    "licenses": [{
+        "type": "BSD",
+        "url": "https://github.com/Vizzuality/grainstore/blob/master/LICENCE"
+    }],
     "repositories": [{
         "type": "git",
         "url": "git://github.com/tokumine/grainstore.git"
