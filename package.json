@@ -1,16 +1,16 @@
 {
     "name": "grainstore",
-    "version": "0.3.0-dev",
+    "version": "0.3.0",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
-    "url": "https://github.com/tokumine/grainstore",
+    "url": "https://github.com/Vizzuality/grainstore",
     "licenses": [{
         "type": "BSD",
         "url": "https://github.com/Vizzuality/grainstore/blob/master/LICENCE"
     }],
     "repositories": [{
         "type": "git",
-        "url": "git://github.com/tokumine/grainstore.git"
+        "url": "git://github.com/Vizzuality/grainstore.git"
     }],
     "author": {
       "name": "Simon Tokumine",

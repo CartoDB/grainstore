@@ -1,5 +1,5 @@
 Version 0.3.0
-2012-07-??
+2012-07-12
 
  API changes:
    - Add optional callback parameter to MMLBuilder constructors
