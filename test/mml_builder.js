@@ -351,6 +351,21 @@ suite('mml_builder', function() {
       });
   });
 
+  test('SRS in XML should use the "+init=epsg:xxx" form', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder(
+      {dbname: 'my_databaasez', table:'my_tablez'},
+      function() {
+        mml_builder.toXML(function(err, data){
+          var xmlDoc = libxmljs.parseXmlString(data);
+          var srs = xmlDoc.get("//@srs");
+          assert.equal(srs.text().indexOf("+init=epsg:"), 0,
+            '"' + srs.text() + '" does not start with "+init=epsg:"');
+          mml_builder.delStyle(done);
+        });
+      });
+  });
+
   suiteTeardown(function() {
     // Check that we left the redis db empty
     redis_client.keys("*", function(err, matches) {

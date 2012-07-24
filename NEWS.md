@@ -2,6 +2,8 @@ Version 0.3.1
 2012-MM-DD
 
  - Loosen carto dependency to include the 0.8 series
+ - Drop 'srs' dependency, use "+init=epsg:xxx" in map XML to 
+   allow mapnik do special handling of wgs84->webmercator reprojection
 
 Version 0.3.0
 2012-07-12
