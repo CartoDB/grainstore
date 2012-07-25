@@ -1,5 +1,5 @@
 Version 0.3.1
-2012-MM-DD
+2012-07-25
 
  - Loosen carto dependency to include the 0.8 series
  - Drop 'srs' dependency, use "+init=epsg:xxx" in map XML to 
