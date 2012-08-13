@@ -1,6 +1,10 @@
 Version 0.3.2-dev
 2012-MM-DD
 
+ - Add more CartoCSS parsing and conversion tests
+ - Accept 'point-transform' without 'point-file' (#20)
+ - Set mapnik target to 2.0.2
+
 Version 0.3.1
 2012-07-25
 
