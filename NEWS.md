@@ -1,8 +1,10 @@
-Version 0.3.2-dev
+Version 0.4.0-dev
 2012-MM-DD
 
- - Request CartoCSS validation against Mapnik version 2.0.2
- - Add more CartoCSS parsing and conversion tests
+ API changes (backward compatible):
+   - Add a mapnik_version option in MMLBuilder constructor
+ Other changes:
+   - Add more CartoCSS parsing and conversion tests
 
 Version 0.3.1
 2012-07-25
