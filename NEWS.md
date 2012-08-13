@@ -1,10 +1,12 @@
-Version 0.4.0-dev
-2012-MM-DD
+Version 0.4.0
+2012-08-13
 
  API changes (backward compatible):
    - Add a mapnik_version option in MMLBuilder constructor
  Other changes:
    - Add more CartoCSS parsing and conversion tests
+ Bug fixes:
+   - Accept 'point-transform' without 'point-file' (#20)
 
 Version 0.3.1
 2012-07-25
