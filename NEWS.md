@@ -1,5 +1,5 @@
-Version 0.3.2-dev
-2012-MM-DD
+Version 0.3.2
+2012-08-14
 
  - Add more CartoCSS parsing and conversion tests
  - Accept 'point-transform' without 'point-file' (#20)
