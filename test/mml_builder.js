@@ -32,8 +32,7 @@ suite('mml_builder', function() {
 
         redis_client.keys("*", function(err, matches) {
             assert.equal(matches.length, 1);
-            // Note: "postgres" is the default user in mml_builder
-            assert.equal(matches[0], 'map_style|my_database|postgres|my_table');
+            assert.equal(matches[0], 'map_style|my_database|my_table');
             mml_builder.delStyle(done);
         });
       }
@@ -63,7 +62,7 @@ suite('mml_builder', function() {
 
       redis_client.keys("*", function(err, matches) {
           assert.equal(matches.length, 1);
-          assert.equal(matches[0], 'map_style|my_database|overridden_user|my_table');
+          assert.equal(matches[0], 'map_style|my_database|my_table');
           mml_builder.delStyle(done);
       });
 
@@ -88,7 +87,7 @@ suite('mml_builder', function() {
 
       redis_client.keys("*", function(err, matches) {
           assert.equal(matches.length, 1);
-          assert.equal(matches[0], 'map_style|my_database|overridden_user|my_table');
+          assert.equal(matches[0], 'map_style|my_database|my_table');
 
           // Test that new mml_builder, with no overridden user/password, uses the default ones
           var mml_builder2 = mml_store.mml_builder({dbname:'my_database', table:'my_table'}, function() {
@@ -233,7 +232,7 @@ suite('mml_builder', function() {
         mml_builder.toXML(function(err, data){
           var xmlDoc = libxmljs.parseXmlString(data);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), "#000000");
+          assert.equal(color.value(), "#000000");
           mml_builder.delStyle(done);
         });
       });
@@ -360,8 +359,8 @@ suite('mml_builder', function() {
         mml_builder.toXML(function(err, data){
           var xmlDoc = libxmljs.parseXmlString(data);
           var srs = xmlDoc.get("//@srs");
-          assert.equal(srs.text().indexOf("+init=epsg:"), 0,
-            '"' + srs.text() + '" does not start with "+init=epsg:"');
+          assert.equal(srs.value().indexOf("+init=epsg:"), 0,
+            '"' + srs.value() + '" does not start with "+init=epsg:"');
           mml_builder.delStyle(done);
         });
       });

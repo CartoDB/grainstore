@@ -1,3 +1,9 @@
+Version 0.5.0-dev
+2012-09-??
+
+ API changes:
+   - Exclude database username in redis style cache key (introduced in 0.3)
+
 Version 0.4.0
 2012-08-13
 
