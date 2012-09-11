@@ -232,7 +232,7 @@ suite('mml_builder', function() {
         mml_builder.toXML(function(err, data){
           var xmlDoc = libxmljs.parseXmlString(data);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.value(), "#000000");
+          assert.equal(color.text(), "#000000");
           mml_builder.delStyle(done);
         });
       });
@@ -359,8 +359,8 @@ suite('mml_builder', function() {
         mml_builder.toXML(function(err, data){
           var xmlDoc = libxmljs.parseXmlString(data);
           var srs = xmlDoc.get("//@srs");
-          assert.equal(srs.value().indexOf("+init=epsg:"), 0,
-            '"' + srs.value() + '" does not start with "+init=epsg:"');
+          assert.equal(srs.text().indexOf("+init=epsg:"), 0,
+            '"' + srs.text() + '" does not start with "+init=epsg:"');
           mml_builder.delStyle(done);
         });
       });
