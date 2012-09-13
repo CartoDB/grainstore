@@ -2,20 +2,41 @@ var assert     = require('assert');
 var _          = require('underscore');
 var grainstore = require('../lib/grainstore');
 var libxmljs   = require('libxmljs');
-var tests      = module.exports = {};
 var redis      = require('redis');
 var Step       = require('step');
+var http       = require('http');
+var fs         = require('fs');
 
 var redis_opts = require('./support/redis_opts');
 var redis_client = redis.createClient(redis_opts.port);
+var server;
+
+var server_port = 8033;
 
 suite('mml_builder', function() {
 
-  suiteSetup(function() {
+  suiteSetup(function(done) {
     // Check that we start with an empty redis db 
     redis_client.keys("*", function(err, matches) {
         assert.equal(matches.length, 0);
     });
+    // Start a server to test external resources
+    server = http.createServer( function(request, response) {
+        var filename = 'test/support/resources' + request.url; 
+        fs.readFile(filename, "binary", function(err, file) {
+          if ( err ) {
+            response.writeHead(404, {'Content-Type': 'text/plain'});
+            console.log("File '" + filename + "' not found");
+            response.write("404 Not Found\n");
+          } else {
+            response.writeHead(200);
+            response.write(file, "binary");
+          }
+          response.end();
+        });
+    });
+    server.listen(server_port, done);
+
   });
 
   test('can generate base mml with normal ops', function(done) {
@@ -368,14 +389,21 @@ suite('mml_builder', function() {
 
   test('store, retrive and convert to XML a set of reference styles', function(done) {
 
+    var cachedir = '/tmp/gt-' + process.pid;
+
     var styles = [
       // point-transform without point-file
       { cartocss: "#tab { point-transform: 'scale(0.9)'; }",
         xml_re: new RegExp(/PointSymbolizer transform="scale\(0.9\)"/) }
+      ,
+      // localize external resources
+      { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
+        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db-tab/cache/.*.svg"') }
+      ,
     ];
 
-    var mml_store = new grainstore.MMLStore(redis_opts);
-    var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'tab'}, function() {
+    var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir});
+    var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
 
       var StylesRunner = function(styles, done) {
         this.styles = styles;
@@ -421,14 +449,101 @@ suite('mml_builder', function() {
             mml_builder.toXML(this);
           },
           function finish(err, data) {
+            var errs = [];
+            if ( err ) errs.push(err);
             //console.log("toXML returned: "); console.dir(data);
             assert.ok(xml_re.test(data), 'toXML: ' + style + ': expected ' + xml_re + ' got:\n' + data);
-            mml_builder.delStyle(function() {});
+            mml_builder.delStyle(function(err) {
+              if ( err ) errs.push(err);
+              else {
+                // check that the cache dir contains no files after delStyle
+                var toclear = cachedir + '/cache';
+                if ( fs.existsSync(toclear) ) {
+                  var names = fs.readdirSync(toclear);
+                  assert.equals(names.length, 0, 'Cache dir ' + toclear + " still contains: " + names);
+                }
+              }
+              if ( errs.length ) err = new Error('toXML: ' + style + ': ' + errs.join("\n"));
+              that.runNext(err);
+            });
+          }
+        );
+
+      };
+
+      var runner = new StylesRunner(styles, done);
+      runner.runNext();
+
+    });
+
+  });
+
+  test('localizes external resources', function(done) {
+
+    var styles = [
+      { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
+        xml_re: new RegExp(/PointSymbolizer file="\/tmp\/moll\/db-tab\/cache\/.*\.svg"/) }
+      ,
+      { cartocss: "#tab { marker-file: url('http://localhost:" + server_port + "/circle.svg'); }",
+        xml_re: new RegExp(/MarkersSymbolizer file="\/tmp\/moll\/db-tab\/cache\/.*\.svg"/) }
+    ];
+
+    var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: '/tmp/moll'});
+    var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
+
+      var StylesRunner = function(styles, done) {
+        this.styles = styles;
+        this.done = done;
+        this.errors = [];
+      };
+
+      StylesRunner.prototype.runNext = function(err) {
+        if ( err ) this.errors.push(err); 
+        if ( ! this.styles.length ) {
+          var err = this.errors.length ? new Error(this.errors) : null;
+          this.done(err);
+          return;
+        }
+        var that = this;
+        var style_spec = this.styles.shift();
+        var style = style_spec.cartocss;
+        var xml_re = style_spec.xml_re;
+
+        Step(
+          function setStyle() {
+            mml_builder.setStyle(style, this);
+          },
+          function getStyle(err, data) {
             if ( err ) {
-              that.runNext(new Error('toXML: ' + style + ': ' + err));
+              mml_builder.delStyle(function() {
+                that.runNext(new Error('setStyle: ' + style + ': ' + err));
+              });
               return;
             }
-            that.runNext(null);
+            mml_builder.getStyle(this);
+          },
+          function toXML(err, data) {
+            if ( err ) {
+              that.runNext(new Error('getStyle: ' + style + ': ' + err));
+              return;
+            }
+            try { assert.equal(data.style, style); }
+            catch (err) { 
+              that.runNext(new Error('getStyle check: ' + style + ': ' + err));
+              return;
+            }
+            mml_builder.toXML(this);
+          },
+          function finish(err, data) {
+            var errs = [];
+            if ( err ) errs.push(err);
+            //console.log("toXML returned: "); console.dir(data);
+            assert.ok(xml_re.test(data), 'toXML: ' + style + ': expected ' + xml_re + ' got:\n' + data);
+            mml_builder.delStyle(function(err) {
+              if ( err ) errs.push(err);
+              if ( errs.length ) err = new Error('toXML: ' + style + ': ' + errs.join("\n"));
+              that.runNext(err);
+            });
           }
         );
 
@@ -442,6 +557,8 @@ suite('mml_builder', function() {
   });
 
   suiteTeardown(function() {
+    // Close the server
+    server.close();
     // Check that we left the redis db empty
     redis_client.keys("*", function(err, matches) {
         assert.equal(matches.length, 0);

@@ -23,7 +23,8 @@
         "generic-pool": "1.0.x",
         "carto": "git://github.com/CartoDB/carto.git#cdb-0.8",
         "redis": "0.7.2",
-        "hiredis": "0.1.14"
+        "hiredis": "0.1.14",
+        "millstone": "git://github.com/mapbox/millstone.git#ff890eb"
     },
     "devDependencies": {
         "mocha": "1.2.1",
