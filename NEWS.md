@@ -1,5 +1,5 @@
-Version 0.6.0-dev
-2012-??-??
+Version 0.6.0
+2012-09-14
 
  API changes (backward compatible):
    - Automatically localise external resources in CartoCSS (#4)
