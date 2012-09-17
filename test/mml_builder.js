@@ -458,9 +458,13 @@ suite('mml_builder', function() {
               else {
                 // check that the cache dir contains no files after delStyle
                 var toclear = cachedir + '/cache';
-                if ( fs.existsSync(toclear) ) {
-                  var names = fs.readdirSync(toclear);
+                var names;  
+                try {
+                  fs.readdirSync(toclear); 
                   assert.equals(names.length, 0, 'Cache dir ' + toclear + " still contains: " + names);
+                } catch (err) {
+                  // complain on unexpected error
+                  if ( err.code != 'ENOENT' ) assert.ok(!err, err);
                 }
               }
               if ( errs.length ) err = new Error('toXML: ' + style + ': ' + errs.join("\n"));
