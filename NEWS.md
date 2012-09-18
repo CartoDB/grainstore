@@ -1,6 +1,8 @@
 Version 0.6.2-dev
 2012-??-??
 
+ - Reconstruct the XML when lost in redis
+
 Version 0.6.1
 2012-09-18
 
