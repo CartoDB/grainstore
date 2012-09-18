@@ -1,5 +1,7 @@
-Version 0.6.1-dev
-2012-??-??
+Version 0.6.1
+2012-09-18
+
+ - Fix support for node-0.4
 
 Version 0.6.0
 2012-09-14
