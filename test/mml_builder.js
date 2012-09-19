@@ -591,6 +591,7 @@ suite('mml_builder', function() {
       mml_builder0.toXML(function(err, xml0) {
         redis_client.get("map_style|db|tab", function(err, val) {
           val = JSON.parse(val);
+          var xml0 = val.xml;
           val.xml = 'bogus_xml';
           val = JSON.stringify(val);
           redis_client.set("map_style|db|tab", val, function(err, data) {
@@ -600,8 +601,15 @@ suite('mml_builder', function() {
                 else {
                   assert.equal(xml, 'bogus_xml');
                   mml_builder.resetStyle(function(err,st) {
-                    console.dir(st);
-                    mml_builder.delStyle(done);
+                    if ( err ) {
+                      mml_builder.delStyle(function() { done(err); });
+                    }
+                    else {
+                      redis_client.get("map_style|db|tab", function(err, val) {
+                        assert.equal(JSON.parse(val).xml, xml0);
+                        mml_builder.delStyle(done);
+                      });
+                    }
                   });
                 }
               });

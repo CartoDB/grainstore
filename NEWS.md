@@ -1,5 +1,7 @@
 Version 0.6.3-dev
 
+ - Fix MMBuilder.resetStyle (and add proper testcase)
+
 Version 0.6.2
 2012-09-19
 
