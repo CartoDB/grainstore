@@ -1,3 +1,5 @@
+Version 0.6.3-dev
+
 Version 0.6.2
 2012-09-19
 
