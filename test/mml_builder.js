@@ -585,6 +585,33 @@ suite('mml_builder', function() {
     });
   });
 
+  test('resetStyle forces re-write of stored XML', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
+      mml_builder0.toXML(function(err, xml0) {
+        redis_client.get("map_style|db|tab", function(err, val) {
+          val = JSON.parse(val);
+          val.xml = 'bogus_xml';
+          val = JSON.stringify(val);
+          redis_client.set("map_style|db|tab", val, function(err, data) {
+            var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
+              mml_builder.toXML(function(err, xml) {
+                if ( err ) done(err);
+                else {
+                  assert.equal(xml, 'bogus_xml');
+                  mml_builder.resetStyle(function(err,st) {
+                    console.dir(st);
+                    mml_builder.delStyle(done);
+                  });
+                }
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();

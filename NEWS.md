@@ -1,6 +1,7 @@
 Version 0.6.2-dev
 2012-??-??
 
+ - Add MMBuilder.resetStyle method to re-render an XML style
  - Reconstruct the XML when lost in redis
 
 Version 0.6.1
