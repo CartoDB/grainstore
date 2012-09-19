@@ -1,5 +1,5 @@
-Version 0.6.2-dev
-2012-??-??
+Version 0.6.2
+2012-09-19
 
  NOTE: when upgrading from 0.6.0 you will need to rename any existing
        localized resources directories or force re-rendering of the
