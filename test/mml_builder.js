@@ -398,7 +398,7 @@ suite('mml_builder', function() {
       ,
       // localize external resources
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
-        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db-tab/cache/.*.svg"') }
+        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
       ,
     ];
 
@@ -486,10 +486,10 @@ suite('mml_builder', function() {
 
     var styles = [
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
-        xml_re: new RegExp(/PointSymbolizer file="\/tmp\/moll\/db-tab\/cache\/.*\.svg"/) }
+        xml_re: new RegExp(/PointSymbolizer file="\/tmp\/moll\/db\/tab\/cache\/.*\.svg"/) }
       ,
       { cartocss: "#tab { marker-file: url('http://localhost:" + server_port + "/circle.svg'); }",
-        xml_re: new RegExp(/MarkersSymbolizer file="\/tmp\/moll\/db-tab\/cache\/.*\.svg"/) }
+        xml_re: new RegExp(/MarkersSymbolizer file="\/tmp\/moll\/db\/tab\/cache\/.*\.svg"/) }
     ];
 
     var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: '/tmp/moll'});

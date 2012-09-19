@@ -1,8 +1,14 @@
 Version 0.6.2-dev
 2012-??-??
 
+ NOTE: when upgrading from 0.6.0 you will need to rename any existing
+       localized resources directories or force re-rendering of the
+       XML styles.
+
  - Add MMBuilder.resetStyle method to re-render an XML style
  - Reconstruct the XML when lost in redis
+ - Change localized resources path from <dbname>-<tablename>
+   to <dbname>/<tablename>. 
 
 Version 0.6.1
 2012-09-18
