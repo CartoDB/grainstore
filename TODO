@@ -1,0 +1,1 @@
+Lazy rendering of XML (only do on .toXML calls)
