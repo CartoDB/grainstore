@@ -1,4 +1,8 @@
+Version 0.6.5-dev
+2012-??-??
+
 Version 0.6.4
+2012-09-20
 
  - Target a branch of millstone that fixes support for urls
    containing regexp control chars in them (most notably '+')
