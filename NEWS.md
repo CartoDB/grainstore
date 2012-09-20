@@ -1,4 +1,5 @@
-Version 0.6.3-dev
+Version 0.6.3
+2012-09-20
 
  - Fix MMBuilder.resetStyle (and add proper testcase)
 
