@@ -251,6 +251,7 @@ suite('mml_builder', function() {
       {dbname: 'my_databaasez', table:'my_tablez', style: '#my_tablez {marker-fill: #000000;}'},
       function() {
         mml_builder.toXML(function(err, data){
+          if ( err ) { mml_buider.delStyle(function() { done(err); }); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var color = xmlDoc.get("//@fill");
           assert.equal(color.text(), "#000000");
@@ -378,6 +379,7 @@ suite('mml_builder', function() {
       {dbname: 'my_databaasez', table:'my_tablez'},
       function() {
         mml_builder.toXML(function(err, data){
+          if ( err ) { mml_buider.delStyle(function() { done(err); }); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var srs = xmlDoc.get("//@srs");
           assert.equal(srs.text().indexOf("+init=epsg:"), 0,
