@@ -24,7 +24,7 @@
         "carto": "git://github.com/CartoDB/carto.git#cdb-0.8",
         "redis": "0.7.2",
         "hiredis": "0.1.14",
-        "millstone": "git://github.com/CartoDB/millstone.git#7ce48bb"
+        "millstone": "git://github.com/CartoDB/millstone.git#cdb-node04-devel"
     },
     "devDependencies": {
         "mocha": "1.2.1",

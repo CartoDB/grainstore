@@ -402,6 +402,10 @@ suite('mml_builder', function() {
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
         xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
       ,
+      // localize external resources with a + in the url
+      { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/+circle.svg'); }",
+        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
+      ,
     ];
 
     var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir});
