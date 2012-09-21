@@ -6,6 +6,7 @@ var redis      = require('redis');
 var Step       = require('step');
 var http       = require('http');
 var fs         = require('fs');
+var base64     = require('../lib/grainstore/base64');
 
 var redis_opts = require('./support/redis_opts');
 var redis_client = redis.createClient(redis_opts.port);
@@ -293,6 +294,9 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var base_builder;
     var cust_builder;
+    var style1 = '#tab { marker-fill: #111111; }';
+    var style2 = '#tab { marker-fill: #222222; }';
+    var style3 = '#tab { marker-fill: #333333; }';
     Step(
       function createBase() {
         base_builder = mml_store.mml_builder({dbname:'db', table:'tab'},
@@ -300,28 +304,29 @@ suite('mml_builder', function() {
       },
       function setBaseStyle(err, data) {
         if ( err ) throw err;
-        base_builder.setStyle('#tab { marker-fill: #111111; }', this);
+        base_builder.setStyle(style1, this);
       },
       function createCustom(err, data) {
         if ( err ) throw err;
         cust_builder = mml_store.mml_builder({dbname:'db', table:'tab',
-            style: '#tab { marker-fill: #222222; }'}, this);
+            style: style2}, this);
       },
       function checkRedis1(err, data) {
         if ( err ) throw err;
         var cb = this;
         redis_client.keys("map_style|db|tab*", function(err, matches) {
-          if ( err ) { base_builder.delStyle(done); }
+          if ( err ) { cb(err); return; }
           assert.equal(matches.length, 2);
           matches = matches.sort(); // base first
           redis_client.get(matches[0], function(err, val) {
-            if ( err ) { base_builder.delStyle(done); }
+            if ( err ) { cb(err); return; }
             // base key has both style and XML 
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
+            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style2));
             redis_client.get(matches[1], function(err, val) {
-              if ( err ) { base_builder.delStyle(done); }
+              if ( err ) { cb(err); return; }
               // custom style key has only XML
               var js = JSON.parse(val);
               assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
@@ -355,7 +360,7 @@ suite('mml_builder', function() {
       },
       function setCustStyle(err, data) {
         if ( err ) throw err;
-        cust_builder.setStyle('#tab { marker-fill: #333333; }', this);
+        cust_builder.setStyle(style3, this);
       },
       function checkBase2(err, data) {
         if ( err ) throw err;
@@ -377,6 +382,32 @@ suite('mml_builder', function() {
           var color = xmlDoc.get("//@fill");
           assert.equal(color.text(), '#333333');
           cb(null);
+        });
+      },
+      function checkRedis2(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        redis_client.keys("map_style|db|tab*", function(err, matches) {
+          if ( err ) { cb(err); return; }
+          assert.equal(matches.length, 2);
+          matches = matches.sort(); // base first
+          redis_client.get(matches[0], function(err, val) {
+            if ( err ) { cb(err); return; }
+            // base key has both style and XML 
+            var js = JSON.parse(val);
+            assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+            assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
+            // the "extended" key is now encoded after the style we just set
+            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style3));
+            redis_client.get(matches[1], function(err, val) {
+              if ( err ) { cb(err); return; }
+              // custom style key has only XML
+              var js = JSON.parse(val);
+              assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
+              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no XML property');
+              cb(null);
+            });
+          });
         });
       },
       function theEnd(err, data) {

@@ -3,6 +3,7 @@ Version 0.6.5-dev
 
  - Only store CartoCSS in the base redis key (#23)
  - Back to tracking mainstream millstone
+ - Many more tests for custom style storage in redis
 
 Version 0.6.4
 2012-09-20
