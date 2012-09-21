@@ -142,9 +142,17 @@ suite('mml_builder', function() {
             if ( err ) { mml_builder.delStyle(done); return; }
             var js = JSON.parse(val);
             // only base key should have a style property
+            // only extended key should have an XML property (it will be constructed on demand)
             assert.ok(!js.hasOwnProperty('style'), 'extended key has a style property');
             assert.ok(js.hasOwnProperty('xml'), 'extended key has no XML');
-            mml_builder.delStyle(done);
+            redis_client.get("map_style|my_database|my_table", function(err, val) {
+              if ( err ) { mml_builder.delStyle(done); return; }
+              assert.ok(val, "Base key not stored when initializing with sql");
+              var js = JSON.parse(val);
+              assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+              assert.ok(!js.hasOwnProperty('xml'), 'base key has an XML property');
+              mml_builder.delStyle(done);
+            });
           });
       });
     });
