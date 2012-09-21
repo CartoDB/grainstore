@@ -353,6 +353,32 @@ suite('mml_builder', function() {
           cb(null);
         });
       },
+      function setCustStyle(err, data) {
+        if ( err ) throw err;
+        cust_builder.setStyle('#tab { marker-fill: #333333; }', this);
+      },
+      function checkBase2(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        base_builder.toXML(function(err, xml) {
+          if ( err ) { cb(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+          var color = xmlDoc.get("//@fill");
+          assert.equal(color.text(), '#111111');
+          cb(null);
+        });
+      },
+      function checkCustom2(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        cust_builder.toXML(function(err, xml) {
+          if ( err ) { cb(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+          var color = xmlDoc.get("//@fill");
+          assert.equal(color.text(), '#333333');
+          cb(null);
+        });
+      },
       function theEnd(err, data) {
         base_builder.delStyle(function() {
           done(err);
