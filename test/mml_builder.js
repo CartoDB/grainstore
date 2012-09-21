@@ -13,6 +13,15 @@ var server;
 
 var server_port = 8033;
 
+function dropXMLFromStore(key, callback) {
+    redis_client.get(key, function(err, val) {
+      val = JSON.parse(val);
+      delete val.xml;
+      val = JSON.stringify(val);
+      redis_client.set(key, val, callback);
+    });
+}
+
 suite('mml_builder', function() {
 
   suiteSetup(function(done) {
@@ -605,23 +614,18 @@ suite('mml_builder', function() {
 
   });
 
-  test('corrupted XML in style store triggers re-creation', function(done) {
+  test('lost XML in base key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
       mml_builder0.toXML(function(err, xml0) {
-        redis_client.get("map_style|db|tab", function(err, val) {
-          val = JSON.parse(val);
-          delete val.xml;
-          val = JSON.stringify(val);
-          redis_client.set("map_style|db|tab", val, function(err, data) {
-            var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
-              mml_builder.toXML(function(err, xml) {
-                if ( err ) done(err);
-                else {
-                  assert.equal(xml, xml0);
-                  mml_builder.delStyle(done);
-                }
-              });
+        dropXMLFromStore("map_style|db|tab", function(err, val) {
+          var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
+            mml_builder.toXML(function(err, xml) {
+              if ( err ) done(err);
+              else {
+                assert.equal(xml, xml0);
+                mml_builder.delStyle(done);
+              }
             });
           });
         });
@@ -629,26 +633,21 @@ suite('mml_builder', function() {
     });
   });
 
-  test('corrupted XML in extended style store triggers re-creation', function(done) {
+  test('lost XML in custom sql store triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var opts = {dbname:'db', table:'tab', sql:'select * from t'};
     var mml_builder0 = mml_store.mml_builder(opts, function() {
       mml_builder0.toXML(function(err, xml0) {
         //redis_client.keys("map_style|db|tab|*", function(err, matches) { console.dir(matches); });
         var key = 'map_style|db|tab|c2VsZWN0ICogZnJvbSB0'; // Use the above line to figure out
-        redis_client.get(key, function(err, val) {
-          val = JSON.parse(val);
-          delete val.xml;
-          val = JSON.stringify(val);
-          redis_client.set(key, val, function(err, data) {
-            var mml_builder = mml_store.mml_builder(opts, function() {
-              mml_builder.toXML(function(err, xml) {
-                if ( err ) done(err);
-                else {
-                  assert.equal(xml, xml0);
-                  mml_builder.delStyle(done);
-                }
-              });
+        dropXMLFromStore(key, function(err, val) {
+          var mml_builder = mml_store.mml_builder(opts, function() {
+            mml_builder.toXML(function(err, xml) {
+              if ( err ) done(err);
+              else {
+                assert.equal(xml, xml0);
+                mml_builder.delStyle(done);
+              }
             });
           });
         });
