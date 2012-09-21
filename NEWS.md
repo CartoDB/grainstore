@@ -1,6 +1,8 @@
 Version 0.6.5-dev
 2012-??-??
 
+ - Back to tracking mainstream millstone
+
 Version 0.6.4
 2012-09-20
 
