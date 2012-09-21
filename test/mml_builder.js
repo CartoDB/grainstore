@@ -293,15 +293,34 @@ suite('mml_builder', function() {
   });
 
   test("can retrieve basic XML specifying sql", function(done){
+    // TODO: use Step !
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder(
-      {dbname: 'my_databaasez', table:'my_tablez', sql: "SELECT * FROM my_face"},
-      function() {
+      {dbname: 'db', table:'tab', sql: "SELECT * FROM my_face"},
+      function(err, data) {
+        if ( err ) { done(err); return; }
         mml_builder.toXML(function(err, data){
+          if ( err ) { done(err); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var sql = xmlDoc.get("//Parameter[@name='table']");
           assert.equal(sql.text(), "SELECT * FROM my_face");
-          mml_builder.delStyle(done);
+          // TODO: check redis status now
+          var mml_builder2 = mml_store.mml_builder(
+            {dbname: 'db', table:'tab'},
+            function(err, data) {
+              if ( err ) { done(err); return; }
+              mml_builder2.toXML(function(err, data){
+                if ( err ) { done(err); return; }
+                // TODO: check redis status now
+                var xmlDoc = libxmljs.parseXmlString(data);
+                var sql = xmlDoc.get("//Parameter[@name='table']");
+                assert.equal(sql.text(), "tab");
+                // NOTE: there's no need to explicitly delete style
+                //       of mml_builder because it is an extension
+                //       of mml_builder2 (extended by SQL)
+                mml_builder2.delStyle(done);
+              });
+            });
         });
       });
   });
