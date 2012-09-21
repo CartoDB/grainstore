@@ -134,7 +134,19 @@ suite('mml_builder', function() {
       var baseMML = mml_builder.baseMML();
       assert.equal(baseMML.Layer[0].id, 'my_table');
       assert.equal(baseMML.Layer[0].Datasource.table, 'SELECT * from my_table');
-      mml_builder.delStyle(done);
+      // Check redis status
+      redis_client.keys("map_style|my_database|my_table|*", function(err, matches) {
+          if ( err ) { mml_builder.delStyle(done); return; }
+          assert.equal(matches.length, 1);
+          redis_client.get(matches[0], function(err, val) {
+            if ( err ) { mml_builder.delStyle(done); return; }
+            var js = JSON.parse(val);
+            // only base key should have a style property
+            assert.ok(!js.hasOwnProperty('style'), 'extended key has a style property');
+            assert.ok(js.hasOwnProperty('xml'), 'extended key has no XML');
+            mml_builder.delStyle(done);
+          });
+      });
     });
   });
 

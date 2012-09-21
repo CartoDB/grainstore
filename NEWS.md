@@ -1,6 +1,7 @@
 Version 0.6.5-dev
 2012-??-??
 
+ - Only store CartoCSS in the base redis key (#23)
  - Back to tracking mainstream millstone
 
 Version 0.6.4
