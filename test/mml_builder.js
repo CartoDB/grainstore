@@ -289,6 +289,78 @@ suite('mml_builder', function() {
       });
   });
 
+  test('base style and custom style keys do not affect each other', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var base_builder;
+    var cust_builder;
+    Step(
+      function createBase() {
+        base_builder = mml_store.mml_builder({dbname:'db', table:'tab'},
+          this);
+      },
+      function setBaseStyle(err, data) {
+        if ( err ) throw err;
+        base_builder.setStyle('#tab { marker-fill: #111111; }', this);
+      },
+      function createCustom(err, data) {
+        if ( err ) throw err;
+        cust_builder = mml_store.mml_builder({dbname:'db', table:'tab',
+            style: '#tab { marker-fill: #222222; }'}, this);
+      },
+      function checkRedis1(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        redis_client.keys("map_style|db|tab*", function(err, matches) {
+          if ( err ) { base_builder.delStyle(done); }
+          assert.equal(matches.length, 2);
+          matches = matches.sort(); // base first
+          redis_client.get(matches[0], function(err, val) {
+            if ( err ) { base_builder.delStyle(done); }
+            // base key has both style and XML 
+            var js = JSON.parse(val);
+            assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+            assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
+            redis_client.get(matches[1], function(err, val) {
+              if ( err ) { base_builder.delStyle(done); }
+              // custom style key has only XML
+              var js = JSON.parse(val);
+              assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
+              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no XML property');
+              cb(null);
+            });
+          });
+        });
+      },
+      function checkBase1(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        base_builder.toXML(function(err, xml) {
+          if ( err ) { cb(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+          var color = xmlDoc.get("//@fill");
+          assert.equal(color.text(), '#111111');
+          cb(null);
+        });
+      },
+      function checkCustom1(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        cust_builder.toXML(function(err, xml) {
+          if ( err ) { cb(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+          var color = xmlDoc.get("//@fill");
+          assert.equal(color.text(), '#222222');
+          cb(null);
+        });
+      },
+      function theEnd(err, data) {
+        base_builder.delStyle(function() {
+          done(err);
+        });
+      }
+    );
+  });
+
   test('can retrieve basic XML', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'my_tablez'}, function() {
@@ -633,7 +705,7 @@ suite('mml_builder', function() {
     });
   });
 
-  test('lost XML in custom sql store triggers re-creation', function(done) {
+  test('lost XML in custom sql key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var opts = {dbname:'db', table:'tab', sql:'select * from t'};
     var mml_builder0 = mml_store.mml_builder(opts, function() {
