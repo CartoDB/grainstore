@@ -1,6 +1,7 @@
 Version 0.6.5-dev
 2012-??-??
 
+ - Support transforming MML Stylesheets to given target mapnik version.
  - Only store CartoCSS in the base redis key (#23)
  - Back to tracking mainstream millstone (~0.5.9)
  - Back to tracking mainstream carto (~0.9.2)

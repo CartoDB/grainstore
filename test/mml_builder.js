@@ -238,7 +238,7 @@ suite('mml_builder', function() {
   });
 
   test('store a good style and retrieve it', function(done) {
-    var style = "#my_table {\n  polygon-fill: #fff;\n}";
+    var style = "version: '2.0.2'; #my_table {\n  polygon-fill: #fff;\n}";
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle(style, function(err, output){
@@ -294,9 +294,9 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var base_builder;
     var cust_builder;
-    var style1 = '#tab { marker-fill: #111111; }';
-    var style2 = '#tab { marker-fill: #222222; }';
-    var style3 = '#tab { marker-fill: #333333; }';
+    var style1 = "version: '2.0.2'; #tab { marker-fill: #111111; }";
+    var style2 = "version: '2.0.2'; #tab { marker-fill: #222222; }";
+    var style3 = "version: '2.0.2'; #tab { marker-fill: #333333; }";
     Step(
       function createBase() {
         base_builder = mml_store.mml_builder({dbname:'db', table:'tab'},
@@ -573,19 +573,35 @@ suite('mml_builder', function() {
     var styles = [
       // point-transform without point-file
       { cartocss: "#tab { point-transform: 'scale(0.9)'; }",
+        cartocss_out: "version: '2.1.0'; #tab { point-transform: 'scale(0.9)'; }",
         xml_re: new RegExp(/PointSymbolizer transform="scale\(0.9\)"/) }
       ,
       // localize external resources
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
+        cartocss_out: "version: '2.1.0'; #tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
         xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
       ,
       // localize external resources with a + in the url
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/+circle.svg'); }",
+        cartocss_out: "version: '2.1.0'; #tab { point-file: url('http://localhost:" + server_port + "/+circle.svg'); }",
         xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
       ,
+      // Adapts marker width and height, due to missing version (defaulting to 2.0.2)
+      { cartocss: "#tab[zoom=1] { marker-width:10; marker-height:20; }\n#tab[zoom=2] { marker-height:'6'; marker-width: '7'; }",
+        cartocss_out: "version: '2.1.0'; #tab[zoom=1] { marker-width:20; marker-height:40; }\n#tab[zoom=2] { marker-height:12; marker-width:14; }",
+        xml_re: new RegExp('MarkersSymbolizer width="20" height="40" ') }
+      ,
+      // Adapts marker width and height, due to explicit 2.0.2 version
+      { cartocss: "version: '2.0.2'; #tab { marker-height: 10; marker-width: 20; }",
+        cartocss_out: "version: '2.1.0'; #tab { marker-height:20; marker-width:40; }",
+        xml_re: new RegExp('MarkersSymbolizer height="20" width="40" ') }
+      ,
+      // Keep marker width and height the same, due to new version
+      { cartocss: "version: '2.1.0'; #tab { marker-width:10; marker-height:20; }",
+        xml_re: new RegExp('MarkersSymbolizer width="10" height="20" ') }
     ];
 
-    var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir});
+    var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir, mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
 
       var StylesRunner = function(styles, done) {
@@ -604,6 +620,7 @@ suite('mml_builder', function() {
         var that = this;
         var style_spec = this.styles.shift();
         var style = style_spec.cartocss;
+        var style_out = style_spec.cartocss_out ? style_spec.cartocss_out : style;
         var xml_re = style_spec.xml_re;
 
         Step(
@@ -624,7 +641,7 @@ suite('mml_builder', function() {
               that.runNext(new Error('getStyle: ' + style + ': ' + err));
               return;
             }
-            try { assert.equal(data.style, style); }
+            try { assert.equal(data.style, style_out); }
             catch (err) { 
               that.runNext(new Error('getStyle check: ' + style + ': ' + err));
               return;
@@ -740,6 +757,7 @@ suite('mml_builder', function() {
       });
     });
   });
+
 
   suiteTeardown(function() {
     // Close the server
