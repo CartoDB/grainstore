@@ -5,11 +5,18 @@ var grainstore = require('../lib/grainstore');
 
 var redis = require('redis')
 
+if ( process.argv.length < 3 ) {
+  console.log("Usage: reset_styles <target_mapnik_version>");
+  process.exit(1);
+}
+
+
+var MAPNIK_VERSION = process.argv[2]; 
 var REDIS_PORT = 6379; // TODO: make a command line parameter
 
 var dbnum = 0;
 
-var mml_store = new grainstore.MMLStore({port: REDIS_PORT});
+var mml_store = new grainstore.MMLStore({port:REDIS_PORT}, {mapnik_version:MAPNIK_VERSION});
 
 var failures = [];
 
