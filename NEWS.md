@@ -6,6 +6,7 @@ Version 0.6.5-dev
  - Back to tracking mainstream millstone (~0.5.9)
  - Back to tracking mainstream carto (~0.9.2)
  - Many more tests for custom style storage in redis
+ - Add tools/reset_styles script to reset all styles
 
 Version 0.6.4
 2012-09-20
