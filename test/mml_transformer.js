@@ -63,6 +63,14 @@ suite('mml_transformer', function() {
     assert.equal(s,
 "version: '2.1.0'; #tab[zoom=1] { marker-width:20; marker-height:40; }\n#tab[zoom=2] { marker-height:12; marker-width:14; }"
     );
+
+    var s = t.transform(
+"#t { marker-width :\n10; \nmarker-height\t:   20; }; }"
+    );
+    assert.equal(s,
+"version: '2.1.0'; #t { marker-width:20; \nmarker-height:40; }; }"
+    );
+
   });
 
   // Adapts marker width and height, from 2.0.2 (expliclit) to 2.1.0
