@@ -700,78 +700,123 @@ suite('mml_builder', function() {
 
   test('lost XML in base key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
-    var mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
-      mml_builder0.toXML(function(err, xml0) {
-        dropXMLFromStore("map_style|db|tab", function(err, val) {
-          var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
-            mml_builder.toXML(function(err, xml) {
-              if ( err ) done(err);
-              else {
-                assert.equal(xml, xml0);
-                mml_builder.delStyle(done);
-              }
-            });
-          });
-        });
-      });
-    });
+    var mml_builder0, mml_builder, xml0;
+    Step (
+      function builder0() {
+        mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function getXML0(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.toXML(this)
+      },
+      function dropXML0(err, data) {
+        if ( err ) { done(err); return; }
+        xml0 = data;
+        dropXMLFromStore("map_style|db|tab", this);
+      },
+      function builder1(err, val) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function getXML1(err) {
+        if ( err ) { done(err); return; }
+        mml_builder.toXML(this);
+      },
+      function checkXML(err, data) {
+        if ( err ) { done(err); return; }
+        assert.equal(data, xml0);
+        mml_builder.delStyle(done);
+      }
+    );
   });
 
   test('lost XML in custom sql key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var opts = {dbname:'db', table:'tab', sql:'select * from t'};
-    var mml_builder0 = mml_store.mml_builder(opts, function() {
-      mml_builder0.toXML(function(err, xml0) {
+    var mml_builder0, mml_builder, xml0;
+    Step(
+      function initBuilder0 () {
+        mml_builder0 = mml_store.mml_builder(opts, this);
+      },
+      function getXML0(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder0.toXML(this);
+      },
+      function dropXML(err, data) {
+        if ( err ) { done(err); return; }
+        xml0 = data;
         //redis_client.keys("map_style|db|tab|*", function(err, matches) { console.dir(matches); });
         var key = 'map_style|db|tab|c2VsZWN0ICogZnJvbSB0'; // Use the above line to figure out
-        dropXMLFromStore(key, function(err, val) {
-          var mml_builder = mml_store.mml_builder(opts, function() {
-            mml_builder.toXML(function(err, xml) {
-              if ( err ) done(err);
-              else {
-                assert.equal(xml, xml0);
-                mml_builder.delStyle(done);
-              }
-            });
-          });
-        });
-      });
-    });
+        dropXMLFromStore(key, this);
+      },
+      function initBuilder(err, val) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder(opts, this);
+      },
+      function getXML(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder.toXML(this);
+      },
+      function checkXML(err, xml) {
+        if ( err ) { done(err); return; }
+        assert.equal(xml, xml0);
+        mml_builder.delStyle(done);
+      }
+    );
   });
 
   test('resetStyle forces re-write of stored XML', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
-    var mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
-      mml_builder0.toXML(function(err, xml0) {
-        redis_client.get("map_style|db|tab", function(err, val) {
-          val = JSON.parse(val);
-          var xml0 = val.xml;
-          val.xml = 'bogus_xml';
-          val = JSON.stringify(val);
-          redis_client.set("map_style|db|tab", val, function(err, data) {
-            var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
-              mml_builder.toXML(function(err, xml) {
-                if ( err ) done(err);
-                else {
-                  assert.equal(xml, 'bogus_xml');
-                  mml_builder.resetStyle(function(err,st) {
-                    if ( err ) {
-                      mml_builder.delStyle(function() { done(err); });
-                    }
-                    else {
-                      redis_client.get("map_style|db|tab", function(err, val) {
-                        assert.equal(JSON.parse(val).xml, xml0);
-                        mml_builder.delStyle(done);
-                      });
-                    }
-                  });
-                }
-              });
-            });
-          });
-        });
-      });
-    });
+    var mml_builder0, mml_builder, xml0;
+    Step(
+      function initBuilder0() {
+        mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function getXML0(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.toXML(this);
+      },
+      function getRedis0(err, xml0) {
+        if ( err ) { done(err); return; }
+        redis_client.get("map_style|db|tab", this);
+      },
+      function setRedis0(err, val) {
+        if ( err ) { done(err); return; }
+        val = JSON.parse(val);
+        xml0 = val.xml;
+        val.xml = 'bogus_xml';
+        val = JSON.stringify(val);
+        redis_client.set("map_style|db|tab", val, this);
+      },
+      function initBuilder(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function getXML(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder.toXML(this);
+      },
+      function resetStyle(err, xml) {
+        if ( err ) { done(err); return; }
+        assert.equal(xml, 'bogus_xml');
+        mml_builder.resetStyle(this);
+      },
+      function getRedis(err,st) {
+        if ( err ) {
+          mml_builder.delStyle(function() { done(err); });
+          return;
+        }
+        redis_client.get("map_style|db|tab", this);
+      },
+      function checkStyle(err, val) {
+        if ( err ) {
+          mml_builder.delStyle(function() { done(err); });
+          return;
+        }
+        assert.equal(JSON.parse(val).xml, xml0);
+        mml_builder.delStyle(done);
+      }
+    );
   });
 
 
