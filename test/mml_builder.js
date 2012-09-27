@@ -238,15 +238,30 @@ suite('mml_builder', function() {
   });
 
   test('store a good style and retrieve it', function(done) {
-    var style = "version: '2.0.2'; #my_table {\n  polygon-fill: #fff;\n}";
+    var style = "#my_table {\n  polygon-fill: #fff;\n}";
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle(style, function(err, output){
         mml_builder.getStyle(function(err, data){
           assert.equal(data.style, style);
+          assert.equal(data.version, '2.0.0');
           mml_builder.delStyle(done);
         });
       });
+    });
+  });
+
+  test('store a good style with version 2.0.2 and retrieve it', function(done) {
+    var style = "#my_table {\n  polygon-fill: #fff;\n}";
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+      mml_builder.setStyle(style, function(err, output){
+        mml_builder.getStyle(function(err, data){
+          assert.equal(data.style, style);
+          assert.equal(data.version, '2.0.2');
+          mml_builder.delStyle(done);
+        });
+      }, '2.0.2');
     });
   });
 
@@ -324,7 +339,7 @@ suite('mml_builder', function() {
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
-            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style2));
+            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style2 + '|2.0.0'));
             redis_client.get(matches[1], function(err, val) {
               if ( err ) { cb(err); return; }
               // custom style key has only XML
@@ -398,7 +413,7 @@ suite('mml_builder', function() {
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
             // the "extended" key is now encoded after the style we just set
-            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style3));
+            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style3 + '|2.0.0'));
             redis_client.get(matches[1], function(err, val) {
               if ( err ) { cb(err); return; }
               // custom style key has only XML
