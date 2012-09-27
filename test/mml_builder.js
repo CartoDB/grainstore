@@ -610,33 +610,40 @@ suite('mml_builder', function() {
       // localize external resources with a + in the url
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/+circle.svg'); }",
         xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
+      ,
+      // transform marker-width and height from 2.0.0 to 2.1.0 resources with a + in the url
+      { cartocss: "#tab { marker-width: 8; marker-height: 3; }",
+        version: '2.0.0', target_version: '2.1.0',
+        xml_re: new RegExp('MarkersSymbolizer width="16" height="6"') }
     ];
 
-    var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir, mapnik_version: '2.1.0'});
-    var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
+    var StylesRunner = function(styles, done) {
+      this.styles = styles;
+      this.done = done;
+      this.errors = [];
+    };
 
-      var StylesRunner = function(styles, done) {
-        this.styles = styles;
-        this.done = done;
-        this.errors = [];
-      };
+    StylesRunner.prototype.runNext = function(err) {
+      if ( err ) this.errors.push(err); 
+      if ( ! this.styles.length ) {
+        var err = this.errors.length ? new Error(this.errors) : null;
+        this.done(err);
+        return;
+      }
+      var that = this;
+      var style_spec = this.styles.shift();
+      var style = style_spec.cartocss;
+      var style_out = style; 
+      var style_version = style_spec.version || '2.0.2';
+      var target_mapnik_version = style_spec.target_version || style_version;
+      var xml_re = style_spec.xml_re;
 
-      StylesRunner.prototype.runNext = function(err) {
-        if ( err ) this.errors.push(err); 
-        if ( ! this.styles.length ) {
-          var err = this.errors.length ? new Error(this.errors) : null;
-          this.done(err);
-          return;
-        }
-        var that = this;
-        var style_spec = this.styles.shift();
-        var style = style_spec.cartocss;
-        var style_out = style; 
-        var xml_re = style_spec.xml_re;
+      var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir, mapnik_version: target_mapnik_version});
+      var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
 
         Step(
           function setStyle() {
-            mml_builder.setStyle(style, this);
+            mml_builder.setStyle(style, this, style_version);
           },
           function getStyle(err, data) {
             if ( err ) {
@@ -683,13 +690,11 @@ suite('mml_builder', function() {
             });
           }
         );
+      });
+    }
 
-      };
-
-      var runner = new StylesRunner(styles, done);
-      runner.runNext();
-
-    });
+    var runner = new StylesRunner(styles, done);
+    runner.runNext();
 
   });
 
