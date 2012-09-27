@@ -776,14 +776,15 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         mml_builder0.toXML(this);
       },
-      function getRedis0(err, xml0) {
+      function getRedis0(err, data) {
         if ( err ) { done(err); return; }
+        xml0 = data;
         redis_client.get("map_style|db|tab", this);
       },
       function setRedis0(err, val) {
         if ( err ) { done(err); return; }
         val = JSON.parse(val);
-        xml0 = val.xml;
+        assert.equal(val.xml, xml0);
         val.xml = 'bogus_xml';
         val = JSON.stringify(val);
         redis_client.set("map_style|db|tab", val, this);
