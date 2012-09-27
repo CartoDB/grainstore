@@ -820,6 +820,69 @@ suite('mml_builder', function() {
     );
   });
 
+  test('resetStyle forces re-write of stored XML using style version', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0", default_style_version: "2.1.0"});
+    var mml_builder0, mml_builder, xml0;
+    Step(
+      function initBuilder0() {
+        mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function setStyle0(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.setStyle('#tab { marker-width:2 }', this, '2.0.0');
+      },
+      function getXML0(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder0.toXML(this);
+      },
+      function getRedis0(err, data) {
+        if ( err ) { done(err); return; }
+        xml0 = data;
+        redis_client.get("map_style|db|tab", this);
+      },
+      function setRedis0(err, val) {
+        if ( err ) { done(err); return; }
+        val = JSON.parse(val);
+        assert.equal(val.xml, xml0);
+        assert.equal(val.version, '2.0.0');
+        assert.equal(val.style, '#tab { marker-width:2 }');
+        val.xml = 'bogus_xml';
+        val = JSON.stringify(val);
+        redis_client.set("map_style|db|tab", val, this);
+      },
+      function initBuilder(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
+      },
+      function getXML(err, data) {
+        if ( err ) { done(err); return; }
+        mml_builder.toXML(this);
+      },
+      function resetStyle(err, xml) {
+        if ( err ) { done(err); return; }
+        assert.equal(xml, 'bogus_xml');
+        mml_builder.resetStyle(this);
+      },
+      function getRedis(err,st) {
+        if ( err ) {
+          mml_builder.delStyle(function() { done(err); });
+          return;
+        }
+        redis_client.get("map_style|db|tab", this);
+      },
+      function checkStyle(err, val) {
+        if ( err ) {
+          mml_builder.delStyle(function() { done(err); });
+          return;
+        }
+        val = JSON.parse(val);
+        assert.equal(val.xml, xml0);
+        //assert.equal(val.version, '2.0.0');
+        //assert.equal(val.style, '#t { marker-width:2 }');
+        mml_builder.delStyle(done);
+      }
+    );
+  });
 
   suiteTeardown(function() {
     // Close the server
