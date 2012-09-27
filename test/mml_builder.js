@@ -54,6 +54,7 @@ suite('mml_builder', function() {
     var mml_builder = mml_store.mml_builder(
       {dbname: 'my_database', table:'my_table'},
       function(err, payload) {
+        if ( err ) { done(err); return; }
         //console.dir(payload);
         var baseMML = mml_builder.baseMML();
     
@@ -62,6 +63,7 @@ suite('mml_builder', function() {
         assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
 
         redis_client.keys("*", function(err, matches) {
+            if ( err ) { done(err); return; }
             assert.equal(matches.length, 1);
             assert.equal(matches[0], 'map_style|my_database|my_table');
             mml_builder.delStyle(done);
@@ -92,6 +94,7 @@ suite('mml_builder', function() {
       assert.equal(baseMML.Layer[0].Datasource.password, 'overridden_password');
 
       redis_client.keys("*", function(err, matches) {
+          if ( err ) { done(err); return; }
           assert.equal(matches.length, 1);
           assert.equal(matches[0], 'map_style|my_database|my_table');
           mml_builder.delStyle(done);
@@ -117,6 +120,7 @@ suite('mml_builder', function() {
       assert.equal(baseMML.Layer[0].Datasource.password, 'overridden_password');
 
       redis_client.keys("*", function(err, matches) {
+          if ( err ) { done(err); return; }
           assert.equal(matches.length, 1);
           assert.equal(matches[0], 'map_style|my_database|my_table');
 
@@ -232,6 +236,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle("#my_table {\n  polygon-fill: #fff;\n}", function(err, output) {
+       if ( err ) { done(err); return; }
         mml_builder.delStyle(done);
       });
     });
@@ -242,7 +247,9 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle(style, function(err, output){
+        if ( err ) { done(err); return; }
         mml_builder.getStyle(function(err, data){
+          if ( err ) { done(err); return; }
           assert.equal(data.style, style);
           assert.equal(data.version, '2.0.0');
           mml_builder.delStyle(done);
@@ -256,7 +263,9 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle(style, function(err, output){
+        if ( err ) { done(err); return; }
         mml_builder.getStyle(function(err, data){
+          if ( err ) { done(err); return; }
           assert.equal(data.style, style);
           assert.equal(data.version, '2.0.2');
           mml_builder.delStyle(done);
@@ -270,8 +279,11 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_tableismo'}, function() {
       mml_builder.setStyle(style, function(err, output){
+        if ( err ) { done(err); return; }
         mml_builder.delStyle(function(err, data){
+          if ( err ) { done(err); return; }
           mml_builder.getStyle(function(err, data){
+            if ( err ) { done(err); return; }
             assert.equal(data.style, "#my_tableismo {marker-fill: #FF6600;marker-opacity: 1;marker-width: 8;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}");
             mml_builder.delStyle(done);
           });
@@ -284,6 +296,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'my_tablez'}, function() {
       mml_builder.getStyle(function(err, data){
+        if ( err ) { done(err); return; }
         assert.equal(data.style, "#my_tablez {marker-fill: #FF6600;marker-opacity: 1;marker-width: 8;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}");
         mml_builder.delStyle(done);
       });
