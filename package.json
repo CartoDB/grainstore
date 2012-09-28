@@ -1,6 +1,6 @@
 {
     "name": "grainstore",
-    "version": "0.6.5-dev",
+    "version": "0.7.0",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
     "url": "https://github.com/Vizzuality/grainstore",
@@ -13,9 +13,9 @@
         "url": "git://github.com/Vizzuality/grainstore.git"
     }],
     "author": {
-      "name": "Simon Tokumine",
-      "url": "http://tokumine.com/",
-      "email": "si@tinypla.net"
+      "name": "Simon Tokumine, Sandro Santilli",
+      "url": "http://vizzuality.com/",
+      "email": "si@tinypla.net, strk@vizzuality.com"
     },
     "dependencies": {
         "underscore"  : ">= 1.1 < 1.4",

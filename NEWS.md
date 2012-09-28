@@ -1,7 +1,12 @@
-Version 0.6.5-dev
-2012-??-??
+Version 0.7.0
+2012-09-28
 
- - Support transforming MML Stylesheets to given target mapnik version.
+ - Style versioning
+   - Allow specifying style version in .setStyle 
+   - Return style version from .getStyle
+   - Include style version in store
+   - Allow specifying target mapnik version
+   - Transform CartoCSS to target mapnik version on rendering
  - Only store CartoCSS in the base redis key (#23)
  - Back to tracking mainstream millstone (~0.5.9)
  - Back to tracking mainstream carto (~0.9.2)
