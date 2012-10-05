@@ -232,6 +232,16 @@ suite('mml_builder', function() {
     });
   });
 
+  test('storing an unparseable style throws errors', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+      mml_builder.setStyle("{", function(err, output){
+       assert.equal(err.message, 'style.mss:1:1 Missing closing `}`');
+       mml_builder.delStyle(done);
+      });
+    });
+  });
+
   test('store a good style', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
