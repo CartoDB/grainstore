@@ -1,17 +1,37 @@
 #!/usr/bin/env node
 
+var path = require('path');
+
 // Reset all styles in the store
 var grainstore = require('../lib/grainstore');
 
 var redis = require('redis')
 
-if ( process.argv.length < 3 ) {
-  console.log("Usage: reset_styles <target_mapnik_version>");
-  process.exit(1);
+function usage(me, exitcode) {
+  console.log("Usage: " + me + " [--convert] <target_mapnik_version>");
+  process.exit(exitcode);
 }
 
+var doConvert = false;
+var MAPNIK_VERSION;
 
-var MAPNIK_VERSION = process.argv[2]; 
+var node_path = process.argv.shift(); 
+var script_path = process.argv.shift(); 
+var me = path.basename(script_path);
+var arg;
+while ( arg = process.argv.shift() ) {
+  if ( arg == '--convert' ) {
+    doConvert = true;
+  } else if ( ! MAPNIK_VERSION ) {
+    MAPNIK_VERSION = arg;
+  }
+  else {
+    usage(me, 1);
+  }
+}
+
+if ( ! MAPNIK_VERSION ) usage(me, 1);
+
 var REDIS_PORT = 6379; // TODO: make a command line parameter
 
 var dbnum = 0;
@@ -46,9 +66,9 @@ client.on('connect', function() {
           else {
             mml_builder.resetStyle(function(err, data) {
               if ( err ) { console.warn(out + err.message); failures.push(k); }
-              else console.log(out + 'OK');
+              else console.log(out + 'OK' + ( doConvert ? ' (converted)' : '' ));
               processNext();
-            });
+            }, doConvert);
           }
       });
 

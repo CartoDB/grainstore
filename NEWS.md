@@ -1,5 +1,8 @@
-Version 0.7.1
-2012-??-??
+Version 0.8.0
+2012-10-08
+
+ - Support requesting conversion with .setStyle and .resetStyle
+ - Add --convert switch to tools/reset_styles for batch-conversion
 
 Version 0.7.0
 2012-09-28

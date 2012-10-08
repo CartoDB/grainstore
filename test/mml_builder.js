@@ -284,6 +284,22 @@ suite('mml_builder', function() {
     });
   });
 
+  test('store a good style with version 2.0.2 converting and retrieve it', function(done) {
+    var style = "#t { marker-width: 3; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'t'}, function() {
+      mml_builder.setStyle(style, function(err, output){
+        if ( err ) { done(err); return; }
+        mml_builder.getStyle(function(err, data){
+          if ( err ) { done(err); return; }
+          assert.equal(data.style, "#t { marker-width:6; }");
+          assert.equal(data.version, '2.1.0');
+          mml_builder.delStyle(done);
+        });
+      }, '2.0.2', true);
+    });
+  });
+
   test('store a good style and delete it, resetting to default', function(done) {
     var style = "#my_table {\n  polygon-fill: #fff;\n}";
     var mml_store = new grainstore.MMLStore(redis_opts);
@@ -889,6 +905,34 @@ suite('mml_builder', function() {
         assert.equal(val.xml, xml0);
         //assert.equal(val.version, '2.0.0');
         //assert.equal(val.style, '#t { marker-width:2 }');
+        mml_builder.delStyle(done);
+      }
+    );
+  });
+
+  test('resetStyle can re-write converted versions', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
+    var mml_builder;
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'t'}, this);
+      },
+      function setStyle(err) {
+        if ( err ) { done(err); return; }
+        mml_builder.setStyle('#t { marker-width:2 }', this, '2.0.2');
+      },
+      function resetStyle(err, data) {
+        if ( err ) { mml_builder.delStyle(function() { done(err); }); }
+        else mml_builder.resetStyle(this, true);
+      },
+      function getStyle(err, data) {
+        if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
+        else mml_builder.getStyle(this);
+      },
+      function checkStyle(err, data) {
+        if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
+        assert.equal(data.style, '#t { marker-width:4 }');
+        assert.equal(data.version, '2.1.0');
         mml_builder.delStyle(done);
       }
     );
