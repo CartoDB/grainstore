@@ -1,5 +1,5 @@
-Version 0.8.1-dev
-2012-10-??
+Version 0.8.1
+2012-10-08
 
  - Add support for 2.0.3 in style transformer
 
