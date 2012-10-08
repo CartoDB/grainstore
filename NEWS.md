@@ -1,3 +1,8 @@
+Version 0.8.1-dev
+2012-10-??
+
+ - Add support for 2.0.3 in style transformer
+
 Version 0.8.0
 2012-10-08
 
