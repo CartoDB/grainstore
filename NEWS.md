@@ -1,3 +1,8 @@
+Version 0.9.0
+2012-10-09
+
+ - Add grainstore.version() API method
+
 Version 0.8.1
 2012-10-08
 

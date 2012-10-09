@@ -1,6 +1,6 @@
 {
     "name": "grainstore",
-    "version": "0.8.1",
+    "version": "0.9.0",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
     "url": "https://github.com/Vizzuality/grainstore",
