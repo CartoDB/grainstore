@@ -2,6 +2,7 @@ Version 0.9.1-dev
 2012-10-??
 
  - Add xml_version to rendered style caches
+ - Regenerate XML cache on xml_version missing or mismatch
 
 Version 0.9.0
 2012-10-09

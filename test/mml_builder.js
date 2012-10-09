@@ -786,6 +786,41 @@ suite('mml_builder', function() {
     );
   });
 
+  test('Target mapnik version upgrade triggers XML re-creation', function(done) {
+    var mml_store0 = new grainstore.MMLStore(redis_opts, { mapnik_version: '2.0.2' });
+    var mml_store1 = new grainstore.MMLStore(redis_opts, { mapnik_version: '2.1.0' });
+    var mml_builder0, mml_builder1, xml0;
+    var style0 = '#t { marker-width: 8; marker-height: 3; }';
+    Step (
+      function builder0() {
+        mml_builder0 = mml_store0.mml_builder({dbname: 'db', table:'t'}, this);
+      },
+      function setStyle0(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.setStyle(style0, this);
+      },
+      function getStyle0(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.getStyle(this)
+      },
+      function checkStyle0(err, data) {
+        xml0 = data.xml;
+        assert.equal(data.xml_version, '2.0.2');
+        mml_builder1 = mml_store1.mml_builder({dbname:'db', table:'t'}, this);
+      },
+      function getStyle1(err, val) {
+        if ( err ) { done(err); return; }
+        mml_builder1.getStyle(this)
+      },
+      function checkStyle1(err, data) {
+        if ( err ) { done(err); return; }
+        assert.equal(data.xml_version, '2.1.0');
+        assert.notDeepEqual(xml0, data.xml);
+        mml_builder1.delStyle(done);
+      }
+    );
+  });
+
   test('lost XML in custom sql key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var opts = {dbname:'db', table:'tab', sql:'select * from t'};
