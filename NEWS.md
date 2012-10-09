@@ -1,3 +1,8 @@
+Version 0.9.1-dev
+2012-10-??
+
+ - Add xml_version to rendered style caches
+
 Version 0.9.0
 2012-10-09
 

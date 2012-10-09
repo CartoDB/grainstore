@@ -158,13 +158,17 @@ suite('mml_builder', function() {
             // only base key should have a style property
             // only extended key should have an XML property (it will be constructed on demand)
             assert.ok(!js.hasOwnProperty('style'), 'extended key has a style property');
+            assert.ok(!js.hasOwnProperty('version'), 'extended key has a style property');
             assert.ok(js.hasOwnProperty('xml'), 'extended key has no XML');
+            assert.ok(js.hasOwnProperty('xml_version'), 'extended key has no xml_version');
             redis_client.get("map_style|my_database|my_table", function(err, val) {
               if ( err ) { mml_builder.delStyle(done); return; }
               assert.ok(val, "Base key not stored when initializing with sql");
               var js = JSON.parse(val);
               assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+              assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
               assert.ok(!js.hasOwnProperty('xml'), 'base key has an XML property');
+              assert.ok(!js.hasOwnProperty('xml_version'), 'base key has an xml_version property');
               mml_builder.delStyle(done);
             });
           });
@@ -284,6 +288,24 @@ suite('mml_builder', function() {
     });
   });
 
+  test('store a good style with version 2.0.2 and target_version 2.1.0 and retrieve it', function(done) {
+    var style = "#my_table {\n  polygon-fill: #fff;\n}";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+      mml_builder.setStyle(style, function(err, output){
+        if ( err ) { done(err); return; }
+        mml_builder.getStyle(function(err, data){
+          if ( err ) { done(err); return; }
+          assert.equal(data.style, style);
+          assert.equal(data.version, '2.0.2');
+          assert.ok(data.hasOwnProperty('xml'));
+          assert.equal(data.xml_version, '2.1.0');
+          mml_builder.delStyle(done);
+        });
+      }, '2.0.2');
+    });
+  });
+
   test('store a good style with version 2.0.2 converting and retrieve it', function(done) {
     var style = "#t { marker-width: 3; }";
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
@@ -377,14 +399,18 @@ suite('mml_builder', function() {
             // base key has both style and XML 
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
-            assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
+            assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
+            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
+            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
             assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style2 + '|2.0.0'));
             redis_client.get(matches[1], function(err, val) {
               if ( err ) { cb(err); return; }
               // custom style key has only XML
               var js = JSON.parse(val);
               assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
-              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no XML property');
+              assert.ok(!js.hasOwnProperty('version'), 'custom style key (' + matches[1] + ') has a version property');
+              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no xml property');
+              assert.ok(js.hasOwnProperty('xml_version'), 'custom style key (' + matches[1] + ') has no xml_version property');
               cb(null);
             });
           });
@@ -450,7 +476,9 @@ suite('mml_builder', function() {
             // base key has both style and XML 
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
-            assert.ok(js.hasOwnProperty('xml'), 'base key has no XML property');
+            assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
+            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
+            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
             // the "extended" key is now encoded after the style we just set
             assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style3 + '|2.0.0'));
             redis_client.get(matches[1], function(err, val) {
@@ -458,7 +486,9 @@ suite('mml_builder', function() {
               // custom style key has only XML
               var js = JSON.parse(val);
               assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
-              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no XML property');
+              assert.ok(!js.hasOwnProperty('version'), 'custom style key (' + matches[1] + ') has a version property');
+              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no xml property');
+              assert.ok(js.hasOwnProperty('xml_version'), 'custom style key (' + matches[1] + ') has no xml_version property');
               cb(null);
             });
           });
