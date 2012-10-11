@@ -494,6 +494,32 @@ suite('mml_builder', function() {
           });
         });
       },
+      // Now set base style again...
+      function setBaseStyle(err, data) {
+        if ( err ) throw err;
+        base_builder.setStyle(style3, this);
+      },
+      // ... and check that the custom style key was removed
+      //     from redis (to ensure rebuilding the XML)
+      function checkRedis3(err, data) {
+        if ( err ) throw err;
+        var cb = this;
+        redis_client.keys("map_style|db|tab*", function(err, matches) {
+          if ( err ) { cb(err); return; }
+          // We expect ONLY the "base" key to exist now
+          assert.equal(matches.length, 1);
+          redis_client.get(matches[0], function(err, val) {
+            if ( err ) { cb(err); return; }
+            // base key has both style and XML 
+            var js = JSON.parse(val);
+            assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+            assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
+            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
+            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
+            cb(null);
+          });
+        });
+      },
       function theEnd(err, data) {
         base_builder.delStyle(function() {
           done(err);
@@ -683,6 +709,7 @@ suite('mml_builder', function() {
       if ( err ) this.errors.push(err); 
       if ( ! this.styles.length ) {
         var err = this.errors.length ? new Error(this.errors) : null;
+        // TODO: remove all from cachedir ?
         this.done(err);
         return;
       }
