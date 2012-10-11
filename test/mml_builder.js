@@ -732,9 +732,8 @@ suite('mml_builder', function() {
               else {
                 // check that the cache dir contains no files after delStyle
                 var toclear = cachedir + '/cache';
-                var names;  
                 try {
-                  fs.readdirSync(toclear); 
+                  var names = fs.readdirSync(toclear); 
                   assert.equals(names.length, 0, 'Cache dir ' + toclear + " still contains: " + names);
                 } catch (err) {
                   // complain on unexpected error
