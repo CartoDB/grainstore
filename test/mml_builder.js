@@ -72,6 +72,40 @@ suite('mml_builder', function() {
     );
   });
 
+  test('can be initialized with custom style', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder(
+      {dbname: 'd', table:'t',
+       style: '#t{}' },
+      function(err, payload) {
+        if ( err ) { done(err); return; }
+        redis_client.keys("map_style|d|t|*", function(err, matches) {
+            if ( err ) { done(err); return; }
+            assert.equal(matches.length, 1);
+            assert.equal(matches[0], 'map_style|d|t|' + base64.encode('#t{}|2.0.0'));
+            mml_builder.delStyle(done);
+        });
+      }
+    );
+  });
+
+  test('can be initialized with custom style and version', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder(
+      {dbname: 'd', table:'t',
+       style: '#t{}', style_version: '2.0.2' },
+      function(err, payload) {
+        if ( err ) { done(err); return; }
+        redis_client.keys("map_style|d|t|*", function(err, matches) {
+            if ( err ) { done(err); return; }
+            assert.equal(matches.length, 1);
+            assert.equal(matches[0], 'map_style|d|t|' + base64.encode('#t{}|2.0.2'));
+            mml_builder.delStyle(done);
+        });
+      }
+    );
+  });
+
   test('can generate base mml with overridden authentication', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {
         datasource: {

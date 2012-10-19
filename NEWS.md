@@ -1,6 +1,8 @@
 Version 0.9.2-dev
 2012-YY-DD
 
+ - Fix mml_builder constructor to accept a style_version parameter
+
 Version 0.9.1
 2012-10-09
 
