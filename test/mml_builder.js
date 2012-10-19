@@ -210,7 +210,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.render("#my_table {\n  backgrxxxxxound-color: #fff;\n}", function(err, output){
-        assert.equal(err.message, 'style.mss:2:2 Unrecognized rule: backgrxxxxxound-color');
+        assert.ok(err.message.match(/Unrecognized rule/), err.message);
         mml_builder.delStyle(done);
       });
     });
@@ -220,7 +220,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.render("#my_table {\n  backgrxxound-color: #fff;bad-tag: #fff;\n}", function(err, output){
-       assert.equal(err.message, 'style.mss:2:2 Unrecognized rule: backgrxxound-color\nstyle.mss:2:27 Unrecognized rule: bad-tag');
+       assert.ok(err.message.match(/Unrecognized rule[\s\S]*Unrecognized rule/), err.message);
        mml_builder.delStyle(done);
       });
     });
@@ -230,7 +230,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle("#my_table {\n  backgrxxound-color: #fff;bad-tag: #fff;\n}", function(err, output){
-       assert.equal(err.message, 'style.mss:2:2 Unrecognized rule: backgrxxound-color\nstyle.mss:2:27 Unrecognized rule: bad-tag');
+       assert.ok(err.message.match(/Unrecognized rule[\s\S]*Unrecognized rule/), err.message);
        mml_builder.delStyle(done);
       });
     });
