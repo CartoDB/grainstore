@@ -1063,6 +1063,44 @@ suite('mml_builder', function() {
     );
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/26
+  test('deletes all related keys', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
+    var mml_builder;
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'t', sql:'select * from test_table'}, this);
+      },
+      function initBuilder2(err) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'t', sql:'select * from test_table limit 1'}, this);
+      },
+      function initBuilder3(err) {
+        if ( err ) { done(err); return; }
+        mml_builder = mml_store.mml_builder({dbname: 'db', table:'t'}, this);
+      },
+      function checkRedis0(err, data) {
+        if ( err ) { done(err); return; }
+        var next = this;
+        redis_client.keys("map_style|db|t*", function(err, matches) {
+            assert.equal(matches.length, 3);
+            next();
+        });
+      },
+      function delStyle(err, data) {
+        if ( err ) { mml_builder.delStyle(function() { done(err); }); }
+        mml_builder.delStyle(this);
+      },
+      function checkRedis(err, data) {
+        if ( err ) { done(err); return; }
+        redis_client.keys("map_style|*", function(err, matches) {
+            assert.equal(matches.length, 0);
+            done();
+        });
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
