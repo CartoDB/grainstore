@@ -1,6 +1,8 @@
-Version 0.9.3-dev
-2012-MM-DD
+Version 0.9.3
+2012-10-30
 
+ - Fix race condition resulting in effects of setStyle occasionally
+   overridden by existing styl repairing code at read time (#27)
  - Fix "make check" return status
 
 Version 0.9.2
