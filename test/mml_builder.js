@@ -1130,7 +1130,7 @@ suite('mml_builder', function() {
           assert.equal(completed.join(','), 'get,set');
         } catch (e) {
           console.warn("NOTE: Could not produce a race");
-          done();
+          mml_builder0.delStyle(done);
           return;
         }
         // Check that current redis contains SET style
