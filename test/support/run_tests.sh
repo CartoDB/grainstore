@@ -28,6 +28,8 @@ PID_REDIS=$!
 
 echo "Running tests"
 mocha -u tdd 
-
+ret=$?
 
 cleanup
+
+exit $ret
