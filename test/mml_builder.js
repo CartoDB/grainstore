@@ -1101,6 +1101,65 @@ suite('mml_builder', function() {
     );
   });
 
+  // See http://github.com/Vizzuality/grainstore/issues/27
+  test('init does not override setStyle work', function(done) {
+    var mml_store0 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
+    var mml_store1 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.0.2"});
+    var mml_builder0, mml_builder1;
+    var ready = false;
+    var completed = [];
+    // Make a big style, so that setStyle takes a lot
+    var style = '#t { ';
+    for (var i=0; i<6000; ++i)
+      style += 'marker-width: 6.2; marker-height: 7.2;'
+            +  'marker-width: 3.3; marker-height: 5.1;'
+            +  'marker-width: 2.4; marker-height: 5.5;';
+    style += '}';
+
+    var checkWhenReady = function() {
+      if ( ! ready ) {
+        setTimeout(checkWhenReady, 100); // check again in 0.1 secs
+        return;
+      }
+      // Check that redis contains the set style
+      redis_client.get('map_style|db|t', function(err, val) {
+        if ( err ) { done(err); return; }
+        val = JSON.parse(val);
+        // Check processing order is as expected
+        try {
+          assert.equal(completed.join(','), 'get,set');
+        } catch (e) {
+          console.warn("NOTE: Could not produce a race");
+          done();
+          return;
+        }
+        // Check that current redis contains SET style
+        assert.equal(val.style.length, style.length, "mml_builder initialization won the race against setStyle");
+        mml_builder0.delStyle(done);
+      });
+    }
+
+    Step(
+      function initBuilder0() {
+        mml_builder0 = mml_store0.mml_builder({dbname: 'db', table:'t'}, this);
+      },
+      function setStyle_and_initBuilder1(err) {
+        if ( err ) { done(err); return; }
+        mml_builder0.setStyle(style, function(err, out) {
+          if ( err ) { done(err); return; }
+          completed.push('set');
+          checkWhenReady();
+        });
+        // NOTE: intentionally initializing BEFORE waiting for setStyle above
+        mml_builder1 = mml_store1.mml_builder({dbname: 'db', table:'t'}, function(err) {
+          if ( err ) { done(err); return; }
+          completed.push('get');
+          ready = true;
+        });
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
