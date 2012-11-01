@@ -1,6 +1,9 @@
 Version 0.9.4-dev
 2012-MM-DD
 
+ - Enhanced 2.0 to 2.1 style transform:
+   - set default marker-placement to line 
+
 Version 0.9.3
 2012-10-30
 
