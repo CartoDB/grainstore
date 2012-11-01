@@ -348,7 +348,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         mml_builder.getStyle(function(err, data){
           if ( err ) { done(err); return; }
-          assert.equal(data.style, "#t { marker-width:6; }");
+          assert.equal(data.style, "#t { marker-width:6; marker-placement:line; }");
           assert.equal(data.version, '2.1.0');
           mml_builder.delStyle(done);
         });
@@ -1056,7 +1056,7 @@ suite('mml_builder', function() {
       },
       function checkStyle(err, data) {
         if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
-        assert.equal(data.style, '#t { marker-width:4 }');
+        assert.equal(data.style, '#t { marker-width:4; marker-placement:line; }');
         assert.equal(data.version, '2.1.0');
         mml_builder.delStyle(done);
       }
