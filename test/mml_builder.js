@@ -731,6 +731,10 @@ suite('mml_builder', function() {
       { cartocss: "#tab { marker-width: 8; marker-height: 3; }",
         version: '2.0.0', target_version: '2.1.0',
         xml_re: new RegExp('MarkersSymbolizer width="16" height="6"') }
+      ,
+      // recognize mapnik-geometry-type
+      { cartocss: "#tab [mapnik-geometry-type=3] { marker-placement:line; }",
+        xml_re: new RegExp(/Filter.*\[mapnik::geometry_type\] = 3.*Filter/) }
     ];
 
     var StylesRunner = function(styles, done) {
