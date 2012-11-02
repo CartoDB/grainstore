@@ -3,7 +3,8 @@ Version 0.9.4-dev
 
  - Add support for using "mapnik-geometry-type" in filters
  - Enhanced 2.0 to 2.1 style transform:
-   - set default marker-placement to line 
+   - Set default marker-placement to line for lines and polygons
+   - Set marker-type to 'ellipse' when marker-pacement is 'point'
 
 Version 0.9.3
 2012-10-30

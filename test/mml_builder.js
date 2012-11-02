@@ -342,13 +342,14 @@ suite('mml_builder', function() {
 
   test('store a good style with version 2.0.2 converting and retrieve it', function(done) {
     var style = "#t { marker-width: 3; }";
+    var style_converted = "#t { marker-width:6; } #t[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #t[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }";
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'t'}, function() {
       mml_builder.setStyle(style, function(err, output){
         if ( err ) { done(err); return; }
         mml_builder.getStyle(function(err, data){
           if ( err ) { done(err); return; }
-          assert.equal(data.style, "#t { marker-width:6; marker-placement:line; }");
+          assert.equal(data.style, style_converted);
           assert.equal(data.version, '2.1.0');
           mml_builder.delStyle(done);
         });
@@ -1042,13 +1043,16 @@ suite('mml_builder', function() {
   test('resetStyle can re-write converted versions', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
     var mml_builder;
+    var style_input = "#t { marker-width:2 }";
+    var style_converted = "#t { marker-width:4 } #t[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #t[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }";
+
     Step(
       function initBuilder() {
         mml_builder = mml_store.mml_builder({dbname: 'db', table:'t'}, this);
       },
       function setStyle(err) {
         if ( err ) { done(err); return; }
-        mml_builder.setStyle('#t { marker-width:2 }', this, '2.0.2');
+        mml_builder.setStyle(style_input, this, '2.0.2');
       },
       function resetStyle(err, data) {
         if ( err ) { mml_builder.delStyle(function() { done(err); }); }
@@ -1060,7 +1064,7 @@ suite('mml_builder', function() {
       },
       function checkStyle(err, data) {
         if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
-        assert.equal(data.style, '#t { marker-width:4; marker-placement:line; }');
+        assert.equal(data.style, style_converted );
         assert.equal(data.version, '2.1.0');
         mml_builder.delStyle(done);
       }

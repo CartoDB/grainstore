@@ -31,7 +31,7 @@ suite('style_trans', function() {
     , '2.0.2', '2.1.0'
     );
     assert.equal(s,
-"#tab[zoom=1] { marker-width:20; marker-height:40; marker-placement:line; }\n#tab[zoom=2] { marker-height:'12'; marker-width:'14'; marker-placement:line; }"
+"#tab[zoom=1] { marker-width:20; marker-height:40; }\n#tab[zoom=2] { marker-height:'12'; marker-width:'14'; } #tab[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #tab[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
     );
 
     var s = t.transform(
@@ -39,7 +39,7 @@ suite('style_trans', function() {
     , '2.0.2', '2.1.0'
     );
     assert.equal(s,
-"#t { marker-width:20; \nmarker-height:40; marker-placement:line; }"
+"#t { marker-width:20; \nmarker-height:40; } #t[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #t[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
     );
 
   });
@@ -51,7 +51,7 @@ suite('style_trans', function() {
     , '2.0.0', '2.1.0'
     );
     assert.equal(s,
-"#tab[zoom=1] { marker-width:20; marker-height:40; marker-placement:line; }\n#tab[zoom=2] { marker-height:'12'; marker-width:\"14\"; marker-placement:line; }"
+"#tab[zoom=1] { marker-width:20; marker-height:40; }\n#tab[zoom=2] { marker-height:'12'; marker-width:\"14\"; } #tab[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #tab[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
     );
 
     var s = t.transform(
@@ -59,7 +59,7 @@ suite('style_trans', function() {
     , '2.0.0', '2.1.0'
     );
     assert.equal(s,
-"#t { marker-width:20; \nmarker-height:40; marker-placement:line; }"
+"#t { marker-width:20; \nmarker-height:40; } #t[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #t[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
     );
 
     var s = t.transform(
@@ -67,49 +67,28 @@ suite('style_trans', function() {
     , '2.0.0', '2.1.0'
     );
     assert.equal(s,
-"#tab { marker-width:4; marker-placement:line; }"
+"#tab { marker-width:4 } #tab[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #tab[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
+    );
+
+    var s = t.transform(
+"#tab{ marker-width:2 }"
+    , '2.0.0', '2.1.0'
+    );
+    assert.equal(s,
+"#tab{ marker-width:4 } #tab[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #tab[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
     );
 
   });
 
-  // Adapts marker-placement default, from 2.0.0 to 2.1.0
-  //
-  // The default changed from "line" to "point", we want to set it back to "line"
-  // See https://github.com/mapnik/mapnik/wiki/API-changes-between-v2.0-and-v2.1
-  test('2.0.0 to 2.1.0, marker-placement default', function() {
-
-    // Add a default marker-placement to an empty style
+  // Nothing to adapt (yet) when no markers are involved
+  test('2.0.0 to 2.1.0, no markers', function() {
     var s = t.transform(
-      "#t { }"
-    , '2.0.0', '2.1.0');
-    assert.equal(s, 
-      "#t { marker-placement:line; }"
-    , '2.0.0', '2.1.0');
-
-    // Add a default marker-placement to an empty multiline style
-    var s = t.transform(
-      "#t { \t \n}"
-    , '2.0.0', '2.1.0');
-    assert.equal(s, 
-      "#t { marker-placement:line; }"
-    , '2.0.0', '2.1.0');
-
-    // Add a default to a non-empty style
-    var s = t.transform(
-      "#t { marker-fill:'#ff0000'; }"
-    , '2.0.0', '2.1.0');
-    assert.equal(s, 
-      "#t { marker-fill:'#ff0000'; marker-placement:line; }"
-    , '2.0.0', '2.1.0');
-
-    // Add a default without overriding
-    // existing setting (only first label is used)
-    var s = t.transform(
-      "#t { marker-fill:'#ff0000'; marker-placement:point; }"
-    , '2.0.0', '2.1.0');
-    assert.equal(s, 
-      "#t { marker-fill:'#ff0000'; marker-placement:point; marker-placement:line; }"
-    , '2.0.0', '2.1.0');
+"#tab[zoom=1] { line-fill:red; }\n#tab[zoom=2] { polygon-fill:blue; }"
+    , '2.0.0', '2.1.0'
+    );
+    assert.equal(s,
+"#tab[zoom=1] { line-fill:red; }\n#tab[zoom=2] { polygon-fill:blue; }"
+    );
 
   });
 
