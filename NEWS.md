@@ -1,5 +1,5 @@
-Version 0.9.4-dev
-2012-MM-DD
+Version 0.9.4
+2012-11-02
 
  - Add support for using "mapnik-geometry-type" in filters
  - Enhanced 2.0 to 2.1 style transform:
