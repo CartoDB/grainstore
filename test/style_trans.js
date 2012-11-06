@@ -44,6 +44,17 @@ suite('style_trans', function() {
 
   });
 
+  // More markers, see ticket xxxx
+  test('2.0.0 to 2.1.0, more markers', function() {
+    var s = t.transform(
+      "#t [a<1] { marker-width:1 } # [a>1] { marker-width:2 }"
+    , '2.0.2', '2.1.0'
+    );
+    assert.equal(s,
+      "#t [a<1] { marker-width:2 } # [a>1] { marker-width:4 } #t[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } #t[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; }"
+    );
+  });
+
   // Adapts marker width and height, from 2.0.0 to 2.1.0
   test('2.0.0 to 2.1.0, markers', function() {
     var s = t.transform(

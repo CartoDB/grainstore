@@ -1,6 +1,8 @@
 Version 0.9.5-dev
 2012-11-DD
 
+ - Fix transformation of styles with missing semicolon (#30)
+
 Version 0.9.4
 2012-11-02
 
