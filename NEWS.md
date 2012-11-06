@@ -1,5 +1,5 @@
-Version 0.9.5-dev
-2012-11-DD
+Version 0.9.5
+2012-11-06
 
  - Fix transformation of styles with missing semicolon (#30)
 
