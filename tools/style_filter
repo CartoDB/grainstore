@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var fs = require('fs');
+var StyleTrans = require('../lib/grainstore/style_trans');
+
+function usage(me, exitcode) {
+  console.log("Usage: " + me + " [from_version] [to_version]");
+  process.exit(exitcode);
+}
+
+var node_path = process.argv.shift(); 
+var script_path = process.argv.shift(); 
+var me = path.basename(script_path);
+if ( process.argv.length < 2 ) usage(me, 1);
+var from_version = process.argv.shift();
+var to_version = process.argv.shift();
+
+var transformer = new StyleTrans();
+
+var fromstyle = fs.readFileSync('/dev/stdin').toString();
+var tostyle = transformer.transform(fromstyle, from_version, to_version);
+console.log(tostyle);
+
