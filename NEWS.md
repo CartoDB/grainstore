@@ -1,5 +1,7 @@
-Version 0.9.6-dev
-2012-MM-DD
+Version 0.9.6
+2012-11-09
+
+ - Set marker-clip:false when transforming styles from 2.0 to 2.1
 
 Version 0.9.5
 2012-11-06
