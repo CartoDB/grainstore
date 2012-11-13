@@ -624,6 +624,17 @@ suite('mml_builder', function() {
       });
   });
 
+  test("bails out on unsupported geometry type with mapnik 2.0.x", function(done){
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.0.2'});
+    var mml_builder = mml_store.mml_builder(
+      {dbname: 'd', table: 't', geom_type: 'geometry'},
+      function(err) {
+        assert.ok(err);
+        assert.equal(err.message, "No style available for geometry of type 'geometry'");
+        mml_builder.delStyle(done);
+      });
+  });
+
   test("can set style and then retrieve XML", function(done){
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_databaasez', table:'my_special_design'},

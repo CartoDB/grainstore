@@ -1,6 +1,8 @@
 Version 0.9.7-dev
 2012-11-DD
 
+ - Gracefully handle unsupported geometry types
+
 Version 0.9.6
 2012-11-09
 
