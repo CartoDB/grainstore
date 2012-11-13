@@ -1,3 +1,6 @@
+Version 0.9.8-dev
+2012-MM-DD
+
 Version 0.9.7
 2012-11-13
 
