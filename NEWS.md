@@ -1,5 +1,5 @@
-Version 0.9.7-dev
-2012-11-DD
+Version 0.9.7
+2012-11-13
 
  - Gracefully handle unsupported geometry types
  - Make default style good for any geometry type (#22)
