@@ -1122,8 +1122,8 @@ suite('mml_builder', function() {
 
   // See http://github.com/Vizzuality/grainstore/issues/27
   test('init does not override setStyle work', function(done) {
-    var mml_store0 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
-    var mml_store1 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.0.2"});
+    var mml_store0 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.0.2"});
+    var mml_store1 = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
     var mml_builder0, mml_builder1;
     var ready = false;
     var completed = [];
