@@ -1,5 +1,5 @@
-Version 0.9.8-dev
-2012-MM-DD
+Version 0.10.0
+2012-11-14
 
  - Add optional "convert" parameter to MMLBuilder.getStyle() method (#32)
 
