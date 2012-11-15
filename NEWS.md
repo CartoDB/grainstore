@@ -1,3 +1,6 @@
+Version 0.10.2-dev
+2012-MM-DD
+
 Version 0.10.1
 2012-11-15
 
