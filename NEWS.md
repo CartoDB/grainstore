@@ -1,6 +1,8 @@
 Version 0.10.1-dev
 2012-MM-DD
 
+ - Fix transform of styles using markers conditionally (#33)
+
 Version 0.10.0
 2012-11-14
 
