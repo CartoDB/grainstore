@@ -1,5 +1,5 @@
-Version 0.10.1-dev
-2012-MM-DD
+Version 0.10.1
+2012-11-15
 
  - Fix transform of styles using markers conditionally (#33)
 
