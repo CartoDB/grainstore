@@ -68,7 +68,7 @@ suite('style_trans', function() {
     var e = "#t[a=1] { marker-width:2; "
           + "[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } "
           + "[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-clip:false; } } "
-          + "#t[a=2] { line-color:red; } "
+          + "#t[a=2] { line-color:red; line-clip:false; } "
           + "#t[a=3] { marker-placement:line; "
           // NOTE: we do override marker-placement for points because "line" doesn't work in 2.1.0
           //       and it worked exactly as "point" in 2.0.0
@@ -113,6 +113,14 @@ suite('style_trans', function() {
     var e = "#tab{ marker-width:4; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-clip:false; } }";
     assert.equal(s, e);
 
+    // line clipping
+    var s = t.transform(
+"#tab{ line-opacity:.5 }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{ line-opacity:.5; line-clip:false; }";
+    assert.equal(s, e);
+
   });
 
   // Nothing to adapt (yet) when no markers are involved
@@ -122,7 +130,7 @@ suite('style_trans', function() {
     , '2.0.0', '2.1.0'
     );
     assert.equal(s,
-"#tab[zoom=1] { line-fill:red; }\n#tab[zoom=2] { polygon-fill:blue; }"
+"#tab[zoom=1] { line-fill:red; line-clip:false; }\n#tab[zoom=2] { polygon-fill:blue; polygon-clip:false; }"
     );
 
   });
