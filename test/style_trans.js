@@ -113,12 +113,28 @@ suite('style_trans', function() {
     var e = "#tab{ marker-width:4; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-clip:false; } }";
     assert.equal(s, e);
 
+  });
+
+  test('2.0.0 to 2.1.0, line clipping', function() {
+
     // line clipping
     var s = t.transform(
 "#tab{ line-opacity:.5 }"
     , '2.0.0', '2.1.0'
     );
     var e = "#tab{ line-opacity:.5; line-clip:false; }";
+    assert.equal(s, e);
+
+  });
+
+  test('2.0.0 to 2.1.0, polygon clipping', function() {
+
+    // line clipping
+    var s = t.transform(
+"#tab{ polygon-fill:red }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{ polygon-fill:red; polygon-clip:false; }";
     assert.equal(s, e);
 
   });
