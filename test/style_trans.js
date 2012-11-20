@@ -116,27 +116,31 @@ suite('style_trans', function() {
   });
 
   test('2.0.0 to 2.1.0, line clipping', function() {
-
-    // line clipping
     var s = t.transform(
 "#tab{ line-opacity:.5 }"
     , '2.0.0', '2.1.0'
     );
     var e = "#tab{ line-opacity:.5; line-clip:false; }";
     assert.equal(s, e);
-
   });
 
   test('2.0.0 to 2.1.0, polygon clipping', function() {
-
-    // line clipping
     var s = t.transform(
 "#tab{ polygon-fill:red }"
     , '2.0.0', '2.1.0'
     );
     var e = "#tab{ polygon-fill:red; polygon-clip:false; }";
     assert.equal(s, e);
+  });
 
+  // https://github.com/Vizzuality/grainstore/issues/35
+  test('2.0.0 to 2.1.0, one line comments', function() {
+    var s = t.transform(
+"#tab{ //polygon-fill:red;\n}"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{ //polygon-fill:red;\n polygon-clip:false; }";
+    assert.equal(s, e);
   });
 
   // Nothing to adapt (yet) when no markers are involved
