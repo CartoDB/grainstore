@@ -1,5 +1,5 @@
-Version 0.10.2-dev
-2012-MM-DD
+Version 0.10.2
+2012-11-20
 
  - Set line-clip:false and polygon-clip:false when transforming styles
    from 2.0 to 2.1 (#34)
