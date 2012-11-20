@@ -2,6 +2,7 @@ Version 0.10.3-dev
 2012-MM-DD
 
  - Fix eating of lines after one-line comments (#35)
+ - Strip comments from styles before performing transformations
 
 Version 0.10.2
 2012-11-20

@@ -139,7 +139,25 @@ suite('style_trans', function() {
 "#tab{ //polygon-fill:red;\n}"
     , '2.0.0', '2.1.0'
     );
-    var e = "#tab{ //polygon-fill:red;\n polygon-clip:false; }";
+    var e = "#tab{  }";
+    assert.equal(s, e);
+  });
+
+  test('2.0.0 to 2.1.0, symbolizers hidden in one line comments', function() {
+    var s = t.transform(
+"#tab{ //polygon-fill:red;\n line-opacity:1; }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{ line-opacity:1; line-clip:false; }";
+    assert.equal(s, e);
+  });
+
+  test('2.0.0 to 2.1.0, symbolizers hidden in multiline line comments', function() {
+    var s = t.transform(
+"#tab{ /* polygon-fill:\nred; */ line-opacity:1; }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{ line-opacity:1; line-clip:false; }";
     assert.equal(s, e);
   });
 
