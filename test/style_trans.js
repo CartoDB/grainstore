@@ -161,6 +161,15 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  test('2.0.0 to 2.1.0, missing semicolon', function() {
+    var s = t.transform(
+"#t{ marker-placement:point; marker-width:8}"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#t{ marker-placement:point; marker-width:16; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-type:ellipse; marker-clip:false; } }";
+    assert.equal(s, e);
+  });
+
   // Nothing to adapt (yet) when no markers are involved
   test('2.0.0 to 2.1.0, no markers', function() {
     var s = t.transform(
