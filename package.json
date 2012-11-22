@@ -23,6 +23,7 @@
         "semver": "~1.1.0",
         "generic-pool": "1.0.x",
         "carto": "git://github.com/CartoDB/carto.git#cdb-0.9",
+        "mapnik-reference": "git://github.com/CartoDB/mapnik-reference.git#cdb-5.0",
         "redis": "0.7.2",
         "hiredis": "0.1.14",
         "millstone": "~0.5.9"
