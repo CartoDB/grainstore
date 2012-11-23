@@ -1,3 +1,9 @@
+Version 0.10.4-dev
+2012-11-DD
+
+ - Add support CartoCSS transform from mapnik 2.0.x to 2.1.1:
+   - marker-multi-policy:whole forced
+
 Version 0.10.3
 2012-11-20
 
