@@ -1,6 +1,8 @@
 Version 0.10.5-dev
 2012-MM-DD
 
+ - For mapnik-2.1.0+, set default style version to target version
+
 Version 0.10.4
 2012-11-23
 
