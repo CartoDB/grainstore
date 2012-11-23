@@ -170,6 +170,15 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  test('2.0.0 to 2.1.1, marker-multi-policy', function() {
+    var s = t.transform(
+"#t{ marker-fill-color:red; }"
+    , '2.0.0', '2.1.1'
+    );
+    var e = "#t{ marker-fill-color:red; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-clip:false; } marker-multi-policy:whole; }"
+    assert.equal(s, e);
+  });
+
   // Nothing to adapt (yet) when no markers are involved
   test('2.0.0 to 2.1.0, no markers', function() {
     var s = t.transform(
