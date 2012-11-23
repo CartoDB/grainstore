@@ -1,5 +1,5 @@
 Version 0.10.4
-2012-11-DD
+2012-11-23
 
  - Fix enforcement of line symbolizer with marker-line-* (#37)
  - Add support CartoCSS transform from mapnik 2.0.x to 2.1.1:
