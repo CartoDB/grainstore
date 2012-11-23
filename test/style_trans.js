@@ -124,6 +124,15 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  test('2.0.0 to 2.1.0, line clipping, bug #37', function() {
+    var s = t.transform(
+"#t{ marker-line-color:red; }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#t{ marker-line-color:red; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-clip:false; } }"
+    assert.equal(s, e);
+  });
+
   test('2.0.0 to 2.1.0, polygon clipping', function() {
     var s = t.transform(
 "#tab{ polygon-fill:red }"

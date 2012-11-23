@@ -1,8 +1,9 @@
 Version 0.10.4-dev
 2012-11-DD
 
+ - Fix enforcement of line symbolizer with marker-line-* (#37)
  - Add support CartoCSS transform from mapnik 2.0.x to 2.1.1:
-   - marker-multi-policy:whole forced
+   - marker-multi-policy:whole forced (#36)
 
 Version 0.10.3
 2012-11-20
