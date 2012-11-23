@@ -1,4 +1,4 @@
-Version 0.10.4-dev
+Version 0.10.4
 2012-11-DD
 
  - Fix enforcement of line symbolizer with marker-line-* (#37)
