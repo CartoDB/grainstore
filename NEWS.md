@@ -1,3 +1,10 @@
+Version 0.10.6-dev
+2012-11-DD
+
+ - Enhance 2.0 -> 2.1 style transform
+   - Consider directives in blocks with no conditions as applying
+     to all blocks. Fixes issue #39
+
 Version 0.10.5
 2012-11-27
 

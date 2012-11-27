@@ -200,6 +200,16 @@ suite('style_trans', function() {
 
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/39
+  test('2.0.0 to 2.1.0, arrow marker specified in outer block', function() {
+    var s = t.transform(
+"#t{ marker-type:arrow; } #t[id=1] { marker-fill:red; }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#t{ marker-type:arrow; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-clip:false; } } #t[id=1] { marker-fill:red; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-clip:false; } }";
+    assert.equal(s, e);
+  });
+
   //suiteTeardown(function() { });
 
 });
