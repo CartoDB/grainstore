@@ -1,5 +1,5 @@
-Version 0.10.5-dev
-2012-MM-DD
+Version 0.10.5
+2012-11-27
 
  - For mapnik-2.1.0+, set default style version to target version
  - Scale arrow markers by 50% in 2.0.x -> 2.1.0 transform
