@@ -152,6 +152,16 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  // https://github.com/Vizzuality/grainstore/issues/41
+  test('2.0.0 to 2.1.0, multiple one line comments', function() {
+    var s = t.transform(
+"#tab{ //polygon-fill:red;\n //marker-type:ellipse;\n }"
+    , '2.0.0', '2.1.0'
+    );
+    var e = "#tab{  }";
+    assert.equal(s, e);
+  });
+
   test('2.0.0 to 2.1.0, symbolizers hidden in one line comments', function() {
     var s = t.transform(
 "#tab{ //polygon-fill:red;\n line-opacity:1; }"

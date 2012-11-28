@@ -1,6 +1,8 @@
 Version 0.10.7-dev
 2012-11-DD
 
+ - Fix comments stripping during CartoCSS transform (#41)
+
 Version 0.10.6
 2012-11-28
 
