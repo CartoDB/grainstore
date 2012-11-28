@@ -1,5 +1,5 @@
-Version 0.10.7-dev
-2012-11-DD
+Version 0.10.7
+2012-11-28
 
  - Fix comments stripping during CartoCSS transform (#41)
  - Fix default extent to be full webmercator extent (#42)
