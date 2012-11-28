@@ -194,7 +194,7 @@ suite('style_trans', function() {
 "#t{ marker-fill-color:red; }"
     , '2.0.0', '2.1.1'
     );
-    var e = "#t{ marker-fill-color:red; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } marker-multi-policy:whole; }"
+    var e = "#t{ marker-fill-color:red; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } marker-multi-policy:largest; }"
     assert.equal(s, e);
   });
 
