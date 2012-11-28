@@ -3,6 +3,8 @@ Version 0.10.7-dev
 
  - Fix comments stripping during CartoCSS transform (#41)
  - Fix default extent to be full webmercator extent (#42)
+ - Enhance 2.0 -> 2.1 style transform
+   - Convert marker-opacity to marker-fill-opacity (#40)
 
 Version 0.10.6
 2012-11-28
