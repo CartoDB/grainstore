@@ -1,4 +1,4 @@
-Version 0.10.8-dev
+Version 0.10.8
 2012-11-28
 
  - Use marker-multi-policy:whole as a workaround for
