@@ -1,5 +1,5 @@
-Version 0.10.6-dev
-2012-11-DD
+Version 0.10.6
+2012-11-28
 
  - Enhance 2.0 -> 2.1 style transform
    - Consider directives in blocks with no conditions as applying
