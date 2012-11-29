@@ -1,6 +1,9 @@
 Version 0.10.9-dev
 2012-MM-DD
 
+ - Reduce default extent to allow for consistent proj4
+   round-tripping (#42)
+
 Version 0.10.8
 2012-11-28
 

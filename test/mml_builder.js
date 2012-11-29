@@ -701,7 +701,7 @@ suite('mml_builder', function() {
       function() {
         var baseMML = mml_builder.baseMML();
         assert.ok(_.isArray(baseMML.Layer));
-        assert.equal(baseMML.Layer[0].Datasource.extent, '-20037508.5,-20037508.5,20037508.5,20037508.5');
+        assert.equal(baseMML.Layer[0].Datasource.extent, '-20037508.3,-20037508.3,20037508.3,20037508.3');
         mml_builder.delStyle(done);
       });
   });
