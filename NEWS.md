@@ -1,7 +1,7 @@
 Version 0.10.8
 2012-11-28
 
- - Use marker-multi-policy:whole as a workaround for
+ - Use marker-multi-policy:largest as a workaround for
    mapnik bug in centroid computation (#44)
 
 Version 0.10.7
