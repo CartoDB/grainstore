@@ -1,5 +1,5 @@
-Version 0.10.9-dev
-2012-MM-DD
+Version 0.10.9 - "EOW"
+2012-12-21
 
  - Reduce default extent to allow for consistent proj4
    round-tripping (#42)
