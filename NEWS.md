@@ -3,6 +3,8 @@ Version 0.10.9-dev
 
  - Reduce default extent to allow for consistent proj4
    round-tripping (#42)
+ - Revert marker-multi-policy to 'whole' now that
+   centroid computation for multi was fixed in mapnik-2.1.x
 
 Version 0.10.8
 2012-11-28
