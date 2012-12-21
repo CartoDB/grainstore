@@ -5,6 +5,7 @@ Version 0.10.9-dev
    round-tripping (#42)
  - Revert marker-multi-policy to 'whole' now that
    centroid computation for multi was fixed in mapnik-2.1.x
+ - Do not force line-clip and polygon-clip to false (#46)
 
 Version 0.10.8
 2012-11-28

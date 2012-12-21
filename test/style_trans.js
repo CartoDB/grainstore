@@ -68,7 +68,7 @@ suite('style_trans', function() {
     var e = "#t[a=1] { marker-width:2; "
           + "[mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } "
           + "[mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } } "
-          + "#t[a=2] { line-color:red; line-clip:false; } "
+          + "#t[a=2] { line-color:red; } "
           + "#t[a=3] { marker-placement:line; "
           // NOTE: we do override marker-placement for points because "line" doesn't work in 2.1.0
           //       and it worked exactly as "point" in 2.0.0
@@ -120,7 +120,7 @@ suite('style_trans', function() {
 "#tab{ line-opacity:.5 }"
     , '2.0.0', '2.1.0'
     );
-    var e = "#tab{ line-opacity:.5; line-clip:false; }";
+    var e = "#tab{ line-opacity:.5; }";
     assert.equal(s, e);
   });
 
@@ -138,7 +138,7 @@ suite('style_trans', function() {
 "#tab{ polygon-fill:red }"
     , '2.0.0', '2.1.0'
     );
-    var e = "#tab{ polygon-fill:red; polygon-clip:false; }";
+    var e = "#tab{ polygon-fill:red; }";
     assert.equal(s, e);
   });
 
@@ -167,7 +167,7 @@ suite('style_trans', function() {
 "#tab{ //polygon-fill:red;\n line-opacity:1; }"
     , '2.0.0', '2.1.0'
     );
-    var e = "#tab{ line-opacity:1; line-clip:false; }";
+    var e = "#tab{ line-opacity:1; }";
     assert.equal(s, e);
   });
 
@@ -176,7 +176,7 @@ suite('style_trans', function() {
 "#tab{ /* polygon-fill:\nred; */ line-opacity:1; }"
     , '2.0.0', '2.1.0'
     );
-    var e = "#tab{ line-opacity:1; line-clip:false; }";
+    var e = "#tab{ line-opacity:1; }";
     assert.equal(s, e);
   });
 
@@ -205,7 +205,7 @@ suite('style_trans', function() {
     , '2.0.0', '2.1.0'
     );
     assert.equal(s,
-"#tab[zoom=1] { line-fill:red; line-clip:false; }\n#tab[zoom=2] { polygon-fill:blue; polygon-clip:false; }"
+"#tab[zoom=1] { line-fill:red; }\n#tab[zoom=2] { polygon-fill:blue; }"
     );
 
   });
