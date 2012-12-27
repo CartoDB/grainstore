@@ -1,1 +1,1 @@
-Lazy rendering of XML (only do on .toXML calls)
+- Encode creation time and time to live into layergroup keys
