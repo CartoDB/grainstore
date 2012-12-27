@@ -6,7 +6,6 @@ var redis      = require('redis');
 var Step       = require('step');
 var http       = require('http');
 var fs         = require('fs');
-var base64     = require('../lib/grainstore/base64');
 
 var redis_opts = require('./support/redis_opts');
 var redis_client = redis.createClient(redis_opts.port);
@@ -82,7 +81,7 @@ suite('mml_builder', function() {
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
             assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|' + base64.encode('#t{}|2.0.0'));
+            assert.equal(matches[0], 'map_style|d|t|f96138079986cfa58e5b3a57556295bd');
             mml_builder.delStyle(done);
         });
       }
@@ -99,7 +98,7 @@ suite('mml_builder', function() {
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
             assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|' + base64.encode('#t{}|2.0.2'));
+            assert.equal(matches[0], 'map_style|d|t|6837fd608615a45143bb9c62e86cff21');
             mml_builder.delStyle(done);
         });
       }
@@ -437,7 +436,7 @@ suite('mml_builder', function() {
             assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
             assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
             assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
-            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style2 + '|2.0.0'));
+            assert.equal(matches[1], 'map_style|db|tab|799988aa2aff8cba53367197dacbf68e');
             redis_client.get(matches[1], function(err, val) {
               if ( err ) { cb(err); return; }
               // custom style key has only XML
@@ -515,7 +514,7 @@ suite('mml_builder', function() {
             assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
             assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
             // the "extended" key is now encoded after the style we just set
-            assert.equal(matches[1], 'map_style|db|tab|' + base64.encode(style3 + '|2.0.0'));
+            assert.equal(matches[1], 'map_style|db|tab|7b8d87a36ef435fb856e45c2dfa44dba');
             redis_client.get(matches[1], function(err, val) {
               if ( err ) { cb(err); return; }
               // custom style key has only XML
@@ -913,7 +912,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         xml0 = data;
         //redis_client.keys("map_style|db|tab|*", function(err, matches) { console.dir(matches); });
-        var key = 'map_style|db|tab|c2VsZWN0ICogZnJvbSB0'; // Use the above line to figure out
+        var key = 'map_style|db|tab|9f683436fe68935af28708d8f2920792'; // Use the above line to figure out
         dropXMLFromStore(key, this);
       },
       function initBuilder(err, val) {
