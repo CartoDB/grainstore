@@ -27,7 +27,7 @@ echo "port ${REDIS_PORT}" | redis-server - > test.log &
 PID_REDIS=$!
 
 echo "Running tests"
-mocha -u tdd 
+mocha -u tdd -t 3000
 ret=$?
 
 cleanup
