@@ -3,6 +3,7 @@ YYYY-MM-DD
 
  - MMLBuilder constructor callback is now mandatory
  - Redis keys for extended styles use md5 hash now
+ - Support an array of "sql" and "style" parameters
 
 Version 0.10.9 - "EOW"
 2012-12-21

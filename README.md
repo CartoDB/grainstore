@@ -4,8 +4,8 @@ Grainstore
 Need to simply generate a Mapnik map from a dynamic PostGIS table?
 
 Grainstore is an opinionated [Carto](https://github.com/mapbox/carto)
-MML style store for _single_ PostGIS tables, views or sql queries that
-outputs Mapnik XML stylesheets.
+MML style store for PostGIS tables, views or sql queries that outputs
+Mapnik XML stylesheets.
 
 Map styles can be defined in the [Carto](https://github.com/mapbox/carto)
 map styling language or use default styles. The Carto styles are persisted
@@ -19,6 +19,10 @@ Grainstore is braindead simple:
 
  1 db + 1 table/query + 1 style =  1 Mapnik XML stylesheet.
 
+or
+
+ 1 db + N queries + N styles =  1 Mapnik XML stylesheet.
+
 
 Typical use
 -----------
@@ -30,6 +34,10 @@ Typical use
 6. initialise with PostGIS DB, table name and sql query
 7. generate Mapnik XML with stored style for table name and sql query
 
+For using multiple layers use an array type for the 'sql' parameter and
+for the 'style' parameter. Each resulting layer will be named 'layerN'
+with N starting from 0 (needed to  properly reference the layers from
+the 'style' values).
 
 Install
 --------
