@@ -52,9 +52,15 @@ client.on('connect', function() {
       if ( /map_style\|.*\|.*\|/.test(k) ) {
         //console.warn("Key " + k + " is EXTENDED, skipping");
         processNext();
+        return;
       } 
 
       var params = RegExp(/map_style\|(.*)\|(.*)/).exec(k);
+      if ( ! params ) {
+        console.warn("Key " + k + " is INVALID, skipping");
+        processNext();
+        return;
+      } 
       var db = params[1];
       var tab = params[2];
       var out = 'map_style|' + db + '|' + tab + ': ';
