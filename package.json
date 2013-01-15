@@ -33,7 +33,7 @@
         "libxmljs": "0.5.x"
     },
     "scripts": {
-        "test": "test/support/run_tests.sh"
+        "test": "test/support/run_tests.sh ${RUNTESTFLAGS} test/*.js"
     },
     "engines": {
         "node": ">= 0.4.0"
