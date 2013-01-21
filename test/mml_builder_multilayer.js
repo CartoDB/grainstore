@@ -98,6 +98,87 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  test('layer name in style array is only a placeholder', function(done) {
+    var style0 = "#layer { marker-width:3; }";
+    var style1 = "#style { line-color:red; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0)','SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))'],
+              style: [style0, style1],
+              style_version:'2.1.0',
+            }, this);
+      },
+      function getXML0(err) {
+          if ( err ) { done(err); return; }
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) { done(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var style0 = xmlDoc.get("Style[@name='layer0']");
+          assert.ok(style0, "Style for layer0 not found in XML");
+
+          var style1 = xmlDoc.get("Style[@name='layer1']");
+          assert.ok(style1, "Style for layer1 not found in XML");
+
+          mml_builder.delStyle(done);
+      }
+    );
+  });
+
+  test('accept sql array with single style string', function(done) {
+    var style0 = "#layer0 { marker-width:3; }";
+    var style1 = "#layer1 { line-color:red; }";
+    var fullstyle = style0 + style1;
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0)','SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))'],
+              style: fullstyle, 
+              style_version:'2.1.0',
+            }, this);
+      },
+      function getXML0(err) {
+          if ( err ) { done(err); return; }
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) { done(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var style0 = xmlDoc.get("Style[@name='layer0']");
+          assert.ok(style0, "Style for layer0 not found in XML");
+
+          var style1 = xmlDoc.get("Style[@name='layer1']");
+          assert.ok(style1, "Style for layer1 not found in XML");
+
+          mml_builder.delStyle(done);
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
