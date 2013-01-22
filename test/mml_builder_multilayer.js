@@ -227,6 +227,75 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  // Can initialize mml_builder by token, and the token expires when requested
+  test('multilayer style expires when asked to', function(done) {
+    var style0 = "#layer0 { marker-width:3; }";
+    var style1 = "#layer1 { line-color:red; }";
+    var fullstyle = style0 + style1;
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder, mml_builder0;
+    var token;
+
+    Step(
+      function initBuilder() {
+        mml_builder0 = mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0)','SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))'],
+              style: fullstyle, 
+              style_version:'2.1.0',
+              ttl:1, // expiration time, in seconds
+            }, this);
+      },
+      function getByToken0(err) {
+          if ( err ) throw err;
+          token = mml_builder.getToken();
+          mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              token: token
+          }, this);
+      },
+      function getXML0(err) {
+          if ( err ) throw err;
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) throw err;
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var style0 = xmlDoc.get("Style[@name='layer0']");
+          assert.ok(style0, "Style for layer0 not found in XML");
+
+          var style1 = xmlDoc.get("Style[@name='layer1']");
+          assert.ok(style1, "Style for layer1 not found in XML");
+
+          // the token should expire within a second
+          var next = this;
+          setTimeout(function() {
+            // force GC run
+            mml_store.gc(next);
+          }, 1000);
+      },
+      function getByToken1(err) {
+          if ( err ) throw err;
+          mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              token: token
+          }, this);
+      },
+      function verifyExpired(err) {
+          assert.ok(err, "Success getting token, expected failure");
+          assert.equal(err.message, "Map style token '" + token + "' not found in redis");
+          done();
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
