@@ -1,3 +1,8 @@
+Version 0.10.10 
+2013-MM-DD
+
+ - Check redis connection at pool creation time
+
 Version 0.10.9 - "EOW"
 2012-12-21
 
