@@ -5,6 +5,7 @@ YYYY-MM-DD
  - Redis keys for extended styles use md5 hash now
  - Support arrays for "sql", "style" and "style_version" parameters
  - New getToken() API method
+ - Check redis connection at pool creation time
 
 Version 0.10.9 - "EOW"
 2012-12-21
