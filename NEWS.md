@@ -1,5 +1,5 @@
 Version 0.10.10 
-2013-MM-DD
+2013-01-28
 
  - Check redis connection at pool creation time
 
