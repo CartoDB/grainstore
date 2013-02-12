@@ -1,6 +1,7 @@
 Version 0.11.0 (if we survive)
 YYYY-MM-DD
 
+ - Tracking upstream mapnik-reference ~5.0.4
  - MMLBuilder constructor callback is now mandatory
  - Redis keys for extended styles use md5 hash now
  - Check redis connection at pool creation time
