@@ -273,7 +273,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
       mml_builder.setStyle("{", function(err, output){
-       assert.equal(err.message, 'style.mss:1:1 Missing closing `}`');
+       assert.ok(err.message.match(/missing closing .}./i), err.message);
        mml_builder.delStyle(done);
       });
     });
