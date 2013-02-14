@@ -141,7 +141,6 @@ npm test
 
 TODO
 -----
-* multilayer api ;)
 * make storage pluggable
 
 to release: npm publish

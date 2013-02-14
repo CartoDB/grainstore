@@ -8,6 +8,7 @@ YYYY-MM-DD
  - Multilayer support:
     - Support arrays for "sql", "style" and "style_version" parameters (#48)
     - New getToken() API method
+    - New touch() API method 
     - Probabilistic based garbage collection for table-less styles
 
 Version 0.10.9 - "EOW"
