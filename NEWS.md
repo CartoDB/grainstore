@@ -1,3 +1,6 @@
+Version 0.11.1-dev
+2013-MM-DD
+
 Version 0.11.0 - Multilayer
 2013-02-14
 
