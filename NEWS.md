@@ -1,5 +1,5 @@
-Version 0.11.0 (if we survive)
-YYYY-MM-DD
+Version 0.11.0 - Multilayer
+2013-02-14
 
  - Tracking upstream mapnik-reference ~5.0.4
  - MMLBuilder constructor callback is now mandatory
