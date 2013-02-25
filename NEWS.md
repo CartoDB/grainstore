@@ -1,5 +1,5 @@
-Version 0.11.1-dev
-2013-MM-DD
+Version 0.11.1
+2013-02-25
 
  - Cleanly handle redis key disappearance on MMLBuilder.getStyle
  - Fix MMLBuilder construction error handling in GC
