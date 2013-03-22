@@ -746,6 +746,11 @@ suite('mml_builder', function() {
       // recognize mapnik-geometry-type
       { cartocss: "#tab [mapnik-geometry-type=3] { marker-placement:line; }",
         xml_re: new RegExp(/Filter.*\[mapnik::geometry_type\] = 3.*Filter/) }
+      ,
+      // properly encode & signs
+      // see http://github.com/CartoDB/cartodb20/issues/137
+      { cartocss: "#tab [f='&'] { marker-width: 8; }",
+        xml_re: new RegExp(/<Filter>\(\[f\] = '&amp;'\)<\/Filter>/) }
     ];
 
     var StylesRunner = function(styles, done) {

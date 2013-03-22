@@ -1,6 +1,7 @@
 Version 0.11.2-dev
 2013-MM-DD
 
+ - Fix use of ampersend characters in CartoCSS (#50)
  - Fix async error on invalid .touch() call
 
 Version 0.11.1
