@@ -1,5 +1,5 @@
 Version 0.12.0
-2013-MM-DD
+2013-03-29
 
  - Add support for "interactivity" option (#51)
 
