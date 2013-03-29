@@ -1,6 +1,8 @@
 Version 0.12.1-dev
 2013-MM-DD
 
+ - Upgrade generic-pool requirement to ~2.0.3
+
 Version 0.12.0
 2013-03-29
 
