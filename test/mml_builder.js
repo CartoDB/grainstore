@@ -105,6 +105,23 @@ suite('mml_builder', function() {
     );
   });
 
+  test('can be initialized with custom interactivity', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder(
+      {dbname: 'd', table:'t',
+       interactivity: { layer:'t', fields:['cartodb_id']} },
+      function(err, payload) {
+        if ( err ) { done(err); return; }
+        redis_client.keys("map_style|d|t|*", function(err, matches) {
+            if ( err ) { done(err); return; }
+            assert.equal(matches.length, 1);
+            assert.equal(matches[0], 'map_style|d|t|66cc2611b167a3f0a75a037c7b3cdc6c');
+            mml_builder.delStyle(done);
+        });
+      }
+    );
+  });
+
   test('can generate base mml with overridden authentication', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {
         datasource: {
@@ -395,6 +412,25 @@ suite('mml_builder', function() {
           var xmlDoc = libxmljs.parseXmlString(data);
           var color = xmlDoc.get("//@fill");
           assert.equal(color.text(), "#000000");
+          mml_builder.delStyle(done);
+        });
+      });
+  });
+
+  test('includes interactivity in XML', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder(
+      { dbname: 'd', table:'t',
+        interactivity: { layer: 't', fields: ['a','b'] }
+      },
+      function() {
+        mml_builder.toXML(function(err, data){
+          if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
+          var xmlDoc = libxmljs.parseXmlString(data);
+          var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+          assert.equal(x.text(), "t");
+          var x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+          assert.equal(x.text(), "a,b");
           mml_builder.delStyle(done);
         });
       });
