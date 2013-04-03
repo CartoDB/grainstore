@@ -401,6 +401,112 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  test('accept per-layer interactivity', function(done) {
+    var sql0 = 'SELECT 1 as a, 2 as b, ST_MakePoint(0,0)';
+    var sql1 = 'SELECT 3 as id, ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
+    var iact0 = 'a,b';
+    var iact1 = 'id';
+    var style0 = "#layer0 { marker-width:3; }";
+    var style1 = "#layer1 { line-color:red; }";
+    var fullstyle = style0 + style1;
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+    var token;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:[sql0, sql1],
+              interactivity: [iact0, iact1],
+              style: fullstyle, 
+              style_version:'2.1.0',
+            }, this);
+      },
+      function getToken(err) {
+          if ( err ) throw err;
+          token = mml_builder.getToken();
+          return true;
+      },
+      function getBuilder0(err) {
+        if ( err ) throw err;
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              token: token
+            }, this);
+      },
+      function getXML0(err) {
+          if ( err ) throw err;
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) throw err;
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var style0 = xmlDoc.get("Style[@name='layer0']");
+          assert.ok(style0, "Style for layer0 not found in XML");
+
+          var style1 = xmlDoc.get("Style[@name='layer1']");
+          assert.ok(style1, "Style for layer1 not found in XML");
+
+          var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+          assert.equal(x.text(), "layer0");
+
+          var x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+          assert.equal(x.text(), "a,b");
+
+          return true;
+      },
+      function getBuilder1(err) {
+        if ( err ) throw err;
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              token: token,
+              layer: 1
+            }, this);
+      },
+      function getXML(err) {
+          if ( err ) { done(err); return; }
+          mml_builder.toXML(this);
+      },
+      function checkXML1(err, xml) {
+          if ( err ) throw err;
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var style0 = xmlDoc.get("Style[@name='layer0']");
+          assert.ok(style0, "Style for layer0 not found in XML");
+
+          var style1 = xmlDoc.get("Style[@name='layer1']");
+          assert.ok(style1, "Style for layer1 not found in XML");
+
+          var x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+          assert.equal(x.text(), "id");
+
+          var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+          assert.equal(x.text(), "layer1");
+
+          return true;
+      },
+      function finish(err) {
+          mml_builder.delStyle(function(e2) {
+            done(err);
+          });
+      }
+    );
+  });
+
   // TODO: test resetStyle ? does it make sense to allow its use ?
 
   suiteTeardown(function() {

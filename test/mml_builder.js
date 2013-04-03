@@ -109,13 +109,13 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder(
       {dbname: 'd', table:'t',
-       interactivity: { layer:'t', fields:['cartodb_id']} },
+       interactivity: 'cartodb_id' },
       function(err, payload) {
         if ( err ) { done(err); return; }
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
             assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|66cc2611b167a3f0a75a037c7b3cdc6c');
+            assert.equal(matches[0], 'map_style|d|t|6457bc91c40adbbe3edf59c766a0ff67');
             mml_builder.delStyle(done);
         });
       }
@@ -421,15 +421,17 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder(
       { dbname: 'd', table:'t',
-        interactivity: { layer: 't', fields: ['a','b'] }
+        interactivity: 'a,b'
       },
       function() {
         mml_builder.toXML(function(err, data){
           if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+          assert.ok(x);
           assert.equal(x.text(), "t");
-          var x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+          x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+          assert.ok(x);
           assert.equal(x.text(), "a,b");
           mml_builder.delStyle(done);
         });
@@ -992,7 +994,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         val = JSON.parse(val);
         assert.equal(val.xml, xml0);
-        val.xml = 'bogus_xml';
+        val.xml = ['bogus_xml'];
         val = JSON.stringify(val);
         redis_client.set("map_style|db|tab", val, this);
       },
@@ -1053,7 +1055,7 @@ suite('mml_builder', function() {
         assert.equal(val.xml, xml0);
         assert.equal(val.version, '2.0.0');
         assert.equal(val.style, '#tab { marker-width:2 }');
-        val.xml = 'bogus_xml';
+        val.xml = [ 'bogus_xml' ];
         val = JSON.stringify(val);
         redis_client.set("map_style|db|tab", val, this);
       },
