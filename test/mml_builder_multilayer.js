@@ -644,6 +644,26 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  test('Error out on malformed layer', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              token: 'abc',
+              layer: 'cipz'
+            }, this);
+      },
+      function checkError(err) {
+          assert.ok(err);
+          assert.equal(err.message, 'Invalid (non-integer) layer value type: cipz');
+          done();
+      }
+    );
+  });
+
   // TODO: test resetStyle ? does it make sense to allow its use ?
 
   suiteTeardown(function() {
