@@ -1,11 +1,11 @@
-Version 0.13.0-dev
-2013-MM-DD
+Version 0.13.0
+2013-04-04
 
 WARNING: this version changes expected format for "interactivity"
          option introduced in 0.12.0
 
  - Upgrade generic-pool requirement to ~2.0.3
- - Add support for per-layer "interactivity" option 
+ - Add support for per-layer "interactivity" option (array)
 
 Version 0.12.0
 2013-03-29
