@@ -1,3 +1,8 @@
+Version 0.13.1-dev
+2013-05-DD
+
+ - Fix handling of multiple style sections (#53)
+
 Version 0.13.0
 2013-04-04
 
