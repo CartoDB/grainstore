@@ -206,7 +206,7 @@ suite('mml_builder multilayer', function() {
   });
 
   test('layer name in single style is only a placeholder', function(done) {
-    var style0 = "#layer { marker-width:3; } #layer { marker-fill:#ff0000 }";
+    var style0 = "#layer { marker-width:3; } #layer[a=1] { marker-fill:#ff0000 }";
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder;
 
