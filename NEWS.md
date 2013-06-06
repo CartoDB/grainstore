@@ -1,6 +1,8 @@
 Version 0.13.3-dev
 2013-MM-DD
 
+ - More fixes to code replacing layer name (#54)
+
 Version 0.13.2
 2013-05-29
 

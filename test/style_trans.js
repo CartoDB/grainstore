@@ -230,6 +230,13 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/54
+  test('layername replacement', function() {
+    var s = t.setLayerName("#t{ [l='1']{ marker-line-color: #FFF;} [l='2'] { marker-line-color: #FF1;} }", 'layer0');
+    var e = "#layer0 { [l='1']{ marker-line-color: #FFF;} [l='2'] { marker-line-color: #FF1;} }";
+    assert.equal(s, e);
+  });
+
   //suiteTeardown(function() { });
 
 });
