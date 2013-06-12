@@ -1,6 +1,8 @@
 Version 0.13.4-dev
 2013-MM-DD
 
+ - Upgrade redis to 0.8.3
+
 Version 0.13.3
 2013-06-06
 
