@@ -1,5 +1,5 @@
-Version 0.13.5-dev
-2013-MM-DD
+Version 0.13.5
+2013-06-28
 
  - Fix support for CartoCSS attachments (#57)
  - Expose a knownByRedis property to MMLBuilder instances
