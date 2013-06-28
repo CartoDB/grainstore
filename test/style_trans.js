@@ -237,6 +237,13 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/57
+  test('layername replacement with labels', function() {
+    var s = t.setLayerName("#t { marker-color: #FFF; } #t::l1 { text-name: [name]; }", 'layer0');
+    var e = "#layer0 { marker-color: #FFF; } #layer0 ::l1 { text-name: [name]; }";
+    assert.equal(s, e);
+  });
+
   //suiteTeardown(function() { });
 
 });
