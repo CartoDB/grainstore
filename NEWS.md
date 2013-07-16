@@ -1,6 +1,8 @@
 Version 0.13.6-dev
 2013-MM-DD
 
+ - Error out on blank CartoCSS array element (#59)
+
 Version 0.13.5
 2013-06-28
 

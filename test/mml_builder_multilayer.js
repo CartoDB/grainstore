@@ -99,6 +99,32 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  test('error out on blank CartoCSS in a style array', function(done) {
+    var style0 = "#layer0 { marker-width:3; }";
+    var style1 = "";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0)','SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))'],
+              style: [style0, style1],
+              style_version:'2.1.0',
+            }, this);
+      },
+      function checkError(err) {
+          assert(err);
+          assert.equal(err.message, "layer1: CartoCSS is empty");
+          return null;
+      },
+      function finish(err) {
+          done(err);
+      }
+    );
+  });
+
   test('accept sql with style and style_version array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "#layer1 { marker-width:4; }";
