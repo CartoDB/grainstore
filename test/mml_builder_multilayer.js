@@ -116,7 +116,7 @@ suite('mml_builder multilayer', function() {
       },
       function checkError(err) {
           assert(err);
-          assert.equal(err.message, "layer1: CartoCSS is empty");
+          assert.equal(err.message, "style1: CartoCSS is empty");
           return null;
       },
       function finish(err) {

@@ -1,6 +1,8 @@
 Version 0.13.7-dev
 2013-MM-DD
 
+ - Change 'layer#' to 'style#' in blank CartoCSS error (#59)
+
 Version 0.13.6
 2013-07-16
 
