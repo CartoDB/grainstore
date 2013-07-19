@@ -13,10 +13,14 @@
         "url": "git://github.com/Vizzuality/grainstore.git"
     },
     "author": {
-      "name": "Simon Tokumine, Sandro Santilli",
-      "url": "https://github.com/Vizzuality/grainstore",
-      "email": "si@tinypla.net, strk@vizzuality.com"
+      "name": "Vizzuality",
+      "url": "http://www.vizzuality.com",
+      "email": "contact@vizzuality.com"
     },
+    "contributors": [
+      "Simon Tokumine <si@tinypla.net>",
+      "Sandro Santilli <strk@vizzuality.com>"
+    ],
     "dependencies": {
         "underscore"  : "~1.3.3",
         "step": "~0.0.5",
