@@ -8,10 +8,10 @@
         "type": "BSD",
         "url": "https://github.com/Vizzuality/grainstore/blob/master/LICENCE"
     }],
-    "repositories": [{
+    "repository": {
         "type": "git",
         "url": "git://github.com/Vizzuality/grainstore.git"
-    }],
+    },
     "author": {
       "name": "Simon Tokumine, Sandro Santilli",
       "url": "https://github.com/Vizzuality/grainstore",
