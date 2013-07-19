@@ -12,11 +12,7 @@
         "type": "git",
         "url": "git://github.com/Vizzuality/grainstore.git"
     },
-    "author": {
-      "name": "Vizzuality",
-      "url": "http://www.vizzuality.com",
-      "email": "contact@vizzuality.com"
-    },
+    "author": "Vizzuality <contact@vizzuality.com> (http://vizzuality.com)",
     "contributors": [
       "Simon Tokumine <si@tinypla.net>",
       "Sandro Santilli <strk@vizzuality.com>"
