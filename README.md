@@ -1,6 +1,8 @@
 Grainstore
 ===========
 
+[![Build Status](https://travis-ci.org/Vizzuality/grainstore.png)](http://travis-ci.org/Vizzuality/grainstore)
+
 Need to simply generate a Mapnik map from a dynamic PostGIS table?
 
 Grainstore is an opinionated [Carto](https://github.com/mapbox/carto)
