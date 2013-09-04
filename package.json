@@ -26,7 +26,7 @@
         "mapnik-reference": "~5.0.4",
         "redis": "~0.8.3",
         "hiredis": "~0.1.14",
-        "millstone": "~0.5.9"
+        "millstone": "git://github.com/CartoDB/millstone.git#cdb-0.6.0-cdb1"
     },
     "devDependencies": {
         "mocha": "~1.2.1",

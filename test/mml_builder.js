@@ -872,6 +872,62 @@ suite('mml_builder', function() {
 
   });
 
+  // External resources are downloaded in isolation
+  // See https://github.com/Vizzuality/grainstore/issues/60
+  test('external resources are downloaded in isolation', function(done) {
+
+      var style = "{ point-file: url('http://localhost:" + server_port + "/circle.svg'); }";
+      var cachedir = '/tmp/gt1-' + process.pid;
+
+      var cdir1 = cachedir + '1';
+      var style1 = '#t1 ' + style;
+      var store1 = new grainstore.MMLStore(redis_opts, {cachedir: cdir1 });
+      var re1 = new RegExp('PointSymbolizer file="' + cdir1 + '/d\/t1/cache/.*.svg"');
+
+      var cdir2 = cachedir + '2';
+      var style2 = '#t2 ' + style;
+      var store2 = new grainstore.MMLStore(redis_opts, {cachedir: cdir2 });
+      var re2 = new RegExp('PointSymbolizer file="' + cdir2 + '/d\/t2/cache/.*.svg"');
+
+      var pending = 2;
+      var err = [];
+      var finish = function (e) {
+          if ( e ) err.push(e.toString());
+          if ( ! --pending ) {
+            if ( err.length ) err = new Error(err.join('\n'));
+            else err = null;
+            done(err);
+          }
+      }
+
+      var b1 = store1.mml_builder({dbname: 'd', table:'t1', style: style1}, function(e) {
+        if ( e ) { finish(e); return; }
+        b1.toXML(function(e, data){
+          if ( e ) { finish(e); return; }
+          try {
+            assert.ok(re1.test(data), 'toXML: ' + style + ': expected ' + re1 + ' got:\n' + data);
+          } catch (e) {
+            err.push(e);
+          }
+          b1.delStyle(finish);
+        });
+      });
+
+      var b2 = store2.mml_builder({dbname: 'd', table:'t2', style: style2}, function(e) {
+        if ( e ) { finish(e); return; }
+        b2.toXML(function(e, data){
+          if ( e ) { finish(e); return; }
+          try {
+            assert.ok(re2.test(data), 'toXML: ' + style + ': expected ' + re2 + ' got:\n' + data);
+          } catch (e) {
+            err.push(e);
+          }
+          b2.delStyle(finish);
+        });
+      });
+
+  });
+
   test('lost XML in base key triggers re-creation', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder0, mml_builder, xml0;
