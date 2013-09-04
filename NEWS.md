@@ -1,5 +1,5 @@
-Version 0.13.8-dev
-2013-MM-DD
+Version 0.13.8
+2013-09-04
 
  - Fix race condition in external resource localization (#60)
 
