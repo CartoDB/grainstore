@@ -438,6 +438,26 @@ suite('mml_builder', function() {
       });
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/61
+  test('zoom variable is special', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder(
+      { dbname: 'd', table:'t',
+        style: '#t [ zoom  >=  4 ] {marker-fill:red;}'
+      },
+      function() {
+        mml_builder.toXML(function(err, data){
+          if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
+          var xmlDoc = libxmljs.parseXmlString(data);
+          var xpath = "//MaxScaleDenominator";
+          var x = xmlDoc.get(xpath);
+          assert.ok(x, "Xpath '" + xpath + "' does not match " + xmlDoc);
+          assert.equal(x.text(), "50000000");
+          mml_builder.delStyle(done);
+        });
+      });
+  });
+
   test('base style and custom style keys do not affect each other', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var base_builder;
