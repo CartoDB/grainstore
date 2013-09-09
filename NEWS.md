@@ -1,5 +1,5 @@
-Version 0.13.9-dev
-2013-MM-DD
+Version 0.13.9
+2013-09-09
 
  - Fix support for use of space-prefixed "zoom" in CartoCSS (#61)
 
