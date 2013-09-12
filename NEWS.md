@@ -1,6 +1,8 @@
 Version 0.13.10-dev
 2013-MM-DD
 
+ - Fix error message for invalid content in non-selfclosing tags (#62)
+
 Version 0.13.9
 2013-09-09
 

@@ -1314,6 +1314,18 @@ suite('mml_builder', function() {
     });
   });
 
+  // See https://github.com/Vizzuality/grainstore/issues/62
+  test('throws useful error message on invalid text-name', function(done) {
+    var style = "#t { text-name: invalid; text-face-name:'Dejagnu'; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t', style:style}, function(err) {
+        assert.ok(err);
+        var re = new RegExp(/Invalid value for text-name/);
+        assert.ok(err.message.match(re), 'No match for ' + re + ' in "' + err.message + '"');
+        done();
+    });
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
