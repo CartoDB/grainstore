@@ -1,5 +1,5 @@
-Version 0.13.10-dev
-2013-MM-DD
+Version 0.13.10
+2013-09-12
 
  - Fix error message for invalid content in non-selfclosing tags (#62)
 
