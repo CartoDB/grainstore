@@ -458,6 +458,35 @@ suite('mml_builder', function() {
       });
   });
 
+  test('quotes in CartoCSS are accepted', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts);
+    var mml_builder = mml_store.mml_builder(
+      { dbname: 'd', table:'t',
+        sql: [ "select 'x' as n, 'SRID=3857;POINT(0 0)'::geometry as the_geom_webmercator",
+               "select 'x' as n, 'SRID=3857;POINT(2 0)'::geometry as the_geom_webmercator" ],
+        style: [ '#t [n="t\'q"] {marker-fill:red;}', '#t[n=\'t"q\'] {marker-fill:green;}' ]
+      },
+      function() {
+        mml_builder.toXML(function(err, data){
+          if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
+          var xmlDoc = libxmljs.parseXmlString(data);
+          var xpath = "//Filter";
+          var x = xmlDoc.find(xpath);
+          assert.equal(x.length, 2);
+          var found = { '"': 0, "'": 0 };
+          for (var i=0; i<2; ++i) {
+            var f = x[i];
+            var m = f.toString().match(/(['"])t(\\?)(["'])q(['"])/);
+            assert.ok(m, "Unexpected filter: " + f.toString());
+            assert.equal(m[1],m[4]); // opening an closing quotes are the same
+            // internal quote must be different or escaped
+            assert.ok(m[3] != m[1] || m[2] == '\\', 'Unescaped quote ' + m[3] + ' found: ' + f.toString());
+          }
+          mml_builder.delStyle(done);
+        });
+      });
+  });
+
   test('base style and custom style keys do not affect each other', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var base_builder;

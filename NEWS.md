@@ -1,6 +1,8 @@
 Version 0.13.11-dev
 2013-MM-DD
 
+ - Fix support for apostrophes in CartoCSS filters (#63)
+
 Version 0.13.10
 2013-09-12
 
