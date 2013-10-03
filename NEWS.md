@@ -1,5 +1,5 @@
-Version 0.13.11-dev
-2013-MM-DD
+Version 0.13.11
+2013-10-03
 
  - Fix support for apostrophes in CartoCSS filters (#63)
  - Back to tracking mainstream millstone (~0.6.5)
