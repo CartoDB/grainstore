@@ -230,6 +230,21 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  test('transform retains quotes in CartoCSS', function() {
+    var s = t.transform( "#t [t=\"ja'ja\\\"ja\"] {  }", '2.0.0','2.1.0');
+    var e = "#t [t=\"ja'ja\\\"ja\"] {  }";
+    assert.equal(s, e);
+
+    var s = t.transform( "#t [t='ja\\\'ja\"ja'] {  }", '2.0.0','2.1.0');
+    var e = "#t [t='ja\\'ja\"ja'] {  }";
+    assert.equal(s, e);
+  });
+
+  //-----------------------------------------------------------------
+  // setLayerName
+  //-----------------------------------------------------------------
+
+
   // See https://github.com/Vizzuality/grainstore/issues/54
   test('layername replacement', function() {
     var s = t.setLayerName("#t{ [l='1']{ marker-line-color: #FFF;} [l='2'] { marker-line-color: #FF1;} }", 'layer0');
@@ -243,6 +258,17 @@ suite('style_trans', function() {
     var e = "#layer0 { marker-color: #FFF; } #layer0 ::l1 { text-name: [name]; }";
     assert.equal(s, e);
   });
+
+  test('setLayerName retains quotes in CartoCSS', function() {
+    var s = t.setLayerName( "#t [t=\"ja'ja\\\"ja\"] {  }", 's');
+    var e = "#s [t=\"ja'ja\\\"ja\"] {  }";
+    assert.equal(s, e);
+
+    var s = t.setLayerName( "#t [t='ja\\\'ja\"ja'] {  }", 's');
+    var e = "#s [t='ja\\'ja\"ja'] {  }";
+    assert.equal(s, e);
+  });
+
 
   //suiteTeardown(function() { });
 
