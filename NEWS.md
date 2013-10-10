@@ -1,5 +1,5 @@
-Version 0.13.12-dev
-2013-MM-DD
+Version 0.13.12
+2013-10-10
 
  - Restore support for node-0.8.9, relaxing millstone dep (#64)
    (requires deployers to use srs-0.3.2)
