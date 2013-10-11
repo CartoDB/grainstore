@@ -1,7 +1,7 @@
 Grainstore
 ===========
 
-[![Build Status](https://travis-ci.org/Vizzuality/grainstore.png)](http://travis-ci.org/Vizzuality/grainstore)
+[![Build Status](https://travis-ci.org/CartoDB/grainstore.png)](http://travis-ci.org/CartoDB/grainstore)
 
 Need to simply generate a Mapnik map from a dynamic PostGIS table?
 
