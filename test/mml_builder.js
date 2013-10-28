@@ -256,6 +256,24 @@ suite('mml_builder', function() {
     });
   });
 
+  test('Render a 2.2.0 style', function(done) {
+    var style = "#t { polygon-fill: #fff; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.2.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t'}, function() {
+      mml_builder.render(style, function(err, output){
+        try {
+          assert.ok(_.isNull(err), _.isNull(err) ? '' : err.message);
+          assert.ok(output);
+          var xmlDoc = libxmljs.parseXmlString(output);
+          //assert.equal(output, '');
+          var srs = xmlDoc.get("//PolygonSymbolizer/@fill");
+          assert.equal(srs.text(), '#ffffff');
+          mml_builder.delStyle(done);
+        } catch (err) { done(err); }
+      });
+    });
+  });
+
   test('can render errors from full mml with bad style', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
@@ -397,6 +415,18 @@ suite('mml_builder', function() {
       mml_builder.getStyle(function(err, data){
         if ( err ) { done(err); return; }
         assert.equal(data.style, "#my_tablez {marker-fill: #FF6600;marker-opacity: 1;marker-width: 8;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}");
+        mml_builder.delStyle(done);
+      });
+    });
+  });
+
+  test('default style in 2.1.0 target mapnik version', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t'}, function() {
+    var default_style_210 = '#t["mapnik::geometry_type"=1] {marker-fill: #FF6600;marker-opacity: 1;marker-width: 16;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}#t["mapnik::geometry_type"=2] {line-color:#FF6600; line-width:1; line-opacity: 0.7;}#t["mapnik::geometry_type"=3] {polygon-fill:#FF6600; polygon-opacity: 0.7; line-opacity:1; line-color: #FFFFFF;}';
+      mml_builder.getStyle(function(err, data){
+        if ( err ) { done(err); return; }
+        assert.equal(data.style, default_style_210);
         mml_builder.delStyle(done);
       });
     });
