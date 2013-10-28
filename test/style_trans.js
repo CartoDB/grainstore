@@ -249,6 +249,15 @@ suite('style_trans', function() {
     assert.equal(s, e);
   });
 
+  test('2.0.1 to 2.2.0', function() {
+    var s = t.transform(
+"#t [mapnik-geometry-type=1] { line-color:red; }"
+    , '2.0.1', '2.2.0'
+    );
+    var e = '#t ["mapnik::geometry_type"=1] { line-color:red; }';
+    assert.equal(s, e);
+  });
+
   test('2.1.1 to 2.1.0', function() {
     var e = null;
     try { t.transform( "#t { }", '2.1.1', '2.1.0'); }
