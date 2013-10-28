@@ -358,7 +358,7 @@ suite('mml_builder', function() {
 
   test('store a good style with version 2.0.2 converting and retrieve it', function(done) {
     var style = "#t { marker-width: 3; }";
-    var style_converted = "#t { marker-width:6; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }";
+    var style_converted = '#t { marker-width:6; ["mapnik::geometry_type"=1] { marker-placement:point; marker-type:ellipse; } ["mapnik::geometry_type">1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }';
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'t'}, function() {
       mml_builder.setStyle(style, function(err, output){
@@ -1202,7 +1202,7 @@ suite('mml_builder', function() {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
     var mml_builder;
     var style_input = "#t { marker-width:2 }";
-    var style_converted = "#t { marker-width:4; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }";
+    var style_converted = '#t { marker-width:4; ["mapnik::geometry_type"=1] { marker-placement:point; marker-type:ellipse; } ["mapnik::geometry_type">1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }';
 
     Step(
       function initBuilder() {
@@ -1328,7 +1328,7 @@ suite('mml_builder', function() {
 
   test('store a good style with version 2.0.2 and retrieve it converted', function(done) {
     var style = "#t { marker-width: 3; }";
-    var style_converted = "#t { marker-width:6; [mapnik-geometry-type=1] { marker-placement:point; marker-type:ellipse; } [mapnik-geometry-type>1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }";
+    var style_converted = '#t { marker-width:6; ["mapnik::geometry_type"=1] { marker-placement:point; marker-type:ellipse; } ["mapnik::geometry_type">1] { marker-placement:line; marker-type:arrow; marker-transform:scale(.5, .5); marker-clip:false; } }';
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'t'}, function() {
       mml_builder.setStyle(style, function(err, output){
