@@ -1,5 +1,5 @@
-Version 0.14.0-dev
-2013-MM-DD
+Version 0.14.0
+2013-10-29
 
  - Add support for Mapnik-2.2.0 (#67)
 
