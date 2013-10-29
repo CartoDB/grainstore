@@ -423,10 +423,22 @@ suite('mml_builder', function() {
   test('default style in 2.1.0 target mapnik version', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t'}, function() {
-    var default_style_210 = '#t["mapnik::geometry_type"=1] {marker-fill: #FF6600;marker-opacity: 1;marker-width: 16;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}#t["mapnik::geometry_type"=2] {line-color:#FF6600; line-width:1; line-opacity: 0.7;}#t["mapnik::geometry_type"=3] {polygon-fill:#FF6600; polygon-opacity: 0.7; line-opacity:1; line-color: #FFFFFF;}';
+    var default_style_210 = '#t[mapnik-geometry-type=1] {marker-fill: #FF6600;marker-opacity: 1;marker-width: 16;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}#t[mapnik-geometry-type=2] {line-color:#FF6600; line-width:1; line-opacity: 0.7;}#t[mapnik-geometry-type=3] {polygon-fill:#FF6600; polygon-opacity: 0.7; line-opacity:1; line-color: #FFFFFF;}';
       mml_builder.getStyle(function(err, data){
         if ( err ) { done(err); return; }
         assert.equal(data.style, default_style_210);
+        mml_builder.delStyle(done);
+      });
+    });
+  });
+
+  test('default style in 2.2.0 target mapnik version', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.2.0'});
+    var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t'}, function() {
+    var default_style_220 = '#t["mapnik::geometry_type"=1] {marker-fill: #FF6600;marker-opacity: 1;marker-width: 16;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}#t["mapnik::geometry_type"=2] {line-color:#FF6600; line-width:1; line-opacity: 0.7;}#t["mapnik::geometry_type"=3] {polygon-fill:#FF6600; polygon-opacity: 0.7; line-opacity:1; line-color: #FFFFFF;}';
+      mml_builder.getStyle(function(err, data){
+        if ( err ) { done(err); return; }
+        assert.equal(data.style, default_style_220);
         mml_builder.delStyle(done);
       });
     });
@@ -450,7 +462,7 @@ suite('mml_builder', function() {
   test('includes interactivity in XML', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder(
-      { dbname: 'd', table:'t',
+      { dbname: 'd2', table:'t',
         interactivity: 'a,b'
       },
       function() {
