@@ -1,6 +1,8 @@
 Version 0.14.1-dev
 YYYY-MM-DD
 
+ - Inherit default PostgreSQL connection parameters from libpq
+
 Version 0.14.0
 2013-10-29
 
