@@ -2,6 +2,7 @@ Version 0.14.2-dev
 2013-11-DD
 
  - Fix support for exponential notation in filter values (#69)
+ - Fix expiration time logging unit (#68)
 
 Version 0.14.1
 2013-10-31
