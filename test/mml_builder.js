@@ -1397,6 +1397,49 @@ suite('mml_builder', function() {
     });
   });
 
+  test('use exponential in filters', function(done) {
+    var style =  "#t[a=1.2e-3] { polygon-fill: #000000; }";
+        style += "#t[b=1.2e+3] { polygon-fill: #000000; }";
+        style += "#t[c=2.3e4] { polygon-fill: #000000; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({dbname: 'd2', table:'t', style:style, style_version:'2.1.0'}, this);
+      },
+      function getXML(err, data) {
+        if ( err ) throw err;
+        mml_builder.toXML(this);
+      },
+      function checkXML(err, data) {
+        if ( err ) throw err;
+        var xmlDoc = libxmljs.parseXmlString(data);
+        var node = xmlDoc.find("//Filter");
+        assert.equal(node.length, 3);
+        for (var i=0; i<node.length; i++) {
+          var txt = node[i].text();
+          if ( txt.match(/\[a\] =/) ) {
+            assert.equal(txt, '([a] = 0.0012)');
+          }
+          else if ( txt.match(/\[b\] =/) ) {
+            assert.equal(txt, '([b] = 1200)');
+          }
+          else if ( txt.match(/\[c\] =/) ) {
+            assert.equal(txt, '([c] = 23000)');
+          }
+          else {
+            assert.fail("No match for " + txt);
+          }
+        }
+        return null;
+      },
+      function finish(err) {
+        if ( mml_builder ) mml_builder.delStyle(function() { done(err); });
+        else done(err);
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
