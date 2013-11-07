@@ -1,6 +1,6 @@
 {
     "name": "grainstore",
-    "version": "0.14.2",
+    "version": "0.14.3-dev",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
     "url": "https://github.com/CartoDB/grainstore",
