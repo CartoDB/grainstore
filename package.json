@@ -3,14 +3,14 @@
     "version": "0.14.2-dev",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
-    "url": "https://github.com/Vizzuality/grainstore",
+    "url": "https://github.com/CartoDB/grainstore",
     "licenses": [{
         "type": "BSD",
-        "url": "https://github.com/Vizzuality/grainstore/blob/master/LICENCE"
+        "url": "https://github.com/CartoDB/grainstore/blob/master/LICENCE"
     }],
     "repository": {
         "type": "git",
-        "url": "git://github.com/Vizzuality/grainstore.git"
+        "url": "git://github.com/CartoDB/grainstore.git"
     },
     "author": "Vizzuality <contact@vizzuality.com> (http://vizzuality.com)",
     "contributors": [
