@@ -703,6 +703,29 @@ suite('mml_builder', function() {
     });
   });
 
+  test('XML contains connection parameters', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {
+        datasource: {
+          user:'u', host:'h', port:'12', password:'p'
+        }
+    });
+    var mml_builder = mml_store.mml_builder({dbname: 'd', table:'t'}, function() {
+      mml_builder.toXML(function(err, data){
+        assert.ok(data, err);
+        var xmlDoc = libxmljs.parseXmlString(data);
+        var node = xmlDoc.get("//Parameter[@name='user']");
+        assert.equal(node.text(), "u");
+        node = xmlDoc.get("//Parameter[@name='host']");
+        assert.equal(node.text(), "h");
+        node = xmlDoc.get("//Parameter[@name='port']");
+        assert.equal(node.text(), "12");
+        node = xmlDoc.get("//Parameter[@name='password']");
+        assert.equal(node.text(), "p");
+        mml_builder.delStyle(done);
+      });
+    });
+  });
+
   test("can retrieve basic XML specifying sql", function(done){
     // TODO: use Step !
     var mml_store = new grainstore.MMLStore(redis_opts);
