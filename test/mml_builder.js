@@ -1463,6 +1463,54 @@ suite('mml_builder', function() {
     );
   });
 
+  // See https://github.com/CartoDB/grainstore/issues/71
+  test('can construct mml_builder when invalid CartoCSS is found in redis',
+  function(done) {
+    var base_key = 'map_style|d|t';
+    var style = '#t {bogus}';
+    // NOTE: we need mapnik_version to be != 2.0.0 
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var builder;
+    var error_expected = false;
+    Step(
+      function setupRedisBase() {
+        redis_client.set(base_key,
+          JSON.stringify({ style: style }),
+        this);
+      },
+      function initBuilder() {
+        builder = mml_store.mml_builder({dbname: 'd', table:'t'}, this);
+      },
+      function checkInit_getXML(err, b) {
+        if ( err ) throw err;
+        assert.ok(b);
+        error_expected = true;
+        builder.toXML(this);
+      },
+      function checkXML_setStyle(err) {
+        if ( err && ! error_expected ) throw err;
+        error_expected = false;
+        assert.ok(err);
+        assert.ok(err.message.match(/bogus/), err.message);
+        builder.setStyle('#t {line-color:red}', this);
+      },
+      function getGoodXML(err) {
+        if ( err ) throw err;
+        builder.toXML(this);
+      },
+      function checkGoodXML(err, xml) {
+        if ( err ) throw err;
+        assert.ok(xml);
+        assert.ok(xml.match(/LineSymbolizer/), xml);
+        return null;
+      },
+      function finish(err) {
+        if ( builder ) builder.delStyle(function() { done(err); });
+        else done(err);
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
