@@ -1,5 +1,5 @@
-Version 0.14.3-dev
-2013-MM-DD
+Version 0.14.3
+2013-11-26
 
  - Allow constructing MMLBuilder against bogus redis css (#71)
 
