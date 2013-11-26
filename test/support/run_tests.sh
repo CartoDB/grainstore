@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PATH=$PATH:$(dirname $0)/../../node_modules/.bin
+
 # Must match redis_opts.js
 REDIS_PORT=$(grep -w port $(dirname $0)/redis_opts.js | sed 's/.*: *//')
 
