@@ -3,6 +3,9 @@
     "version": "0.14.4",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
+    "keywords": [
+      "cartodb"
+    ],
     "url": "https://github.com/CartoDB/grainstore",
     "licenses": [{
         "type": "BSD",
