@@ -1,4 +1,4 @@
-Version 0.15.1-dev
+Version 0.15.1
 2013-11-28
 
  - Fix carto renderer configuration pollution between calls
