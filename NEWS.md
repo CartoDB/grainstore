@@ -3,6 +3,7 @@ Version 0.15.0-dev
 
  - Accept carto renderer configuration, allowing [among other
    things] specification of a list of valid fonts (#72)
+ - Allow overriding db host and port in MMLBuilder constructor (#70)
 
 Version 0.14.3
 2013-11-26

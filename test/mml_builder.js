@@ -191,6 +191,45 @@ suite('mml_builder', function() {
     });
   });
 
+  // See https://github.com/CartoDB/grainstore/issues/70
+  test('can override db host and port with mml_builder constructor', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {
+        datasource: { host:'shadow_host', port:'shadow_port' }});
+    var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            table:'my_table',
+            dbhost:'overridden_host', dbport:'overridden_port' }, function() {
+
+      var baseMML = mml_builder.baseMML();
+
+      assert.ok(_.isArray(baseMML.Layer));
+      assert.equal(baseMML.Layer[0].id, 'my_table');
+      assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
+      assert.equal(baseMML.Layer[0].Datasource.host, 'overridden_host');
+      assert.equal(baseMML.Layer[0].Datasource.port, 'overridden_port');
+
+      redis_client.keys("*", function(err, matches) {
+          if ( err ) { done(err); return; }
+          assert.equal(matches.length, 1);
+          assert.equal(matches[0], 'map_style|my_database|my_table');
+
+          // Test that new mml_builder, with no overridden user/password, uses the default ones
+          var mml_builder2 = mml_store.mml_builder({dbname:'my_database', table:'my_table'}, function() {
+              var baseMML = mml_builder2.baseMML();
+              assert.equal(baseMML.Layer[0].id, 'my_table');
+              assert.equal(baseMML.Layer[0].Datasource.dbname, 'my_database');
+              assert.equal(baseMML.Layer[0].Datasource.host, 'shadow_host');
+              assert.equal(baseMML.Layer[0].Datasource.port, 'shadow_port');
+
+              mml_builder.delStyle(function() {
+                 mml_builder2.delStyle(done);
+              });
+          });
+      });
+
+    });
+  });
+
   test('can generate base mml with sql ops, maintain id', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts);
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', sql: 'SELECT * from my_table'},
