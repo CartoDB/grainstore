@@ -1,6 +1,9 @@
 Version 0.15.0-dev
 2013-MM-DD
 
+ - Accept carto renderer configuration, allowing [among other
+   things] specification of a list of valid fonts (#72)
+
 Version 0.14.3
 2013-11-26
 

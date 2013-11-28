@@ -1511,6 +1511,51 @@ suite('mml_builder', function() {
     );
   });
 
+  // See https://github.com/CartoDB/grainstore/issues/72
+  test('invalid fonts are complained about',
+  function(done) {
+    var error_expected = false;
+    var mml_store = new grainstore.MMLStore(redis_opts, {
+      mapnik_version: '2.1.0',
+      carto_env: {
+        validation_data: {
+          fonts: ['Dejagnu','good']
+        }
+      }
+    });
+    var builder;
+    Step(
+      function initBuilder() {
+        builder = mml_store.mml_builder({dbname: 'd', table:'t'}, this);
+      },
+      function setGoodFont(err, b) {
+        if ( err ) throw err;
+        assert.ok(b);
+        builder.setStyle(
+          '#t{text-name:[a]; text-face-name:"good";}',
+          this);
+      },
+      function setBogusFont(err) {
+        if ( err ) throw err;
+        error_expected = true;
+        builder.setStyle(
+          "#t { text-name:[a]; text-face-name:'bogus_font'; }",
+          this);
+      },
+      function checkBogusFont(err) {
+        if ( err && ! error_expected ) throw err;
+        error_expected = false;
+        assert.ok(err, "no error raised when using bogus font");
+        assert.ok(err.message.match(/Invalid.*text-face-name.*bogus_font/), err);
+        return null;
+      },
+      function finish(err) {
+        if ( builder ) builder.delStyle(function() { done(err); });
+        else done(err);
+      }
+    );
+  });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
