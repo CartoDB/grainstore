@@ -1,6 +1,8 @@
 Version 0.15.2-dev
 2013-MM-DD
 
+ - Allow constructing MMLBuilder against bogus redis layergroup (#73)
+
 Version 0.15.1
 2013-11-28
 
