@@ -1550,49 +1550,6 @@ suite('mml_builder', function() {
     );
   });
 
-  // See https://github.com/CartoDB/grainstore/issues/73
-  test('can construct mml_builder against invalid redis content (missing sql)',
-  function(done) {
-    var token = 'def';
-    var base_key = 'map_style|d|~'+token;
-    var style = '#t { line-color:red; }';
-    // NOTE: we need mapnik_version to be != 2.0.0 
-    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
-    var builder;
-    var error_expected = false;
-    Step(
-      function setupRedisBase() {
-        redis_client.set(base_key,
-          JSON.stringify({ style: style }),
-        this);
-      },
-      function initBuilder() {
-        builder = mml_store.mml_builder({dbname: 'd', token:token}, this);
-      },
-      function checkInit_getXML(err, b) {
-        if ( err ) throw err;
-        assert.ok(b);
-        error_expected = true;
-        builder.toXML(this);
-      },
-      function checkXML_delStyle(err) {
-        if ( err && ! error_expected ) throw err;
-        error_expected = false;
-        assert.ok(err);
-        assert.ok(err.message.match(/sql disabled/), err.message);
-        builder.delStyle(this);
-      },
-      function finish(err) {
-        if ( builder ) builder.delStyle(function() { done(err); });
-        else done(err);
-      }
-    );
-  });
-
-  // TODO: check no redis key is created for invalid styles
-  // See https://github.com/CartoDB/grainstore/issues/71
-  // and https://github.com/CartoDB/grainstore/issues/73
-
   // See https://github.com/CartoDB/grainstore/issues/72
   test('invalid fonts are complained about',
   function(done) {

@@ -726,6 +726,90 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+  // See https://github.com/CartoDB/grainstore/issues/73
+  test('can construct mml_builder against invalid redis content (missing sql)',
+  function(done) {
+    var token = 'def';
+    var base_key = 'map_style|d|~'+token;
+    var style = '#t { line-color:red; }';
+    // NOTE: we need mapnik_version to be != 2.0.0 
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var builder;
+    var error_expected = false;
+    Step(
+      function setupRedisBase() {
+        redis_client.set(base_key,
+          JSON.stringify({ style: style }),
+        this);
+      },
+      function initBuilder() {
+        builder = mml_store.mml_builder({dbname: 'd', token:token}, this);
+      },
+      function checkInit_getXML(err, b) {
+        if ( err ) throw err;
+        assert.ok(b);
+        error_expected = true;
+        builder.toXML(this);
+      },
+      function checkXML_delStyle(err) {
+        if ( err && ! error_expected ) throw err;
+        error_expected = false;
+        assert.ok(err);
+        assert.ok(err.message.match(/sql disabled/), err.message);
+        builder.delStyle(this);
+      },
+      function finish(err) {
+        if ( builder ) builder.delStyle(function() { done(err); });
+        else done(err);
+      }
+    );
+  });
+
+  // See https://github.com/CartoDB/grainstore/issues/73
+  test('can construct mml_builder by token after changing mapnik_version',
+  function(done) {
+    var token;
+    var mml_store1 = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.0.0'});
+    var mml_store2 = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var builder1;
+    var error_expected = false;
+    Step(
+      function initBuilder() {
+        builder1 = mml_store1.mml_builder({
+          dbname: 'd',
+          sql:['SELECT ST_MakePoint(0,0)'],
+          style: ['#s { line-color:red; }']
+        }, this);
+      },
+      function checkInit1_getXML1(err) {
+        if ( err ) throw err;
+        token = builder1.getToken();
+        builder1.toXML(this);
+      },
+      function checkXML1_initByToken(err, xml) {
+        if ( err ) throw err;
+        var xmlDoc = libxmljs.parseXmlString(xml);
+        var layer0 = xmlDoc.get("Layer[@name='layer0']");
+        assert.ok(layer0, "Layer0 not found in XML");
+        builder2 = mml_store2.mml_builder({dbname: 'd', token:token}, this);
+      },
+      function checkInit2_getXML2(err) {
+        if ( err ) throw err;
+        builder2.toXML(this); 
+      },
+      function checkXML2_delStyle(err, xml) {
+        if ( err ) throw err;
+        var xmlDoc = libxmljs.parseXmlString(xml);
+        var layer0 = xmlDoc.get("Layer[@name='layer0']");
+        assert.ok(layer0, "Layer0 not found in XML");
+        builder2.delStyle(this); // don't need to also delStyle from builder1..
+      },
+      function finish(err) {
+        done(err);
+      }
+    );
+  });
+
   // TODO: test resetStyle ? does it make sense to allow its use ?
 
   suiteTeardown(function() {
