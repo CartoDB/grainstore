@@ -1,5 +1,5 @@
-Version 0.15.2-dev
-2013-MM-DD
+Version 0.15.2
+2013-12-05
 
  - Allow constructing MMLBuilder against bogus redis layergroup (#73)
  - Fix MMLBuilder construction by token after mapnik version change (#73)
