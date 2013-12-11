@@ -1,6 +1,8 @@
 Version 0.15.3
 20YY-MM-DD
 
+ - Use external module for redis pooling (#75)
+
 Version 0.15.2
 2013-12-05
 
