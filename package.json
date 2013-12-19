@@ -25,7 +25,7 @@
         "step": "~0.0.5",
         "semver": "~1.1.0",
         "redis-mpool": "~0.0.2",
-        "carto": "git://github.com/CartoDB/carto.git#0.9.5-cdb2",
+        "carto": "http://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
         "mapnik-reference": "~5.0.4",
         "millstone": "~0.6.4"
     },
