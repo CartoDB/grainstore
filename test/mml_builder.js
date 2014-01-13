@@ -80,8 +80,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
-            assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|f96138079986cfa58e5b3a57556295bd');
+            assert.equal(matches.length, 0);
             mml_builder.delStyle(done);
         });
       }
@@ -97,8 +96,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
-            assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|6837fd608615a45143bb9c62e86cff21');
+            assert.equal(matches.length, 0);
             mml_builder.delStyle(done);
         });
       }
@@ -114,8 +112,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         redis_client.keys("map_style|d|t|*", function(err, matches) {
             if ( err ) { done(err); return; }
-            assert.equal(matches.length, 1);
-            assert.equal(matches[0], 'map_style|d|t|6457bc91c40adbbe3edf59c766a0ff67');
+            assert.equal(matches.length, 0);
             mml_builder.delStyle(done);
         });
       }
@@ -240,26 +237,16 @@ suite('mml_builder', function() {
       // Check redis status
       redis_client.keys("map_style|my_database|my_table|*", function(err, matches) {
           if ( err ) { mml_builder.delStyle(done); return; }
-          assert.equal(matches.length, 1);
-          redis_client.get(matches[0], function(err, val) {
+          assert.equal(matches.length, 0);
+          redis_client.get("map_style|my_database|my_table", function(err, val) {
             if ( err ) { mml_builder.delStyle(done); return; }
+            assert.ok(val, "Base key not stored when initializing with sql");
             var js = JSON.parse(val);
-            // only base key should have a style property
-            // only extended key should have an XML property (it will be constructed on demand)
-            assert.ok(!js.hasOwnProperty('style'), 'extended key has a style property');
-            assert.ok(!js.hasOwnProperty('version'), 'extended key has a style property');
-            assert.ok(js.hasOwnProperty('xml'), 'extended key has no XML');
-            assert.ok(js.hasOwnProperty('xml_version'), 'extended key has no xml_version');
-            redis_client.get("map_style|my_database|my_table", function(err, val) {
-              if ( err ) { mml_builder.delStyle(done); return; }
-              assert.ok(val, "Base key not stored when initializing with sql");
-              var js = JSON.parse(val);
-              assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
-              assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
-              assert.ok(!js.hasOwnProperty('xml'), 'base key has an XML property');
-              assert.ok(!js.hasOwnProperty('xml_version'), 'base key has an xml_version property');
-              mml_builder.delStyle(done);
-            });
+            assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
+            assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
+            assert.ok(!js.hasOwnProperty('xml'), 'base key has an XML property');
+            assert.ok(!js.hasOwnProperty('xml_version'), 'base key has an xml_version property');
+            mml_builder.delStyle(done);
           });
       });
     });
@@ -405,8 +392,8 @@ suite('mml_builder', function() {
           if ( err ) { done(err); return; }
           assert.equal(data.style, style);
           assert.equal(data.version, '2.0.2');
-          assert.ok(data.hasOwnProperty('xml'));
-          assert.equal(data.xml_version, '2.1.0');
+          /*assert.ok(data.hasOwnProperty('xml'));
+          assert.equal(data.xml_version, '2.1.0');*/
           mml_builder.delStyle(done);
         });
       }, '2.0.2');
@@ -440,6 +427,7 @@ suite('mml_builder', function() {
           if ( err ) { done(err); return; }
           mml_builder.getStyle(function(err, data){
             if ( err ) { done(err); return; }
+            assert(data);
             assert.equal(data.style, "#my_tableismo {marker-fill: #FF6600;marker-opacity: 1;marker-width: 8;marker-line-color: white;marker-line-width: 3;marker-line-opacity: 0.9;marker-placement: point;marker-type: ellipse;marker-allow-overlap: true;}");
             mml_builder.delStyle(done);
           });
@@ -594,27 +582,14 @@ suite('mml_builder', function() {
         var cb = this;
         redis_client.keys("map_style|db|tab*", function(err, matches) {
           if ( err ) { cb(err); return; }
-          assert.equal(matches.length, 2);
-          matches = matches.sort(); // base first
+          assert.equal(matches.length, 1, 'Expected 1 keys, found ' + matches.join(', '));
           redis_client.get(matches[0], function(err, val) {
             if ( err ) { cb(err); return; }
-            // base key has both style and XML 
+            // base key has only style 
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
-            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
-            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
-            assert.equal(matches[1], 'map_style|db|tab|799988aa2aff8cba53367197dacbf68e');
-            redis_client.get(matches[1], function(err, val) {
-              if ( err ) { cb(err); return; }
-              // custom style key has only XML
-              var js = JSON.parse(val);
-              assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
-              assert.ok(!js.hasOwnProperty('version'), 'custom style key (' + matches[1] + ') has a version property');
-              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no xml property');
-              assert.ok(js.hasOwnProperty('xml_version'), 'custom style key (' + matches[1] + ') has no xml_version property');
-              cb(null);
-            });
+            cb(null);
           });
         });
       },
@@ -671,7 +646,7 @@ suite('mml_builder', function() {
         var cb = this;
         redis_client.keys("map_style|db|tab*", function(err, matches) {
           if ( err ) { cb(err); return; }
-          assert.equal(matches.length, 2);
+          //assert.equal(matches.length, 2, 'Expected 2 keys, found ' + matches.join(', '));
           matches = matches.sort(); // base first
           redis_client.get(matches[0], function(err, val) {
             if ( err ) { cb(err); return; }
@@ -679,20 +654,7 @@ suite('mml_builder', function() {
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
-            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
-            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
-            // the "extended" key is now encoded after the style we just set
-            assert.equal(matches[1], 'map_style|db|tab|7b8d87a36ef435fb856e45c2dfa44dba');
-            redis_client.get(matches[1], function(err, val) {
-              if ( err ) { cb(err); return; }
-              // custom style key has only XML
-              var js = JSON.parse(val);
-              assert.ok(!js.hasOwnProperty('style'), 'custom style key (' + matches[1] + ') has a style property');
-              assert.ok(!js.hasOwnProperty('version'), 'custom style key (' + matches[1] + ') has a version property');
-              assert.ok(js.hasOwnProperty('xml'), 'custom style key (' + matches[1] + ') has no xml property');
-              assert.ok(js.hasOwnProperty('xml_version'), 'custom style key (' + matches[1] + ') has no xml_version property');
-              cb(null);
-            });
+            cb(null);
           });
         });
       },
@@ -712,12 +674,10 @@ suite('mml_builder', function() {
           assert.equal(matches.length, 1);
           redis_client.get(matches[0], function(err, val) {
             if ( err ) { cb(err); return; }
-            // base key has both style and XML 
+            // base key has only style 
             var js = JSON.parse(val);
             assert.ok(js.hasOwnProperty('style'), 'base key has no style property');
             assert.ok(js.hasOwnProperty('version'), 'base key has no version property');
-            assert.ok(js.hasOwnProperty('xml'), 'base key has no xml property');
-            assert.ok(js.hasOwnProperty('xml_version'), 'base key has no xml_version property');
             cb(null);
           });
         });
@@ -1113,195 +1073,6 @@ suite('mml_builder', function() {
     );
   });
 
-  test('Target mapnik version upgrade triggers XML re-creation', function(done) {
-    var mml_store0 = new grainstore.MMLStore(redis_opts, { mapnik_version: '2.0.2' });
-    var mml_store1 = new grainstore.MMLStore(redis_opts, { mapnik_version: '2.1.0' });
-    var mml_builder0, mml_builder1, xml0;
-    var style0 = '#t { marker-width: 8; marker-height: 3; }';
-    Step (
-      function builder0() {
-        mml_builder0 = mml_store0.mml_builder({dbname: 'db', table:'t'}, this);
-      },
-      function setStyle0(err) {
-        if ( err ) { done(err); return; }
-        mml_builder0.setStyle(style0, this);
-      },
-      function getStyle0(err) {
-        if ( err ) { done(err); return; }
-        mml_builder0.getStyle(this)
-      },
-      function checkStyle0(err, data) {
-        xml0 = data.xml;
-        assert.equal(data.xml_version, '2.0.2');
-        mml_builder1 = mml_store1.mml_builder({dbname:'db', table:'t'}, this);
-      },
-      function getStyle1(err, val) {
-        if ( err ) { done(err); return; }
-        mml_builder1.getStyle(this)
-      },
-      function checkStyle1(err, data) {
-        if ( err ) { done(err); return; }
-        assert.equal(data.xml_version, '2.1.0');
-        assert.notDeepEqual(xml0, data.xml);
-        mml_builder1.delStyle(done);
-      }
-    );
-  });
-
-  test('lost XML in custom sql key triggers re-creation', function(done) {
-    var mml_store = new grainstore.MMLStore(redis_opts);
-    var opts = {dbname:'db', table:'tab', sql:'select * from t'};
-    var mml_builder0, mml_builder, xml0;
-    Step(
-      function initBuilder0 () {
-        mml_builder0 = mml_store.mml_builder(opts, this);
-      },
-      function getXML0(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder0.toXML(this);
-      },
-      function dropXML(err, data) {
-        if ( err ) { done(err); return; }
-        xml0 = data;
-        //redis_client.keys("map_style|db|tab|*", function(err, matches) { console.dir(matches); });
-        var key = 'map_style|db|tab|9f683436fe68935af28708d8f2920792'; // Use the above line to figure out
-        dropXMLFromStore(key, this);
-      },
-      function initBuilder(err, val) {
-        if ( err ) { done(err); return; }
-        mml_builder = mml_store.mml_builder(opts, this);
-      },
-      function getXML(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder.toXML(this);
-      },
-      function checkXML(err, xml) {
-        if ( err ) { done(err); return; }
-        assert.equal(xml, xml0);
-        mml_builder.delStyle(done);
-      }
-    );
-  });
-
-  test('resetStyle forces re-write of stored XML', function(done) {
-    var mml_store = new grainstore.MMLStore(redis_opts);
-    var mml_builder0, mml_builder, xml0;
-    Step(
-      function initBuilder0() {
-        mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
-      },
-      function getXML0(err) {
-        if ( err ) { done(err); return; }
-        mml_builder0.toXML(this);
-      },
-      function getRedis0(err, data) {
-        if ( err ) { done(err); return; }
-        xml0 = data;
-        redis_client.get("map_style|db|tab", this);
-      },
-      function setRedis0(err, val) {
-        if ( err ) { done(err); return; }
-        val = JSON.parse(val);
-        assert.equal(val.xml, xml0);
-        val.xml = ['bogus_xml'];
-        val = JSON.stringify(val);
-        redis_client.set("map_style|db|tab", val, this);
-      },
-      function initBuilder(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
-      },
-      function getXML(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder.toXML(this);
-      },
-      function resetStyle(err, xml) {
-        if ( err ) { done(err); return; }
-        assert.equal(xml, 'bogus_xml');
-        mml_builder.resetStyle(this);
-      },
-      function getRedis(err,st) {
-        if ( err ) {
-          mml_builder.delStyle(function() { done(err); });
-          return;
-        }
-        redis_client.get("map_style|db|tab", this);
-      },
-      function checkStyle(err, val) {
-        if ( err ) {
-          mml_builder.delStyle(function() { done(err); });
-          return;
-        }
-        assert.equal(JSON.parse(val).xml, xml0);
-        mml_builder.delStyle(done);
-      }
-    );
-  });
-
-  test('resetStyle forces re-write of stored XML using style version', function(done) {
-    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0", default_style_version: "2.1.0"});
-    var mml_builder0, mml_builder, xml0;
-    Step(
-      function initBuilder0() {
-        mml_builder0 = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
-      },
-      function setStyle0(err) {
-        if ( err ) { done(err); return; }
-        mml_builder0.setStyle('#tab { marker-width:2 }', this, '2.0.0');
-      },
-      function getXML0(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder0.toXML(this);
-      },
-      function getRedis0(err, data) {
-        if ( err ) { done(err); return; }
-        xml0 = data;
-        redis_client.get("map_style|db|tab", this);
-      },
-      function setRedis0(err, val) {
-        if ( err ) { done(err); return; }
-        val = JSON.parse(val);
-        assert.equal(val.xml, xml0);
-        assert.equal(val.version, '2.0.0');
-        assert.equal(val.style, '#tab { marker-width:2 }');
-        val.xml = [ 'bogus_xml' ];
-        val = JSON.stringify(val);
-        redis_client.set("map_style|db|tab", val, this);
-      },
-      function initBuilder(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, this);
-      },
-      function getXML(err, data) {
-        if ( err ) { done(err); return; }
-        mml_builder.toXML(this);
-      },
-      function resetStyle(err, xml) {
-        if ( err ) { done(err); return; }
-        assert.equal(xml, 'bogus_xml');
-        mml_builder.resetStyle(this);
-      },
-      function getRedis(err,st) {
-        if ( err ) {
-          mml_builder.delStyle(function() { done(err); });
-          return;
-        }
-        redis_client.get("map_style|db|tab", this);
-      },
-      function checkStyle(err, val) {
-        if ( err ) {
-          mml_builder.delStyle(function() { done(err); });
-          return;
-        }
-        val = JSON.parse(val);
-        assert.equal(val.xml, xml0);
-        //assert.equal(val.version, '2.0.0');
-        //assert.equal(val.style, '#t { marker-width:2 }');
-        mml_builder.delStyle(done);
-      }
-    );
-  });
-
   test('resetStyle can re-write converted versions', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: "2.1.0"});
     var mml_builder;
@@ -1353,7 +1124,7 @@ suite('mml_builder', function() {
         if ( err ) { done(err); return; }
         var next = this;
         redis_client.keys("map_style|db|t*", function(err, matches) {
-            assert.equal(matches.length, 3);
+            assert.equal(matches.length, 1);
             next();
         });
       },
@@ -1399,7 +1170,7 @@ suite('mml_builder', function() {
         try {
           assert.equal(completed.join(','), 'get,set');
         } catch (e) {
-          console.warn("NOTE: Could not produce a race");
+          console.warn("NOTE: Could not produce a race (" + completed.join(',') + ")");
           mml_builder0.delStyle(done);
           return;
         }
