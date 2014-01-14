@@ -1,5 +1,5 @@
 Version 0.16.0
-2014-01-DD
+2014-01-14
 
  - Stop caching XML in redis (#79, #80)
  - Do not include XML in MMLBuilder.getStyle return (#25)
