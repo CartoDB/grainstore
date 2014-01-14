@@ -1,6 +1,8 @@
-Version 0.15.3
-20YY-MM-DD
+Version 0.16.0
+2014-01-DD
 
+ - Stop caching XML in redis (#79, #80)
+ - Do not include XML in MMLBuilder.getStyle return (#25)
  - Use external module for redis pooling (#75)
  - Install carto dependency via http (#77)
 
