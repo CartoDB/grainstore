@@ -883,11 +883,11 @@ suite('mml_builder', function() {
       ,
       // localize external resources
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/circle.svg'); }",
-        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
+        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/cache/.*.svg"') }
       ,
       // localize external resources with a + in the url
       { cartocss: "#tab { point-file: url('http://localhost:" + server_port + "/+circle.svg'); }",
-        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/db\/tab/cache/.*.svg"') }
+        xml_re: new RegExp('PointSymbolizer file="' + cachedir + '/cache/.*.svg"') }
       ,
       // transform marker-width and height from 2.0.0 to 2.1.0 resources with a + in the url
       { cartocss: "#tab { marker-width: 8; marker-height: 3; }",
@@ -915,7 +915,12 @@ suite('mml_builder', function() {
       if ( ! this.styles.length ) {
         var err = this.errors.length ? new Error(this.errors) : null;
         // TODO: remove all from cachedir ?
-        this.done(err);
+        var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir});
+        var that = this;
+        mml_store.purgeLocalizedResources(0, function(e) {
+          if ( e ) console.log("Error purging localized resources: " + e);
+          that.done(err);
+        });
         return;
       }
       var that = this;
@@ -961,17 +966,6 @@ suite('mml_builder', function() {
             assert.ok(xml_re.test(data), 'toXML: ' + style + ': expected ' + xml_re + ' got:\n' + data);
             mml_builder.delStyle(function(err) {
               if ( err ) errs.push(err);
-              else {
-                // check that the cache dir contains no files after delStyle
-                var toclear = cachedir + '/cache';
-                try {
-                  var names = fs.readdirSync(toclear); 
-                  assert.equals(names.length, 0, 'Cache dir ' + toclear + " still contains: " + names);
-                } catch (err) {
-                  // complain on unexpected error
-                  if ( err.code != 'ENOENT' ) assert.ok(!err, err);
-                }
-              }
               if ( errs.length ) err = new Error('toXML: ' + style + ': ' + errs.join("\n"));
               that.runNext(err);
             });
@@ -995,12 +989,12 @@ suite('mml_builder', function() {
       var cdir1 = cachedir + '1';
       var style1 = '#t1 ' + style;
       var store1 = new grainstore.MMLStore(redis_opts, {cachedir: cdir1 });
-      var re1 = new RegExp('PointSymbolizer file="' + cdir1 + '/d\/t1/cache/.*.svg"');
+      var re1 = new RegExp('PointSymbolizer file="' + cdir1 + '/cache/.*.svg"');
 
       var cdir2 = cachedir + '2';
       var style2 = '#t2 ' + style;
       var store2 = new grainstore.MMLStore(redis_opts, {cachedir: cdir2 });
-      var re2 = new RegExp('PointSymbolizer file="' + cdir2 + '/d\/t2/cache/.*.svg"');
+      var re2 = new RegExp('PointSymbolizer file="' + cdir2 + '/cache/.*.svg"');
 
       var pending = 2;
       var err = [];
