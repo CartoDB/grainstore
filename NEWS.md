@@ -4,6 +4,7 @@ Version 0.17.0
  - Use a single cache of localized resources, purge after
    1 day of no access (#82)
  - Allow setting TTL=0 to skip storage of table-less tokens (#81)
+ - Allow passing own RedisPooler to MMLStore ctor (#76)
 
 Version 0.16.0
 2014-01-14
