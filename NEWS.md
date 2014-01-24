@@ -1,5 +1,5 @@
 Version 0.17.0
-2014-MM-DD
+2014-01-24
 
  - Use a single cache of localized resources, purge after
    1 day of no access (#82)
