@@ -1,6 +1,8 @@
 Version 0.17.1
 2014-MM-DD
 
+ - Stop scanning "related keys" on setStyle and delStyle (#84)
+
 Version 0.17.0
 2014-01-24
 
