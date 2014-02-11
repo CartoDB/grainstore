@@ -1,5 +1,5 @@
 Version 0.17.1
-2014-MM-DD
+2014-02-11
 
  - Stop scanning "related keys" on setStyle and delStyle (#84)
 
