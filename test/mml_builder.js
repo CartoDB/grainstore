@@ -293,7 +293,7 @@ suite('mml_builder', function() {
           var xmlDoc = libxmljs.parseXmlString(output);
           //assert.equal(output, '');
           var srs = xmlDoc.get("//PolygonSymbolizer/@fill");
-          assert.equal(srs.text(), '#ffffff');
+          assert.equal(srs.value(), '#ffffff');
           mml_builder.delStyle(done);
         } catch (err) { done(err); }
       });
@@ -480,7 +480,7 @@ suite('mml_builder', function() {
           if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), "#000000");
+          assert.equal(color.value(), "#000000");
           mml_builder.delStyle(done);
         });
       });
@@ -600,7 +600,7 @@ suite('mml_builder', function() {
           if ( err ) { cb(err); return; }
           var xmlDoc = libxmljs.parseXmlString(xml);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), '#111111');
+          assert.equal(color.value(), '#111111');
           cb(null);
         });
       },
@@ -611,7 +611,7 @@ suite('mml_builder', function() {
           if ( err ) { cb(err); return; }
           var xmlDoc = libxmljs.parseXmlString(xml);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), '#222222');
+          assert.equal(color.value(), '#222222');
           cb(null);
         });
       },
@@ -626,7 +626,7 @@ suite('mml_builder', function() {
           if ( err ) { cb(err); return; }
           var xmlDoc = libxmljs.parseXmlString(xml);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), '#111111');
+          assert.equal(color.value(), '#111111');
           cb(null);
         });
       },
@@ -637,7 +637,7 @@ suite('mml_builder', function() {
           if ( err ) { cb(err); return; }
           var xmlDoc = libxmljs.parseXmlString(xml);
           var color = xmlDoc.get("//@fill");
-          assert.equal(color.text(), '#333333');
+          assert.equal(color.value(), '#333333');
           cb(null);
         });
       },
@@ -865,8 +865,8 @@ suite('mml_builder', function() {
           if ( err ) { mml_builder.delStyle(function() { done(err); }); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
           var srs = xmlDoc.get("//@srs");
-          assert.equal(srs.text().indexOf("+init=epsg:"), 0,
-            '"' + srs.text() + '" does not start with "+init=epsg:"');
+          assert.equal(srs.value().indexOf("+init=epsg:"), 0,
+            '"' + srs.value() + '" does not start with "+init=epsg:"');
           mml_builder.delStyle(done);
         });
       });
