@@ -1,6 +1,10 @@
 Version 0.17.2
 2014-MM-DD
 
+ - Accept 'cachettl' param to control localized resources lifetime
+ - Augment verbosity of localized resource purges
+ - Fix GC counter in log prefix 
+
 Version 0.17.1
 2014-02-11
 
