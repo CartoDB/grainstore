@@ -49,7 +49,7 @@ npm install
 
 Dependencies
 ------------
-* node.js (tested from 0.4.x to 0.8.x)
+* node.js (tested from 0.4.x to 0.10.x)
 * npm
 * Redis
 * libosr (or libgdal)

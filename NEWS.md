@@ -7,6 +7,7 @@ Version 0.18.0
  - Drop support for constructing MMLBuilder by token
  - Drop MMLStore.gc() method
  - Drop MMLBuilder.touch() method
+ - Tested to work with node-0.10.26 (#87)
 
 Version 0.17.1
 2014-02-11
