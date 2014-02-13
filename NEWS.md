@@ -1,9 +1,6 @@
 Version 0.17.2
 2014-MM-DD
 
- - Accept 'cachettl' param to control localized resources lifetime
- - Augment verbosity of localized resource purges
- - Fix GC counter in log prefix 
  - Accept 0 as "gc_prob" param, to disable automatic garbage collection
    (better to periodically call purgeLocalizedResources in that case)
 

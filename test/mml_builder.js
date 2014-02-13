@@ -931,7 +931,7 @@ suite('mml_builder', function() {
       var target_mapnik_version = style_spec.target_version || style_version;
       var xml_re = style_spec.xml_re;
 
-      var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir, mapnik_version: target_mapnik_version, cachettl:0.01});
+      var mml_store = new grainstore.MMLStore(redis_opts, {cachedir: cachedir, mapnik_version: target_mapnik_version});
       var mml_builder = mml_store.mml_builder({dbname: 'db', table:'tab'}, function() {
 
         Step(
