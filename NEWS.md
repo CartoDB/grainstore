@@ -3,6 +3,7 @@ Version 0.17.2
 
  - Accept 0 as "gc_prob" param, to disable automatic garbage collection
    (better to periodically call purgeLocalizedResources in that case)
+ - Improve logging of localized resource purging (#85)
 
 Version 0.17.1
 2014-02-11
