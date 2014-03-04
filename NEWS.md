@@ -1,6 +1,8 @@
 Version 0.18.1
 2014-MM-DD
 
+ - Stop using WATCH (#89)
+
 Version 0.18.0
 2014-02-13
 
