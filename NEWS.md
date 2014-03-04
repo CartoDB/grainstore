@@ -1,5 +1,5 @@
 Version 0.18.1
-2014-MM-DD
+2014-03-04
 
  - Stop using WATCH (#89)
  - Require redis-mpool ~0.0.4
