@@ -1,5 +1,7 @@
-Version 0.18.3
-2014-mm-dd
+Version 0.19.0
+2014-MM-DD
+
+ - Allow specifying a column name for each layer (#92)
 
 Version 0.18.2
 2014-07-02

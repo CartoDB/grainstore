@@ -75,14 +75,66 @@ suite('mml_builder multilayer', function() {
           var layer0 = xmlDoc.get("Layer[@name='layer0']");
           assert.ok(layer0, "Layer0 not found in XML");
 
+          var gf0 = layer0.get("Datasource/Parameter[@name='geometry_field']");
+          assert.ok(gf0, "geometry_field for layer0 not found in XML");
+          assert.equal(gf0.text(), "the_geom_webmercator"); // default
+
           var layer1 = xmlDoc.get("Layer[@name='layer1']");
           assert.ok(layer1, "Layer1 not found in XML");
+
+          var gf1 = layer1.get("Datasource/Parameter[@name='geometry_field']");
+          assert.ok(gf1, "geometry_field for layer1 not found in XML");
+          assert.equal(gf1.text(), "the_geom_webmercator"); // default
 
           var style0 = xmlDoc.get("Style[@name='layer0']");
           assert.ok(style0, "Style for layer0 not found in XML");
 
           var style1 = xmlDoc.get("Style[@name='layer1']");
           assert.ok(style1, "Style for layer1 not found in XML");
+
+          mml_builder.delStyle(done);
+      }
+    );
+  });
+
+  // See http://github.com/CartoDB/grainstore/issues/92
+  test('accept sql array with style array and gcols array', function(done) {
+    var style0 = "#layer0 { marker-width:3; }";
+    var style1 = "#layer1 { line-color:red; }";
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0) g','SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5)) g2'],
+              style: [style0, style1],
+              gcols: [,'g2'], // first intentionally blank
+              style_version:'2.1.0',
+            }, this);
+      },
+      function getXML0(err) {
+          if ( err ) { done(err); return; }
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) { done(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+
+          var gf0 = layer0.get("Datasource/Parameter[@name='geometry_field']");
+          assert.ok(gf0, "geometry_field for layer0 not found in XML");
+          assert.equal(gf0.text(), "the_geom_webmercator"); // default
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+
+          var gf1 = layer1.get("Datasource/Parameter[@name='geometry_field']");
+          assert.ok(gf1, "geometry_field for layer1 not found in XML");
+          assert.equal(gf1.text(), "g2"); 
 
           mml_builder.delStyle(done);
       }
