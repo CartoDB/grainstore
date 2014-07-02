@@ -1,5 +1,9 @@
 Version 0.18.2
-2014-MM-DD
+2014-07-02
+
+ - Allows specifiying search_path when building the MML
+ - How to release documentation
+ - License update
 
 Version 0.18.1
 2014-03-04
