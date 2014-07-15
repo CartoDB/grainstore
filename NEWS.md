@@ -1,3 +1,4 @@
+ - Allow specifying a extra datasource options for each layer 
  - Allow specifying a column type for each layer (#93)
 
 Version 0.19.0

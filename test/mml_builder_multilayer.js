@@ -181,6 +181,81 @@ suite('mml_builder multilayer', function() {
           assert.equal(gf1.text(), "r"); 
           var typ1 = ds1.get("Parameter[@name='type']");
           assert.equal(typ1.text(), "pgraster"); 
+          assert.ok(! ds1.get("Parameter[@name='band']") );
+
+          mml_builder.delStyle(done);
+      }
+    );
+  });
+
+  // See http://github.com/CartoDB/grainstore/issues/93
+  test('accept rcolbands and extra_ds_opts arrays', function(done) {
+    var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
+    var mml_builder;
+
+    Step(
+      function initBuilder() {
+        mml_builder = mml_store.mml_builder({
+              dbname: 'my_database',
+              sql:['SELECT ST_MakePoint(0,0) g',
+                   'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r',
+                   'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r2'],
+              gcols: ['g','r','r2'], 
+              gcoltypes: [,'raster','raster'], // first intentionally blank
+              extra_ds_opts: [
+                {'geometry_field':'fake'}, // will not override
+                {'use_overviews':1, 'prescale_rasters':true},
+                {'band':1,'clip_rasters':1}
+              ],
+              style_version:'2.1.0',
+            }, this);
+      },
+      function getXML0(err) {
+          if ( err ) { done(err); return; }
+          mml_builder.toXML(this);
+      },
+      function checkXML0(err, xml) {
+          if ( err ) { done(err); return; }
+          var xmlDoc = libxmljs.parseXmlString(xml);
+
+          var layer0 = xmlDoc.get("Layer[@name='layer0']");
+          assert.ok(layer0, "Layer0 not found in XML");
+          var ds0 = layer0.get("Datasource");
+          assert.ok(ds0, "Datasource for layer0 not found in XML");
+          var gf0 = ds0.get("Parameter[@name='geometry_field']");
+          assert.equal(gf0.text(), "g", xmlDoc); 
+
+          var layer1 = xmlDoc.get("Layer[@name='layer1']");
+          assert.ok(layer1, "Layer1 not found in XML");
+          var ds1 = layer1.get("Datasource");
+          assert.ok(ds1, "Datasource for layer1 not found in XML: " + xmlDoc);
+          var gf1 = ds1.get("Parameter[@name='raster_field']");
+          assert.ok(gf1, "raster_field for layer1 not found in: " + ds1);
+          assert.equal(gf1.text(), "r"); 
+          var typ1 = ds1.get("Parameter[@name='type']");
+          assert.equal(typ1.text(), "pgraster"); 
+          assert.ok(! ds1.get("Parameter[@name='band']") );
+          assert.ok(! ds1.get("Parameter[@name='clip_rasters']") );
+          var ovv1 = ds1.get("Parameter[@name='use_overviews']");
+          assert.equal(ovv1.text(), "1"); 
+          var scl1 = ds1.get("Parameter[@name='prescale_rasters']");
+          assert.equal(scl1.text(), "true"); 
+
+          var layer2 = xmlDoc.get("Layer[@name='layer2']");
+          assert.ok(layer2, "Layer2 not found in XML");
+          var ds2 = layer2.get("Datasource");
+          assert.ok(ds2, "Datasource for layer2 not found in XML: " + xmlDoc);
+          var gf2 = ds2.get("Parameter[@name='raster_field']");
+          assert.ok(gf2, "raster_field for layer2 not found in: " + ds2);
+          assert.equal(gf2.text(), "r2"); 
+          var typ2 = ds2.get("Parameter[@name='type']");
+          assert.equal(typ2.text(), "pgraster"); 
+          var bnd2 = ds2.get("Parameter[@name='band']");
+          assert.equal(bnd2.text(), "1");
+          var clp2 = ds2.get("Parameter[@name='clip_rasters']");
+          assert.equal(clp2.text(), "1");
+          assert.ok(! ds2.get("Parameter[@name='use_overviews']") );
+          assert.ok(! ds2.get("Parameter[@name='prescale_rasters']") );
 
           mml_builder.delStyle(done);
       }
