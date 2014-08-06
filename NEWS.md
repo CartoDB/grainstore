@@ -2,6 +2,7 @@ Version 0.19.0
 2014-MM-DD
 
  - Allow specifying a column name for each layer (#92)
+ - Allow specifying different formats for tile via optional args
 
 Version 0.18.2
 2014-07-02
