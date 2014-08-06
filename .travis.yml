@@ -1,6 +1,8 @@
 before_install:
+  - sudo mv /etc/apt/sources.list.d/pgdg-source.list* /tmp
+  - sudo apt-add-repository --yes ppa:cartodb/gis
   - sudo apt-get update -q
-  - sudo apt-get install -y gdal-bin
+  - sudo apt-get install -q libgdal-dev
 
 language: node_js
 node_js:
