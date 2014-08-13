@@ -1,6 +1,10 @@
 Version 0.20.0
 2014-mm-dd
 
+ - Upgrades dependencies:
+    - underscore
+    - redis-mpool
+
 Version 0.19.0
 2014-08-07
 
