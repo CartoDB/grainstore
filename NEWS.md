@@ -4,6 +4,7 @@ Version 0.20.0
  - Upgrades dependencies:
     - underscore
     - redis-mpool
+ - Specifies name in the redis pool
 
 Version 0.19.0
 2014-08-07
