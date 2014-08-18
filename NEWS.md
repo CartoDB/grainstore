@@ -1,6 +1,12 @@
 Version 0.20.1
 2014-mm-dd
 
+ - Removes unused base64
+ - Upgrades dependencies
+    - semver
+    - millstone
+ - Removes mapnik-reference dependency
+
 Version 0.20.0
 2014-08-13
 
