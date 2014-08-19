@@ -150,6 +150,47 @@ suite('mml_builder', function() {
     });
   });
 
+    test('search_path is set in the datasource', function(done) {
+        var search_path = "'foo', 'bar'";
+        var mml_store = new grainstore.MMLStore(redis_opts);
+        var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', search_path: search_path}, function() {
+            var baseMML = mml_builder.baseMML();
+            assert.equal(baseMML.Layer[0].Datasource.search_path, search_path);
+            done();
+        });
+    });
+
+    test('search_path is NOT set in the datasource', function(done) {
+        var mml_store = new grainstore.MMLStore(redis_opts);
+        var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table', search_path: null}, function() {
+            var baseMML = mml_builder.baseMML();
+            assert.ok(
+                !baseMML.Layer[0].Datasource.hasOwnProperty('search_path'),
+                "search_path was not expected in the datasource but was found with value: " + baseMML.Layer[0].Datasource.search_path
+            );
+            done();
+        });
+    });
+
+    test('default format is png', function(done) {
+        var mml_store = new grainstore.MMLStore(redis_opts);
+        var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+            var baseMML = mml_builder.baseMML();
+            assert.equal(baseMML.format, 'png');
+            done();
+        });
+    });
+
+    test('format can be overwritten with optional args', function(done) {
+        var format = 'png32';
+        var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_tile_format: format});
+        var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+            var baseMML = mml_builder.baseMML();
+            assert.equal(baseMML.format, format);
+            done();
+        });
+    });
+
   test('can override authentication with mml_builder constructor', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {
         datasource: { user:'shadow_user', password:'shadow_password' }});
