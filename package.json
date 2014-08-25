@@ -1,6 +1,6 @@
 {
     "name": "grainstore",
-    "version": "0.20.0",
+    "version": "0.20.1",
     "main": "./lib/grainstore/index.js",
     "description": "Stores map styles and generates postgis friendly MML & XML for Mapnik",
     "keywords": [
@@ -21,13 +21,12 @@
       "Sandro Santilli <strk@vizzuality.com>"
     ],
     "dependencies": {
-        "underscore": "~1.6.0",
+        "redis-mpool": "https://github.com/CartoDB/node-redis-mpool/tarball/0.1.0",
+        "carto": "https://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
+        "millstone": "~0.6.14",
         "step": "~0.0.5",
-        "semver": "~1.1.0",
-        "redis-mpool": "http://github.com/CartoDB/node-redis-mpool/tarball/0.1.0",
-        "carto": "http://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
-        "mapnik-reference": "~5.0.4",
-        "millstone": "~0.6.4"
+        "underscore": "~1.6.0",
+        "semver": "~1.1.4"
     },
     "devDependencies": {
         "mocha": "~1.14.0",
