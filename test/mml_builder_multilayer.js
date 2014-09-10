@@ -141,8 +141,22 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+[
+    [
+        {type: 'geometry', name: 'g'},
+        {type: 'raster', name: 'r'}
+    ],
+    [
+        'g',
+        {type: 'raster', name: 'r'}
+    ],
+    [
+        {name: 'g'},
+        {type: 'raster', name: 'r'}
+    ]
+].forEach(function(gcols) {
   // See http://github.com/CartoDB/grainstore/issues/93
-  test('accept gcoltypes array', function(done) {
+  test('accept types in gcols', function(done) {
     var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'});
     var mml_builder;
 
@@ -152,8 +166,7 @@ suite('mml_builder multilayer', function() {
               dbname: 'my_database',
               sql:['SELECT ST_MakePoint(0,0) g',
                    'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r'],
-              gcols: ['g','r'], 
-              gcoltypes: [,'raster'], // first intentionally blank
+              gcols: gcols,
               style_version:'2.1.0',
             }, this);
       },
@@ -187,6 +200,8 @@ suite('mml_builder multilayer', function() {
       }
     );
   });
+});
+
 
   // See http://github.com/CartoDB/grainstore/issues/93
   test('accept rcolbands and extra_ds_opts arrays', function(done) {
@@ -200,8 +215,11 @@ suite('mml_builder multilayer', function() {
               sql:['SELECT ST_MakePoint(0,0) g',
                    'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r',
                    'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r2'],
-              gcols: ['g','r','r2'], 
-              gcoltypes: [,'raster','raster'], // first intentionally blank
+              gcols: [
+                  {type: 'geometry', name: 'g'},
+                  {type: 'raster', name: 'r'},
+                  {type: 'raster', name: 'r2'}
+              ],
               extra_ds_opts: [
                 {'geometry_field':'fake'}, // will not override
                 {'use_overviews':1, 'prescale_rasters':true},
@@ -261,6 +279,34 @@ suite('mml_builder multilayer', function() {
       }
     );
   });
+
+
+  test('gcol with objects fails when name is not provided', function(done) {
+      var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.1.0'}),
+          mml_builder;
+
+      Step(
+          function initBuilder() {
+              mml_builder = mml_store.mml_builder({
+                  dbname: 'my_database',
+                  sql:['SELECT ST_MakePoint(0,0) g',
+                      'SELECT ST_AsRaster(ST_MakePoint(0,0),1.0,1.0) r'],
+                  gcols: [
+                      {type: 'geometry'}
+                  ],
+                  style_version:'2.1.0',
+              }, this);
+          },
+          function getXML0(err) {
+              if ( err ) { done(err); return; }
+              mml_builder.toXML(this);
+          },
+          function(err) {
+              assert.ok(!!err);
+              done();
+          }
+      );
+  })
 
   test('error out on blank CartoCSS in a style array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
