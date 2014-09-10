@@ -1,7 +1,4 @@
- - Allow specifying a extra datasource options for each layer 
- - Allow specifying a column type for each layer (#93)
-
-Version 0.20.1
+Version 0.21.0
 2014-mm-dd
 
  - Removes unused base64
@@ -9,6 +6,8 @@ Version 0.20.1
     - semver
     - millstone
  - Removes mapnik-reference dependency
+ - Allow specifying a extra datasource options for each layer
+ - Allow specifying a column type for each layer (#93)
 
 Version 0.20.0
 2014-08-13
