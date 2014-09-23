@@ -1401,6 +1401,24 @@ suite('mml_builder', function() {
     );
   });
 
+    ['2.0.0', '2.1.1', '2.2.0'].forEach(function(version) {
+        test('test transformation from version ' + version + ' to 2.3.0 target mapnik version', function(done) {
+            var style = "#my_table {\n  polygon-fill: #fff;\n}";
+            var mml_store = new grainstore.MMLStore(redis_opts, {mapnik_version: '2.3.0'});
+            var mml_builder = mml_store.mml_builder({dbname: 'my_database', table:'my_table'}, function() {
+                mml_builder.setStyle(style, function(err, output){
+                    if ( err ) { done(err); return; }
+                    mml_builder.getStyle(function(err, data){
+                        if ( err ) { done(err); return; }
+                        assert.equal(data.style, style);
+                        assert.equal(data.version, version);
+                        mml_builder.delStyle(done);
+                    });
+                }, version);
+            });
+        });
+    });
+
   suiteTeardown(function() {
     // Close the server
     server.close();
