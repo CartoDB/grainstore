@@ -1,5 +1,5 @@
 Version 0.22.1
-2014-mm-dd
+2014-12-02
 
  - Freezes millstone version to 0.6.14 to support node.js v0.8.x
 
