@@ -24,6 +24,12 @@ function dropXMLFromStore(key, callback) {
 
 suite('mml_builder multilayer', function() {
 
+  var queryMakeLine = 'SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
+  var queryMakePoint = 'SELECT ST_MakePoint(0,0)';
+
+  var styleLine = "#layer1 { line-color:red; }";
+  var stylePoint = "#layer0 { marker-width:3; }";
+
   suiteSetup(function(done) {
     // Check that we start with an empty redis db 
     redis_client.keys("*", function(err, matches) {
@@ -307,6 +313,73 @@ suite('mml_builder multilayer', function() {
           }
       );
   })
+
+    test('datasource_extend option allows to have different datasources per layer', function(done) {
+        var mmlStore = new grainstore.MMLStore(redis_opts, { mapnik_version: '2.3.0' });
+        var mmlBuilder;
+
+        var default_user = 'default_user',
+            default_pass = 'default_pass',
+            wadus_user = 'wadus_user',
+            wadus_pass = 'wadus_password';
+
+        var datasource_extend = {
+            user: wadus_user,
+            password: wadus_pass
+        };
+
+        Step(
+            function initBuilder() {
+                mmlBuilder = mmlStore.mml_builder({
+                    dbuser: default_user,
+                    dbpassword: default_pass,
+                    dbname: 'my_database',
+                    sql: [queryMakeLine, queryMakePoint],
+                    datasource_extend: [,datasource_extend],
+                    style: [styleLine, stylePoint],
+                    style_version: '2.3.0'
+                }, this);
+            },
+            function getXML(err) {
+                if (err) {
+                    throw err;
+                }
+                mmlBuilder.toXML(this);
+            },
+            function validateXML(err, xml) {
+                if (err) {
+                    throw err;
+                }
+                var xmlDoc = libxmljs.parseXmlString(xml);
+
+                var layer0 = xmlDoc.get("Layer[@name='layer0']");
+                assert.ok(layer0, "Layer0 not found in XML");
+                var layer1 = xmlDoc.get("Layer[@name='layer1']");
+                assert.ok(layer1, "Layer1 not found in XML");
+
+                var layer0Datasource = layer0.get("Datasource");
+                assert.ok(layer0Datasource, "Datasource for layer0 not found in XML");
+                var layer1Datasource = layer1.get("Datasource");
+                assert.ok(layer1Datasource, "Datasource for layer1 not found in XML");
+
+
+                var layer0User = layer0Datasource.get("Parameter[@name='user']");
+                assert.equal(layer0User.text(), default_user, xml);
+                var layer1User = layer1Datasource.get("Parameter[@name='user']");
+                assert.equal(layer1User.text(), wadus_user, xml);
+
+                var layer0Password = layer0Datasource.get("Parameter[@name='password']");
+                assert.equal(layer0Password.text(), default_pass, xml);
+                var layer1Password = layer1Datasource.get("Parameter[@name='password']");
+                assert.equal(layer1Password.text(), wadus_pass, xml);
+
+                return null;
+            },
+            function finish(err) {
+                return done(err);
+            }
+        );
+    });
 
   test('error out on blank CartoCSS in a style array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
