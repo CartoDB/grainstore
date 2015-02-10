@@ -1,6 +1,7 @@
-Version 0.22.2
-2014-mm-dd
+Version 0.23.0
+2015-mm-dd
 
+ - Allow specifying/modifying datasource per layer
 
 Version 0.22.1
 2014-12-02
