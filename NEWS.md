@@ -1,5 +1,5 @@
 Version 0.23.0
-2015-mm-dd
+2015-02-10
 
  - Allow specifying/modifying datasource per layer
 
