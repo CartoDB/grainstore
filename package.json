@@ -29,7 +29,6 @@
     "devDependencies": {
         "step": "~0.0.5",
         "mocha": "~1.14.0",
-        "redis": "~0.8.3",
         "libxmljs": "~0.8.1"
     },
     "scripts": {
