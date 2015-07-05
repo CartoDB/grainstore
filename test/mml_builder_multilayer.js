@@ -1,13 +1,10 @@
 var assert     = require('assert');
 var grainstore = require('../lib/grainstore');
 var libxmljs   = require('libxmljs');
-var redis      = require('redis');
 var step       = require('step');
 var http       = require('http');
 var fs         = require('fs');
 
-var redis_opts = require('./support/redis_opts');
-var redis_client = redis.createClient(redis_opts.port);
 var server;
 
 var server_port = 8033;
@@ -35,11 +32,6 @@ suite('mml_builder multilayer', function() {
   var stylePoint = "#layer0 { marker-width:3; }";
 
   suiteSetup(function(done) {
-    // Check that we start with an empty redis db 
-    redis_client.keys("*", function(err, matches) {
-        assert.ok(!err);
-        assert.equal(matches.length, 0);
-    });
     // Start a server to test external resources
     server = http.createServer( function(request, response) {
         var filename = 'test/support/resources' + request.url; 
@@ -57,6 +49,10 @@ suite('mml_builder multilayer', function() {
     });
     server.listen(server_port, done);
 
+  });
+
+  suiteTeardown(function() {
+    server.close();
   });
 
   test('accept sql array with style array', function(done) {
@@ -592,18 +588,6 @@ suite('mml_builder multilayer', function() {
           done();
       }
     );
-  });
-
-  // TODO: test resetStyle ? does it make sense to allow its use ?
-
-  suiteTeardown(function() {
-    // Close the server
-    server.close();
-    // Check that we left the redis db empty
-    redis_client.keys("*", function(err, matches) {
-        assert.equal(matches.length, 0);
-    });
-    redis_client.flushall();
   });
 
 });

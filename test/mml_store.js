@@ -2,8 +2,6 @@ var assert     = require('assert');
 var _          = require('underscore');
 var grainstore = require('../lib/grainstore');
 
-var redis_opts = require('./support/redis_opts');
-
 var DEFAULT_POINT_STYLE = [
     '#layer {',
     '  marker-fill: #FF6600;',

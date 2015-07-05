@@ -1,5 +1,8 @@
-Version 0.23.1
+Version 1.0.0
 2015-mm-dd
+
+ - Simpler API with just allow to get XML from params
+ - No more style storing in Redis
 
 
 Version 0.23.0
