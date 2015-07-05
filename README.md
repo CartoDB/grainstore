@@ -29,18 +29,11 @@ or
 
 Typical use
 -----------
-1. initialise grainstore with PostGIS DB and table name
-2. generate Mapnik XML for table with default styles
-3. set custom style with carto 
-4. get carto errors returned if present, else store style
-5. generate Mapnik XML with custom style
-6. initialise with PostGIS DB, table name and sql query
-7. generate Mapnik XML with stored style for table name and sql query
-
 For using multiple layers use an array type for the 'sql' parameter and
 for the 'style' parameter. Each resulting layer will be named 'layerN'
 with N starting from 0 (needed to  properly reference the layers from
 the 'style' values).
+
 
 Install
 --------
@@ -49,10 +42,8 @@ npm install
 
 Dependencies
 ------------
-* node.js (tested from 0.4.x to 0.10.x)
+* node.js (tested from 0.8.x to 0.10.x)
 * npm
-* Redis
-* libosr (or libgdal)
 
 
 Additional test dependencies
@@ -66,29 +57,27 @@ Examples
 
 ```javascript
 
-var GrainStore = require('grainstore');
+var grainstore = require('grainstore');
 
+var params = {
+  dbname: 'my_database',
+  sql:'select * from my_table',
+  style: '#my_table { polygon-fill: #fff; }'
+}
 
 // fully default.
-var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'}, function(err, payload) {
-	mmlb.toXML(function(err, data){
-	  console.log(data); // => Mapnik XML for your database with default styles
-	}); 
+var mmls = new grainstore.MMLStore();
+var mmlb = mmls.mml_builder(params);
+mmlb.toXML(function(err, data){
+    console.log(data); // => Mapnik XML for your database with default styles
 });
 
 
-// custom redis and pg settings.
-var mmls = new GrainStore.MMLStore({host:'10.0.0.1'}); 
-
-var render_target = {
-  dbname: 'my_db', 
-  table:'my_tb', 
-  sql:'select * from my_tb where age < 100'
-}
+// custom pg settings.
+var mmls = new GrainStore.MMLStore();
 
 // see mml_store.js for more customisation detail 
-var mapnik_config = {
+var options = {
   Map: {srid: 4326},
   Datasource: {
     user: "postgres",
@@ -96,38 +85,22 @@ var mapnik_config = {
   }   
 }
 
-mmlb = mmls.mml_builder(render_target, mapnik_config, function(err, payload) {
-	mmlb.toXML(function(err, data){
-	  console.log(data); // => Mapnik XML of custom database with default style
-	}); 
+mmlb = mmls.mml_builder(params, options);
+mmlb.toXML(function(err, data){
+    console.log(data); // => Mapnik XML of custom database with default style
 });
-
 
 
 // custom styles.
 var mmls = new GrainStore.MMLStore();
-var mmlb = mmls.mml_builder({dbname: 'my_database', table:'my_table'},
-function(err, payload)
-{
-	var my_style = "#my_table{marker-fill: #FF6600;}"
-
-	mmlb.setStyle(my_style, function(err, data){
-	  if err throw err; // any Carto Compile errors
-	  
-	  mmlb.toMML(function(err, data){
-	    console.log(data) // => Carto ready MML
-	  }); 
-	  
-	  mmlb.toXML(function(err, data){
-	    console.log(data); // => Mapnik XML of database with custom style
-	  }); 
-	  
-	  mmlb.getStyle(function(err, data){
-	    console.log(data); // => "#my_table{marker-fill: #FF6600;}"
-	  });
-	});
+var mmlb = mmls.mml_builder(params);
+mmlb.toMML(function(err, data){
+    console.log(data) // => Carto ready MML
 });
 
+mmlb.toXML(function(err, data){
+    console.log(data); // => Mapnik XML of database with custom style
+});
 ```
 
 For more examples, see the tests.
@@ -142,8 +115,9 @@ npm test
 ```
 
 
-TODO
------
-* make storage pluggable
+Release
+-------
 
-to release: npm publish
+```
+npm publish
+```
