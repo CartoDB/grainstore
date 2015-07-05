@@ -1,6 +1,7 @@
 Version 1.0.0
-2015-mm-dd
+2015-07-05
 
+ - **IMPORTANT**: backwards incompatible release: to keep using previous API/behaviour stick to 0.x series
  - Simpler API with just allow to get XML from params
  - No more style storing in Redis
 
