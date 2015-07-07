@@ -22,6 +22,7 @@
     ],
     "dependencies": {
         "carto": "https://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
+        "generic-pool": "~2.2.0",
         "millstone": "0.6.14",
         "underscore": "~1.6.0",
         "semver": "~1.1.4"
