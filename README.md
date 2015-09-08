@@ -121,3 +121,8 @@ Release
 ```
 npm publish
 ```
+
+Contributing
+------------
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
