@@ -680,7 +680,6 @@ suite('mml_builder', function() {
         if ( err ) {
             throw err;
         }
-        console.log(data);
         var xmlDoc = libxmljs.parseXmlString(data);
         var node = xmlDoc.find("//Filter");
         assert.equal(node.length, 3);
