@@ -31,7 +31,7 @@ suite('mml_builder', function() {
   suiteSetup(function(done) {
     // Start a server to test external resources
     server = http.createServer( function(request, response) {
-        var filename = 'test/support/resources' + request.url; 
+        var filename = 'test/support/resources' + request.url;
         fs.readFile(filename, "binary", function(err, file) {
           if ( err ) {
             response.writeHead(404, {'Content-Type': 'text/plain'});
@@ -69,11 +69,11 @@ suite('mml_builder', function() {
             .toXML(done);
     });
 
-  test('can be initialized with custom interactivity', function(done) {
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
-    mml_store.mml_builder({dbname: 'd', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, interactivity: 'cartodb_id' })
-        .toXML(done);
-  });
+    test('can be initialized with custom interactivity', function(done) {
+        var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+        mml_store.mml_builder({dbname: 'd', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, interactivity: 'cartodb_id' })
+            .toXML(done);
+    });
 
     test('can generate base mml with overridden authentication', function(done) {
         var mml_store = new grainstore.MMLStore({
@@ -170,7 +170,7 @@ suite('mml_builder', function() {
         done();
     });
 
-  // See https://github.com/CartoDB/grainstore/issues/70
+    // See https://github.com/CartoDB/grainstore/issues/70
     test('can override db host and port with mml_builder constructor', function(done) {
         var mml_store = new grainstore.MMLStore({
             datasource: { host:'shadow_host', port:'shadow_port' }});
@@ -708,7 +708,7 @@ suite('mml_builder', function() {
 
   test('can construct mml_builder', function(done) {
     var style = '#t {bogus}';
-    // NOTE: we need mapnik_version to be != 2.0.0 
+    // NOTE: we need mapnik_version to be != 2.0.0
     var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
     mml_store.mml_builder({dbname: 'd', sql:'t', style: style}).toXML(
         function checkInit_getXML(err) {
@@ -749,5 +749,37 @@ suite('mml_builder', function() {
       }
     );
   });
+
+    test('should can set format after building the MML', function(done) {
+        var mml_store = new grainstore.MMLStore();
+        var mml = mml_store.mml_builder({
+            dbname: 'my_databaasez',
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE
+        });
+
+        mml.set('grainstore_map', { format: 'png32' });
+
+        mml.toXML(function (err, data) {
+            var xmlDoc = libxmljs.parseXmlString(data);
+            var format = xmlDoc.get("//Parameter[@name='format']");
+
+            assert.equal(format.text(), 'png32');
+            done();
+        });
+    });
+
+    test('when setting a property not allowed should throw error', function () {
+        var mml_store = new grainstore.MMLStore();
+        var mml = mml_store.mml_builder({
+            dbname: 'my_databaasez',
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE
+        });
+
+        assert.throws(function() {
+            mml.set('toXML', { format: 'png32' });
+        }, Error);
+    });
 
 });
