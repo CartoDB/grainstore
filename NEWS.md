@@ -1,4 +1,4 @@
-Version 1.0.1
+Version 1.1.0
 2015-mm-dd
 
  - Add options param in MMLStore to create MMLBuilder with extra options
