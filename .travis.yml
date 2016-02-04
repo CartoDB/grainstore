@@ -1,12 +1,5 @@
-before_install:
-  - sudo mv /etc/apt/sources.list.d/pgdg-source.list* /tmp
-  - sudo apt-get -qq purge postgis* postgresql*
-  - sudo apt-add-repository --yes ppa:cartodb/postgresql-9.3
-  - sudo apt-add-repository --yes ppa:cartodb/gis
-  - sudo apt-get update -q
-  - sudo apt-get install -y gdal-bin
+sudo: false
 
 language: node_js
 node_js:
-  - "0.8"
   - "0.10"
