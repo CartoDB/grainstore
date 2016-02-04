@@ -42,7 +42,7 @@ npm install
 
 Dependencies
 ------------
-* node.js (tested from 0.8.x to 0.10.x)
+* node.js >=0.10
 * npm
 
 
