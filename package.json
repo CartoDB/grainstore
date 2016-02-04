@@ -7,7 +7,7 @@
       "cartodb"
     ],
     "url": "https://github.com/CartoDB/grainstore",
-    "license": "BSD",
+    "license": "BSD-3-Clause",
     "repository": {
         "type": "git",
         "url": "git://github.com/CartoDB/grainstore.git"
