@@ -1,5 +1,5 @@
 Version 1.1.1
-2015-mm-dd
+2016-02-04
 
  - Upgrades millstone version to 0.6.16
 
