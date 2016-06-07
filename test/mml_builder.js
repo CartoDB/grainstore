@@ -432,7 +432,7 @@ suite('mml_builder', function() {
 
   test("can retrieve basic XML specifying sql", function(done){
     var mml_store = new grainstore.MMLStore();
-    mml_store.mml_builder({dbname: 'db', table:'tab', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE})
+    mml_store.mml_builder({dbname: 'db', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE})
         .toXML(function(err, data){
           if ( err ) { done(err); return; }
           var xmlDoc = libxmljs.parseXmlString(data);
@@ -780,6 +780,47 @@ suite('mml_builder', function() {
         assert.throws(function() {
             mml.set('toXML', { format: 'png32' });
         }, Error);
+    });
+
+    test('can set layer name from ids array', function(done) {
+        var mml_store = new grainstore.MMLStore();
+        var mml = mml_store.mml_builder({
+            dbname: 'my_databaasez',
+            ids: ['layer-name-wadus'],
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE
+        });
+
+        mml.toXML(function (err, data) {
+            var xmlDoc = libxmljs.parseXmlString(data);
+            var layer = xmlDoc.get("//Layer");
+
+            assert.equal(layer.attr('name').value(), 'layer-name-wadus');
+
+            done();
+        });
+    });
+
+    test('set valid interactivity layer name based on ids array', function(done) {
+        var mml_store = new grainstore.MMLStore();
+        var mml = mml_store.mml_builder({
+            dbname: 'd2',
+            ids: ['layer-wadus'],
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE,
+            interactivity: 'a,b'
+        });
+        mml.toXML(function(err, data){
+            if ( err ) { return done(err); }
+            var xmlDoc = libxmljs.parseXmlString(data);
+            var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+            assert.ok(x);
+            assert.equal(x.text(), 'layer-wadus');
+            x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
+            assert.ok(x);
+            assert.equal(x.text(), "a,b");
+            done();
+        });
     });
 
 });
