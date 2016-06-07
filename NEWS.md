@@ -2,6 +2,7 @@ Version 1.2.0
 2016-mm-dd
 
  - Allow to provide an array of ids to override layer ids/names #111
+ - Upgrade libxmljs development dependency to 0.18.0
 
 
 Version 1.1.1
