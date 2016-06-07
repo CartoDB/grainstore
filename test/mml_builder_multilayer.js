@@ -590,4 +590,68 @@ suite('mml_builder multilayer', function() {
     );
   });
 
+
+    test('undefined layer id uses old `layer{index}` notation for layer name', function(done) {
+        var mml_store = new grainstore.MMLStore();
+        var mml = mml_store.mml_builder({
+            dbname: 'my_db',
+            ids: ['layer-name-wadus', null, 'layer-name-top'],
+            sql: ['select 1', 'select 2', 'select 3'],
+            style: [DEFAULT_POINT_STYLE, DEFAULT_POINT_STYLE, DEFAULT_POINT_STYLE]
+        });
+
+        mml.toXML(function (err, data) {
+            var xmlDoc = libxmljs.parseXmlString(data);
+
+            var layer0 = xmlDoc.get("Layer[@name='layer-name-wadus']");
+            assert.ok(layer0, "Layer0 not found in XML");
+
+            var layer1 = xmlDoc.get("Layer[@name='layer1']");
+            assert.ok(layer1, "Layer1 not found in XML");
+
+            var layer2 = xmlDoc.get("Layer[@name='layer-name-top']");
+            assert.ok(layer2, "Layer2 not found in XML");
+
+            var style0 = xmlDoc.get("Style[@name='layer-name-wadus']");
+            assert.ok(style0, "Style for layer0 not found in XML");
+
+            var style1 = xmlDoc.get("Style[@name='layer1']");
+            assert.ok(style1, "Style for layer1 not found in XML");
+
+            var style2 = xmlDoc.get("Style[@name='layer-name-top']");
+            assert.ok(style2, "Style for layer1 not found in XML");
+
+            done();
+        });
+    });
+
+    test('Uses correct layer name for interactivity layer', function(done) {
+        var sql0 = 'SELECT 1 as a, 2 as b, ST_MakePoint(0,0)';
+        var sql1 = 'SELECT 3 as a, 4 as b, ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
+        var style0 = "#layer0 { marker-width:3; }";
+        var style1 = "#layer1 { line-color:red; }";
+        var fullstyle = style0 + style1;
+        var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+        var iact0 = 'a,b';
+        var iact1 = 'c,d';
+
+        var mml = mml_store.mml_builder({
+            dbname: 'my_database',
+            ids: ['layer-wadus-0','layer-wadus-1'],
+            layer: 1,
+            sql:[sql0, sql1],
+            interactivity: [iact0, iact1],
+            style: fullstyle,
+            style_version:'2.1.0'
+        });
+
+        mml.toXML(function(err, data) {
+            var xmlDoc = libxmljs.parseXmlString(data);
+            var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
+            assert.ok(x);
+            assert.equal(x.text(), 'layer-wadus-1');
+            done();
+        });
+    });
+
 });
