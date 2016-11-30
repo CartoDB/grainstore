@@ -20,7 +20,7 @@
   "dependencies": {
     "carto": "https://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
     "debug": "~2.2.0",
-    "millstone": "0.6.16",
+    "millstone": "cartodb/millstone#node-v6",
     "semver": "~5.0.3",
     "underscore": "~1.6.0"
   },
