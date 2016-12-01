@@ -26,7 +26,8 @@ var DEFAULT_POINT_STYLE = [
 
 var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
 
-suite('mml_builder', function() {
+[false, true].forEach(function(useWorkers) {
+suite('mml_builder use_workers=' + useWorkers, function() {
 
   suiteSetup(function(done) {
     // Start a server to test external resources
@@ -52,7 +53,7 @@ suite('mml_builder', function() {
   });
 
     test('can generate base mml with normal ops', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder({dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE});
         var baseMML = mml_builder.baseMML();
 
@@ -64,19 +65,19 @@ suite('mml_builder', function() {
     });
 
     test('can be initialized with custom style and version', function(done) {
-        var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
         mml_store.mml_builder({dbname: 'd', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, style_version: '2.0.2' })
             .toXML(done);
     });
 
     test('can be initialized with custom interactivity', function(done) {
-        var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
         mml_store.mml_builder({dbname: 'd', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, interactivity: 'cartodb_id' })
             .toXML(done);
     });
 
     test('can generate base mml with overridden authentication', function(done) {
-        var mml_store = new grainstore.MMLStore({
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
             datasource: {
                 user:'overridden_user',
                 password:'overridden_password'
@@ -101,7 +102,7 @@ suite('mml_builder', function() {
 
     test('search_path is set in the datasource', function(done) {
         var search_path = "'foo', 'bar'";
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder(
             {dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, search_path: search_path}
         );
@@ -112,7 +113,7 @@ suite('mml_builder', function() {
     });
 
     test('search_path is NOT set in the datasource', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder(
             {dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE, search_path: null}
         );
@@ -126,7 +127,7 @@ suite('mml_builder', function() {
     });
 
     test('default format is png', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder({dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE});
         var baseMML = mml_builder.baseMML();
         assert.equal(baseMML.format, 'png');
@@ -135,7 +136,7 @@ suite('mml_builder', function() {
 
     test('format can be overwritten with optional args', function(done) {
         var format = 'png32';
-        var mml_store = new grainstore.MMLStore({mapnik_tile_format: format});
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_tile_format: format});
         var mml_builder = mml_store.mml_builder({dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE});
         var baseMML = mml_builder.baseMML();
         assert.equal(baseMML.format, format);
@@ -143,7 +144,7 @@ suite('mml_builder', function() {
     });
 
     test('can override authentication with mml_builder constructor', function(done) {
-        var mml_store = new grainstore.MMLStore({
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
             datasource: { user:'shadow_user', password:'shadow_password' }});
         var mml_builder = mml_store.mml_builder({
                 dbname: 'my_database',
@@ -172,7 +173,7 @@ suite('mml_builder', function() {
 
     // See https://github.com/CartoDB/grainstore/issues/70
     test('can override db host and port with mml_builder constructor', function(done) {
-        var mml_store = new grainstore.MMLStore({
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
             datasource: { host:'shadow_host', port:'shadow_port' }});
         var mml_builder = mml_store.mml_builder({
                 dbname: 'my_database',
@@ -200,7 +201,7 @@ suite('mml_builder', function() {
     });
 
     test('can generate base mml with sql ops, maintain id', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder(
             {dbname: 'my_database', sql: 'SELECT * from my_table', style: DEFAULT_POINT_STYLE}
         );
@@ -211,7 +212,7 @@ suite('mml_builder', function() {
     });
 
     test('can force plain base mml with sql ops', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder(
             {dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE}
         );
@@ -222,7 +223,7 @@ suite('mml_builder', function() {
     });
 
   test('can generate full mml with style', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     var mml_builder = mml_store.mml_builder({dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE});
     var mml = mml_builder.toMML("my carto style");
     assert.equal(mml.Stylesheet[0].data, 'my carto style');
@@ -230,7 +231,7 @@ suite('mml_builder', function() {
   });
 
   test('can render XML from full mml with style', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     var mml_builder = mml_store.mml_builder(
         {dbname: 'my_database', sql:'my_table', style: "#my_table {\n  polygon-fill: #fff;\n}"}
     );
@@ -243,7 +244,7 @@ suite('mml_builder', function() {
 
   test('Render a 2.2.0 style', function(done) {
     var style = "#t { polygon-fill: #fff; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.2.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.2.0'});
     mml_store.mml_builder({dbname: 'd', sql: SAMPLE_SQL, style: style}).toXML(function(err, output) {
         try {
           assert.ok(_.isNull(err), _.isNull(err) ? '' : err.message);
@@ -258,7 +259,7 @@ suite('mml_builder', function() {
   });
 
   test('can render errors from full mml with bad style', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder(
         {dbname: 'my_database', sql: SAMPLE_SQL, style: "#my_table {\n  backgrxxxxxound-color: #fff;\n}"}
     ).toXML(function(err) {
@@ -268,7 +269,7 @@ suite('mml_builder', function() {
   });
 
   test('can render multiple errors from full mml with bad style', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder(
         {dbname: 'my_database', sql: SAMPLE_SQL, style: "#my_table {\n  backgrxxound-color: #fff;bad-tag: #fff;\n}"}
     ).toXML(
@@ -280,7 +281,7 @@ suite('mml_builder', function() {
   });
 
     test('retrieves a dynamic style should return XML with dynamic style', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         mml_store.mml_builder({dbname: 'my_databaasez', sql:'my_tablez', style: '#my_tablez {marker-fill: #000000;}'})
             .toXML(function(err, data){
                 if ( err ) { return done(err); }
@@ -292,7 +293,7 @@ suite('mml_builder', function() {
     });
 
   test('includes interactivity in XML', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder(
       { dbname: 'd2', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE,
         interactivity: 'a,b'
@@ -311,7 +312,7 @@ suite('mml_builder', function() {
 
   // See https://github.com/Vizzuality/grainstore/issues/61
   test('zoom variable is special', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder(
       { dbname: 'd', sql: SAMPLE_SQL,
         style: '#t [ zoom  >=  4 ] {marker-fill:red;}'
@@ -327,7 +328,7 @@ suite('mml_builder', function() {
   });
 
   test('quotes in CartoCSS are accepted', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder(
       { dbname: 'd', table:'t',
         sql: [ "select 'x' as n, 'SRID=3857;POINT(0 0)'::geometry as the_geom_webmercator",
@@ -352,7 +353,7 @@ suite('mml_builder', function() {
   });
 
   test('base style and custom style keys do not affect each other', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     var style1 = "#tab { marker-fill: #111111; }";
     var style2 = "#tab { marker-fill: #222222; }";
     var style3 = "#tab { marker-fill: #333333; }";
@@ -399,7 +400,7 @@ suite('mml_builder', function() {
   });
 
   test('can retrieve basic XML', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder({dbname: 'my_databaasez', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE})
         .toXML(function(err, data){
             var xmlDoc = libxmljs.parseXmlString(data);
@@ -410,7 +411,7 @@ suite('mml_builder', function() {
   });
 
   test('XML contains connection parameters', function(done) {
-    var mml_store = new grainstore.MMLStore({
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
         datasource: {
           user:'u', host:'h', port:'12', password:'p'
         }
@@ -431,7 +432,7 @@ suite('mml_builder', function() {
   });
 
   test("can retrieve basic XML specifying sql", function(done){
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder({dbname: 'db', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE})
         .toXML(function(err, data){
           if ( err ) { done(err); return; }
@@ -452,7 +453,7 @@ suite('mml_builder', function() {
   });
 
   test('by default datasource has full webmercator extent', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     var mml_builder = mml_store.mml_builder(
         {dbname: 'my_database', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE}
     );
@@ -463,7 +464,7 @@ suite('mml_builder', function() {
   });
 
   test('SRS in XML should use the "+init=epsg:xxx" form', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     mml_store.mml_builder({dbname: 'my_databaasez', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE})
         .toXML(function(err, data){
           if ( err ) { return done(err); }
@@ -527,7 +528,7 @@ suite('mml_builder', function() {
       if ( ! this.styles.length ) {
         err = this.errors.length ? new Error(this.errors) : null;
         // TODO: remove all from cachedir ?
-        mml_store = new grainstore.MMLStore({cachedir: cachedir});
+        mml_store = new grainstore.MMLStore({ use_workers: useWorkers, cachedir: cachedir});
         that = this;
         mml_store.purgeLocalizedResources(0, function(e) {
           if ( e ) {
@@ -544,7 +545,7 @@ suite('mml_builder', function() {
       var target_mapnik_version = style_spec.target_version || style_version;
       var xml_re = style_spec.xml_re;
 
-      var mml_store = new grainstore.MMLStore({
+      var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
           cachedir: cachedir,
           mapnik_version: target_mapnik_version,
           cachettl: 0.01
@@ -580,12 +581,12 @@ suite('mml_builder', function() {
 
       var cdir1 = cachedir + '1';
       var style1 = '#t1 ' + style;
-      var store1 = new grainstore.MMLStore({cachedir: cdir1 });
+      var store1 = new grainstore.MMLStore({ use_workers: useWorkers, cachedir: cdir1 });
       var re1 = new RegExp('PointSymbolizer file="' + cdir1 + '/cache/.*.svg"');
 
       var cdir2 = cachedir + '2';
       var style2 = '#t2 ' + style;
-      var store2 = new grainstore.MMLStore({cachedir: cdir2 });
+      var store2 = new grainstore.MMLStore({ use_workers: useWorkers, cachedir: cdir2 });
       var re2 = new RegExp('PointSymbolizer file="' + cdir2 + '/cache/.*.svg"');
 
       var pending = 2;
@@ -629,7 +630,7 @@ suite('mml_builder', function() {
   });
 
   test('lost XML in base key triggers re-creation', function(done) {
-    var mml_store = new grainstore.MMLStore();
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
     var mml_builder0 = mml_store.mml_builder({dbname: 'db', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE}),
         mml_builder = mml_store.mml_builder({dbname: 'db', sql: "SELECT * FROM my_face", style: DEFAULT_POINT_STYLE}),
         xml0;
@@ -657,7 +658,7 @@ suite('mml_builder', function() {
   // See https://github.com/Vizzuality/grainstore/issues/62
   test('throws useful error message on invalid text-name', function(done) {
     var style = "#t { text-name: invalid; text-face-name:'Dejagnu'; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
     mml_store.mml_builder({dbname: 'd', sql:'t', style:style}).toXML(function(err) {
         assert.ok(err);
         var re = /Invalid value for text-name/;
@@ -670,7 +671,7 @@ suite('mml_builder', function() {
     var style =  "#t[a=1.2e-3] { polygon-fill: #000000; }";
         style += "#t[b=1.2e+3] { polygon-fill: #000000; }";
         style += "#t[c=2.3e4] { polygon-fill: #000000; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
     var mml_builder = mml_store.mml_builder({dbname: 'd2', sql:'t', style:style, style_version:'2.1.0'});
     step(
       function getXML() {
@@ -709,7 +710,7 @@ suite('mml_builder', function() {
   test('can construct mml_builder', function(done) {
     var style = '#t {bogus}';
     // NOTE: we need mapnik_version to be != 2.0.0
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
     mml_store.mml_builder({dbname: 'd', sql:'t', style: style}).toXML(
         function checkInit_getXML(err) {
             assert.ok(err.message.match(/bogus/), err.message);
@@ -721,7 +722,7 @@ suite('mml_builder', function() {
   // See https://github.com/CartoDB/grainstore/issues/72
   test('invalid fonts are complained about',
   function(done) {
-    var mml_store = new grainstore.MMLStore({
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers,
       mapnik_version: '2.1.0',
       carto_env: {
         validation_data: {
@@ -751,7 +752,7 @@ suite('mml_builder', function() {
   });
 
     test('should can set format after building the MML', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml = mml_store.mml_builder({
             dbname: 'my_databaasez',
             sql: SAMPLE_SQL,
@@ -770,7 +771,7 @@ suite('mml_builder', function() {
     });
 
     test('when setting a property not allowed should throw error', function () {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml = mml_store.mml_builder({
             dbname: 'my_databaasez',
             sql: SAMPLE_SQL,
@@ -783,7 +784,7 @@ suite('mml_builder', function() {
     });
 
     test('can set layer name from ids array', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml = mml_store.mml_builder({
             dbname: 'my_databaasez',
             ids: ['layer-name-wadus'],
@@ -802,7 +803,7 @@ suite('mml_builder', function() {
     });
 
     test('set valid interactivity layer name based on ids array', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml = mml_store.mml_builder({
             dbname: 'd2',
             ids: ['layer-wadus'],
@@ -823,4 +824,5 @@ suite('mml_builder', function() {
         });
     });
 
+});
 });

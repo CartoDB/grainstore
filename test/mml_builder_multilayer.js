@@ -23,7 +23,8 @@ var DEFAULT_POINT_STYLE = [
     '}'
 ].join('');
 
-suite('mml_builder multilayer', function() {
+[false, true].forEach(function(useWorkers) {
+suite('mml_builder multilayer use_workers=' + useWorkers, function() {
 
   var queryMakeLine = 'SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
   var queryMakePoint = 'SELECT ST_MakePoint(0,0)';
@@ -34,7 +35,7 @@ suite('mml_builder multilayer', function() {
   suiteSetup(function(done) {
     // Start a server to test external resources
     server = http.createServer( function(request, response) {
-        var filename = 'test/support/resources' + request.url; 
+        var filename = 'test/support/resources' + request.url;
         fs.readFile(filename, "binary", function(err, file) {
           if ( err ) {
             response.writeHead(404, {'Content-Type': 'text/plain'});
@@ -58,7 +59,7 @@ suite('mml_builder multilayer', function() {
   test('accept sql array with style array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "#layer1 { line-color:red; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -102,7 +103,7 @@ suite('mml_builder multilayer', function() {
   test('accept sql array with style array and gcols array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "#layer1 { line-color:red; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
     var mml_builder;
 
     step(
@@ -154,7 +155,7 @@ suite('mml_builder multilayer', function() {
 ].forEach(function(gcols) {
   // See http://github.com/CartoDB/grainstore/issues/93
   test('accept types in gcols', function(done) {
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -176,7 +177,7 @@ suite('mml_builder multilayer', function() {
           var ds0 = layer0.get("Datasource");
           assert.ok(ds0, "Datasource for layer0 not found in XML");
           var gf0 = ds0.get("Parameter[@name='geometry_field']");
-          assert.equal(gf0.text(), "g", xmlDoc); 
+          assert.equal(gf0.text(), "g", xmlDoc);
 
           var layer1 = xmlDoc.get("Layer[@name='layer1']");
           assert.ok(layer1, "Layer1 not found in XML");
@@ -184,9 +185,9 @@ suite('mml_builder multilayer', function() {
           assert.ok(ds1, "Datasource for layer1 not found in XML: " + xmlDoc);
           var gf1 = ds1.get("Parameter[@name='raster_field']");
           assert.ok(gf1, "raster_field for layer1 not found in: " + ds1);
-          assert.equal(gf1.text(), "r"); 
+          assert.equal(gf1.text(), "r");
           var typ1 = ds1.get("Parameter[@name='type']");
-          assert.equal(typ1.text(), "pgraster"); 
+          assert.equal(typ1.text(), "pgraster");
           assert.ok(! ds1.get("Parameter[@name='band']") );
 
           done();
@@ -198,7 +199,7 @@ suite('mml_builder multilayer', function() {
 
   // See http://github.com/CartoDB/grainstore/issues/93
   test('accept rcolbands and extra_ds_opts arrays', function(done) {
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -230,7 +231,7 @@ suite('mml_builder multilayer', function() {
           var ds0 = layer0.get("Datasource");
           assert.ok(ds0, "Datasource for layer0 not found in XML");
           var gf0 = ds0.get("Parameter[@name='geometry_field']");
-          assert.equal(gf0.text(), "g", xmlDoc); 
+          assert.equal(gf0.text(), "g", xmlDoc);
 
           var layer1 = xmlDoc.get("Layer[@name='layer1']");
           assert.ok(layer1, "Layer1 not found in XML");
@@ -238,15 +239,15 @@ suite('mml_builder multilayer', function() {
           assert.ok(ds1, "Datasource for layer1 not found in XML: " + xmlDoc);
           var gf1 = ds1.get("Parameter[@name='raster_field']");
           assert.ok(gf1, "raster_field for layer1 not found in: " + ds1);
-          assert.equal(gf1.text(), "r"); 
+          assert.equal(gf1.text(), "r");
           var typ1 = ds1.get("Parameter[@name='type']");
-          assert.equal(typ1.text(), "pgraster"); 
+          assert.equal(typ1.text(), "pgraster");
           assert.ok(! ds1.get("Parameter[@name='band']") );
           assert.ok(! ds1.get("Parameter[@name='clip_rasters']") );
           var ovv1 = ds1.get("Parameter[@name='use_overviews']");
-          assert.equal(ovv1.text(), "1"); 
+          assert.equal(ovv1.text(), "1");
           var scl1 = ds1.get("Parameter[@name='prescale_rasters']");
-          assert.equal(scl1.text(), "true"); 
+          assert.equal(scl1.text(), "true");
 
           var layer2 = xmlDoc.get("Layer[@name='layer2']");
           assert.ok(layer2, "Layer2 not found in XML");
@@ -254,9 +255,9 @@ suite('mml_builder multilayer', function() {
           assert.ok(ds2, "Datasource for layer2 not found in XML: " + xmlDoc);
           var gf2 = ds2.get("Parameter[@name='raster_field']");
           assert.ok(gf2, "raster_field for layer2 not found in: " + ds2);
-          assert.equal(gf2.text(), "r2"); 
+          assert.equal(gf2.text(), "r2");
           var typ2 = ds2.get("Parameter[@name='type']");
-          assert.equal(typ2.text(), "pgraster"); 
+          assert.equal(typ2.text(), "pgraster");
           var bnd2 = ds2.get("Parameter[@name='band']");
           assert.equal(bnd2.text(), "1");
           var clp2 = ds2.get("Parameter[@name='clip_rasters']");
@@ -271,7 +272,7 @@ suite('mml_builder multilayer', function() {
 
 
   test('gcol with objects fails when name is not provided', function(done) {
-      var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'}),
+      var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'}),
           mml_builder;
 
       step(
@@ -295,7 +296,7 @@ suite('mml_builder multilayer', function() {
   });
 
     test('datasource_extend option allows to have different datasources per layer', function(done) {
-        var mmlStore = new grainstore.MMLStore({ mapnik_version: '2.3.0' });
+        var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers,  mapnik_version: '2.3.0' });
 
         var default_user = 'default_user',
             default_pass = 'default_pass',
@@ -357,7 +358,7 @@ suite('mml_builder multilayer', function() {
   test('error out on blank CartoCSS in a style array', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -386,7 +387,7 @@ suite('mml_builder multilayer', function() {
     var sql1 = 'SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
     var style_version0 = "2.0.2";
     var style_version1 = "2.1.0";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -444,7 +445,7 @@ suite('mml_builder multilayer', function() {
   test('layer name in style array is only a placeholder', function(done) {
     var style0 = "#layer { marker-width:3; }";
     var style1 = "#style { line-color:red; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -478,7 +479,7 @@ suite('mml_builder multilayer', function() {
 
   test('layer name in single style is only a placeholder', function(done) {
     var style0 = "#layer { marker-width:3; } #layer[a=1] { marker-fill:#ff0000 }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -510,7 +511,7 @@ suite('mml_builder multilayer', function() {
   test('accept sql array with single style string', function(done) {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "#layer1 { line-color:red; }";
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -548,7 +549,7 @@ suite('mml_builder multilayer', function() {
     var style0 = "#layer0 { marker-width:3; }";
     var style1 = "#layer1 { line-color:red; }";
     var fullstyle = style0 + style1;
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
     var iact0;
     var iact1 = ['a','b'];
 
@@ -558,7 +559,7 @@ suite('mml_builder multilayer', function() {
               dbname: 'my_database',
               sql:[sql0, sql1],
               interactivity: [iact0, iact1],
-              style: fullstyle, 
+              style: fullstyle,
               style_version:'2.1.0'
             }).toXML(this);
       },
@@ -571,7 +572,7 @@ suite('mml_builder multilayer', function() {
   });
 
   test('Error out on malformed layer', function(done) {
-    var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
 
     step(
       function initBuilder() {
@@ -592,7 +593,7 @@ suite('mml_builder multilayer', function() {
 
 
     test('undefined layer id uses old `layer{index}` notation for layer name', function(done) {
-        var mml_store = new grainstore.MMLStore();
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml = mml_store.mml_builder({
             dbname: 'my_db',
             ids: ['layer-name-wadus', null, 'layer-name-top'],
@@ -631,7 +632,7 @@ suite('mml_builder multilayer', function() {
         var style0 = "#layer0 { marker-width:3; }";
         var style1 = "#layer1 { line-color:red; }";
         var fullstyle = style0 + style1;
-        var mml_store = new grainstore.MMLStore({mapnik_version: '2.1.0'});
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
         var iact0 = 'a,b';
         var iact1 = 'c,d';
 
@@ -654,4 +655,5 @@ suite('mml_builder multilayer', function() {
         });
     });
 
+});
 });
