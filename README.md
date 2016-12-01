@@ -1,7 +1,7 @@
 Grainstore
 ===========
 
-[![Build Status](http://travis-ci.org/CartoDB/grainstore.png)]
+[![Build Status](http://travis-ci.org/CartoDB/grainstore.png?branch=master)]
 (http://travis-ci.org/CartoDB/grainstore)
 
 Need to simply generate a Mapnik map from a dynamic PostGIS table?
@@ -42,7 +42,7 @@ npm install
 
 Dependencies
 ------------
-* node.js (tested from 0.8.x to 0.10.x)
+* node.js >=0.10
 * npm
 
 
@@ -121,3 +121,8 @@ Release
 ```
 npm publish
 ```
+
+Contributing
+------------
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
