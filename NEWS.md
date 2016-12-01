@@ -1,5 +1,5 @@
 Version 1.3.0
-2016-mm-dd
+2016-12-01
 
  - Add option to render XML with a child process, not blocking the main thread.
 
