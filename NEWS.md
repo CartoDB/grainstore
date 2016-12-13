@@ -1,5 +1,7 @@
-Version 1.3.1
+Version 1.4.0
 2016-mm-dd
+
+ - Improve debugging: DEBUG=grainstore:renderer:xml will output the final generated XML.
 
 
 Version 1.3.0
