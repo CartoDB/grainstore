@@ -18,7 +18,7 @@
     "Sandro Santilli <strk@vizzuality.com>"
   ],
   "dependencies": {
-    "carto": "https://github.com/CartoDB/carto/tarball/0.9.5-cdb2",
+    "carto": "0.16.3",
     "debug": "~2.2.0",
     "millstone": "cartodb/millstone#node-v6",
     "semver": "~5.0.3",
