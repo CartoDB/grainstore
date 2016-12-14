@@ -1,5 +1,17 @@
-Version 1.2.1
+Version 1.4.1
 2016-mm-dd
+
+
+Version 1.4.0
+2016-12-13
+
+ - Improve debugging: DEBUG=grainstore:renderer:xml will output the final generated XML.
+
+
+Version 1.3.0
+2016-12-01
+
+ - Add option to render XML with a child process, not blocking the main thread.
 
 
 Version 1.2.0
@@ -253,7 +265,7 @@ Version 0.11.0 - Multilayer
  - Multilayer support:
     - Support arrays for "sql", "style" and "style_version" parameters (#48)
     - New getToken() API method
-    - New touch() API method 
+    - New touch() API method
     - Probabilistic based garbage collection for table-less styles
 
 Version 0.10.9 - "EOW"
@@ -383,7 +395,7 @@ Version 0.7.0
 2012-09-28
 
  - Style versioning
-   - Allow specifying style version in .setStyle 
+   - Allow specifying style version in .setStyle
    - Return style version from .getStyle
    - Include style version in store
    - Allow specifying target mapnik version
@@ -415,7 +427,7 @@ Version 0.6.2
  - Add MMBuilder.resetStyle method to re-render an XML style
  - Reconstruct the XML when lost in redis
  - Change localized resources path from <dbname>-<tablename>
-   to <dbname>/<tablename>. 
+   to <dbname>/<tablename>.
 
 Version 0.6.1
 2012-09-18
@@ -448,7 +460,7 @@ Version 0.3.1
 2012-07-25
 
  - Loosen carto dependency to include the 0.8 series
- - Drop 'srs' dependency, use "+init=epsg:xxx" in map XML to 
+ - Drop 'srs' dependency, use "+init=epsg:xxx" in map XML to
    allow mapnik do special handling of wgs84->webmercator reprojection
 
 Version 0.3.0
@@ -476,17 +488,17 @@ Version 0.2.3
  - Tests ported to mocha (#11)
  - Require libxmljs-0.5.x and redis-0.7.2 (for node-0.8.x compatibility)
 
-Version 0.2.2 
+Version 0.2.2
 2012-06-26
 
  - Require leaks free 'carto' 0.7.0 and 'srs' 0.2.14 (#12)
  - Testsuite improvements:
-   - Add support for make check 
+   - Add support for make check
    - Fix invalid syntax used in tests for mml_builder (#13)
    - Print unexpected error message in mml_buider test
 
 
-Version 0.2.1 
+Version 0.2.1
 2012-06-06
 
 Version 0.2.0
