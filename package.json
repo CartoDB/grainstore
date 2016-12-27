@@ -20,8 +20,10 @@
   "dependencies": {
     "carto": "0.16.3",
     "debug": "~2.2.0",
+    "es6-promise": "4.0.5",
     "generic-pool": "~2.2.0",
     "millstone": "cartodb/millstone#node-v6",
+    "postcss": "5.0.19",
     "semver": "~5.0.3",
     "underscore": "~1.6.0"
   },
