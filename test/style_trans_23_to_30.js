@@ -3,7 +3,7 @@
 var assert = require('assert');
 var StyleTrans = require('../lib/grainstore/style_trans.js');
 
-describe('cartocss transformation from 2.3.x to 3.0.x', function() {
+describe.only('cartocss transformation from 2.3.x to 3.0.x', function() {
     beforeEach(function() {
         this.styleTrans = new StyleTrans();
     });
@@ -21,7 +21,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -35,7 +34,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -50,7 +48,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -63,36 +60,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-clip: false;',
-                '  polygon-pattern-aligment: local;',
-                '}'
-            ].join('\n')
-        }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon symbolizer is present and `polygon-pattern-aligment` is already set to global',
-            input: [
-                '#layer {',
-                '  polygon-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
-                '}'
-            ].join('\n'),
-            expected: [
-                '#layer {',
-                '  polygon-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
-                '  polygon-clip: true;',
-                '}'
-            ].join('\n')
-        }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon symbolizer is present and `polygon-pattern-aligment` is already set to local',
-            input: [
-                '#layer {',
-                '  polygon-clip: false;',
-                '  polygon-pattern-aligment: local;',
-                '}'
-            ].join('\n'),
-            expected: [
-                '#layer {',
-                '  polygon-clip: false;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -109,12 +76,10 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}',
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -130,7 +95,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
-                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -144,6 +108,192 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-simplify: 0.1;',
                 '  polygon-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add polygon defaults if just polygon-pattern symbolizer is present',
+            input: [
+                '#layer::glow {',
+                '  polygon-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add polygon and polygon-pattern defaults if both symbolizers are present for layer with `::glow` modifier',
+            input: [
+                '#layer::glow {',
+                '  polygon-simplify: 0.1;',
+                '  polygon-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  polygon-simplify: 0.1;',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-clip: true;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }]
+    };
+
+    var polygonPatternSuite = {
+        symbolizer: 'polygon-pattern',
+        testCases: [{
+            description: 'should add defaults if polygon-pattern symbolizer is present with `polygon-pattern-simplify-algorithm` property',
+            input: [
+                '#layer {',
+                '  polygon-pattern-simplify-algorithm: zhao-saalfeld;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-simplify-algorithm: zhao-saalfeld;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `polygon-pattern-clip` default if polygon-pattern symbolizer is present and `polygon-clip` is already set to true',
+            input: [
+                '#layer {',
+                '  polygon-pattern-clip: true;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `polygon-pattern-clip` default if polygon symbolizer is present and `polygon-clip` is already set to false',
+            input: [
+                '#layer {',
+                '  polygon-pattern-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-clip: false;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to global',
+            input: [
+                '#layer {',
+                '  polygon-pattern-opacity: 0.5;',
+                '  polygon-pattern-aligment: global;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-opacity: 0.5;',
+                '  polygon-pattern-aligment: global;',
+                '  polygon-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to local',
+            input: [
+                '#layer {',
+                '  polygon-pattern-clip: false;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-clip: false;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if polygon-pattern symbolizer is present in two different rules',
+            input: [
+                '#layer {',
+                '  polygon-pattern-simplify: 0.1;',
+                '}',
+                '#layer {',
+                '  polygon-pattern-opacity: 0.5;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}',
+                '#layer {',
+                '  polygon-pattern-opacity: 0.5;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if polygon-pattern symbolizer is present with two different properties',
+            input: [
+                '#layer {',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-pattern-opacity: 0.5;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-pattern-opacity: 0.5;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if polygon-pattern symbolizer is present for layer with `::glow` modifier',
+            input: [
+                '#layer::glow {',
+                '  polygon-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-pattern-clip: true;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add defaults if just polygon symbolizer is present',
+            input: [
+                '#layer::glow {',
+                '  polygon-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  polygon-simplify: 0.1;',
+                '  polygon-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add polygon and polygon-pattern defaults if both symbolizers are present',
+            input: [
+                '#layer {',
+                '  polygon-simplify: 0.1;',
+                '  polygon-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-simplify: 0.1;',
+                '  polygon-pattern-simplify: 0.1;',
+                '  polygon-clip: true;',
+                '  polygon-pattern-clip: true;',
                 '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
@@ -250,6 +400,125 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  line-cap: round;',
                 '  line-clip: true;',
+                '}'
+            ].join('\n')
+        }]
+    };
+
+    var linePatternSuite = {
+        symbolizer: 'line-pattern',
+        testCases: [{
+            description: 'should add defaults if line-pattern symbolizer is present with `line-pattern-simplify-algorithm` property',
+            input: [
+                '#layer {',
+                '  line-pattern-simplify-algorithm: visvalingam-whyatt;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-pattern-simplify-algorithm: visvalingam-whyatt;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `line-pattern-clip` default if line-pattern symbolizer is present and `line-pattern-clip` is already set to true',
+            input: [
+                '#layer {',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `line-pattern-clip` default if line-pattern symbolizer is present and `line-pattern-clip` is already set to false',
+            input: [
+                '#layer {',
+                '  line-pattern-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-pattern-clip: false;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if line-pattern symbolizer is present in two different rules',
+            input: [
+                '#layer {',
+                '  line-pattern-simplify: 0.1;',
+                '}',
+                '#layer {',
+                '  line-pattern-opacity: 0.5;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-pattern-simplify: 0.1;',
+                '  line-pattern-clip: true;',
+                '}',
+                '#layer {',
+                '  line-pattern-opacity: 0.5;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if line-pattern symbolizer is present with two different properties',
+            input: [
+                '#layer {',
+                '  line-pattern-simplify: 0.1;',
+                '  line-pattern-opacity: 0.5;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-pattern-simplify: 0.1;',
+                '  line-pattern-opacity: 0.5;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if line-pattern symbolizer is present for layer with `::glow` modifier',
+            input: [
+                '#layer::glow {',
+                '  line-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  line-pattern-simplify: 0.1;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add defaults if just line symbolizer is present',
+            input: [
+                '#layer::glow {',
+                '  line-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer::glow {',
+                '  line-simplify: 0.1;',
+                '  line-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add line and line-pattern defaults if both symbolizers are present',
+            input: [
+                '#layer {',
+                '  line-simplify: 0.1;',
+                '  line-pattern-simplify: 0.1;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-simplify: 0.1;',
+                '  line-pattern-simplify: 0.1;',
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
         }]
@@ -642,7 +911,9 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
 
     var suites = []
         .concat(polygonSuite)
+        .concat(polygonPatternSuite)
         .concat(lineSuite)
+        .concat(linePatternSuite)
         .concat(markerSuite)
         .concat(shieldSuite)
         .concat(textSuite)
