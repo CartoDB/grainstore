@@ -479,6 +479,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  text-spacing: 5;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }, {
@@ -492,6 +493,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  text-halo-fill: #cf3;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }, {
@@ -506,6 +508,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  text-halo-fill: #cf3;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }, {
@@ -518,6 +521,22 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  text-clip: false;',
+                '  text-label-position-tolerance: 0;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `text-label-position-tolerance` default if text symbolizer is present and `text-label-position-tolerance` is already set to any value',
+            input: [
+                '#layer {',
+                '  text-halo-fill: #cf3;',
+                '  text-label-position-tolerance: 12.0;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  text-halo-fill: #cf3;',
+                '  text-label-position-tolerance: 12.0;',
+                '  text-clip: true;',
                 '}'
             ].join('\n')
         }, {
@@ -534,10 +553,12 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  text-spacing: 5;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}',
                 '#layer {',
                 '  text-halo-fill: #cf3;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }, {
@@ -553,6 +574,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  text-spacing: 5;',
                 '  text-halo-fill: #cf3;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }, {
@@ -566,6 +588,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  text-spacing: 5;',
                 '  text-clip: true;',
+                '  text-label-position-tolerance: 0;',
                 '}'
             ].join('\n')
         }]
