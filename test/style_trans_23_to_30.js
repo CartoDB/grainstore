@@ -11,7 +11,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     var polygonSuite = {
         symbolizer: 'polygon',
         testCases: [{
-            property: 'polygon-fill',
+            description: 'should add defaults if polygon symbolizer is present with `polygon-fill` property',
             input: [
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
@@ -21,10 +21,11 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: 'polygon-opacity',
+            description: 'should add defaults if polygon symbolizer is present with `polygon-opacity` property',
             input: [
                 '#layer {',
                 '  polygon-opacity: 0.5;',
@@ -34,11 +35,11 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: 'polygon-clip',
-            not: true,
+            description: 'should not add `polygon-clip` default if polygon symbolizer is present and `polygon-clip` is already set to true',
             input: [
                 '#layer {',
                 '  polygon-opacity: 0.5;',
@@ -49,11 +50,11 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: 'polygon-clip already defined',
-            not: true,
+            description: 'should not add `polygon-clip` default if polygon symbolizer is present and `polygon-clip` is already set to false',
             input: [
                 '#layer {',
                 '  polygon-clip: false;',
@@ -62,10 +63,40 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-clip: false;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: ['polygon-fill', 'polygon-opacity']. join(', '),
+            description: 'should not add `polygon-pattern-aligment` default if polygon symbolizer is present and `polygon-pattern-aligment` is already set to global',
+            input: [
+                '#layer {',
+                '  polygon-opacity: 0.5;',
+                '  polygon-pattern-aligment: global;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-opacity: 0.5;',
+                '  polygon-pattern-aligment: global;',
+                '  polygon-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `polygon-pattern-aligment` default if polygon symbolizer is present and `polygon-pattern-aligment` is already set to local',
+            input: [
+                '#layer {',
+                '  polygon-clip: false;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-clip: false;',
+                '  polygon-pattern-aligment: local;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should add defaults if polygon symbolizer is present in two different rules',
             input: [
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
@@ -78,14 +109,16 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}',
                 '#layer {',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: 'polygon-fill and polygon-opacity in the same rule',
+            description: 'should add defaults if polygon symbolizer is present with two different properties',
             input: [
                 '#layer {',
                 '  polygon-fill: rgba(128,128,128,1);',
@@ -97,10 +130,11 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-fill: rgba(128,128,128,1);',
                 '  polygon-opacity: 0.5;',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }, {
-            property: 'polygon-simplify in ::glow symbolizer',
+            description: 'should add defaults if polygon symbolizer is present for layer with `::glow` modifier',
             input: [
                 '#layer::glow {',
                 '  polygon-simplify: 0.1;',
@@ -110,6 +144,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-simplify: 0.1;',
                 '  polygon-clip: true;',
+                '  polygon-pattern-aligment: local;',
                 '}'
             ].join('\n')
         }]
@@ -118,7 +153,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     var lineSuite = {
         symbolizer: 'line',
         testCases: [{
-            property: 'line-width',
+            description: 'should add defaults if line symbolizer is present with `line-width` property',
             input: [
                 '#layer {',
                 '  line-width: 0.5;',
@@ -131,7 +166,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'line-cap',
+            description: 'should add defaults if line symbolizer is present with `line-cap` property',
             input: [
                 '#layer {',
                 '  line-cap: round;',
@@ -144,8 +179,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'line-clip',
-            not: true,
+            description: 'should not add `line-clip` default if line symbolizer is present and `line-clip` is already set to true',
             input: [
                 '#layer {',
                 '  line-cap: round;',
@@ -159,8 +193,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'line-clip already defined',
-            not: true,
+            description: 'should not add `line-clip` default if line symbolizer is present and `line-clip` is already set to false',
             input: [
                 '#layer {',
                 '  line-clip: false;',
@@ -172,7 +205,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: ['line-width', 'line-cap']. join(', '),
+            description: 'should add defaults if line symbolizer is present in two different rules',
             input: [
                 '#layer {',
                 '  line-width: 0.5;',
@@ -192,7 +225,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'line-width and line-cap in the same rule',
+            description: 'should add defaults if line symbolizer is present with two different properties',
             input: [
                 '#layer {',
                 '  line-width: 0.5;',
@@ -207,7 +240,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'line-cap in ::glow symbolizer',
+            description: 'should add defaults if line symbolizer is present for layer with `::glow` modifier',
             input: [
                 '#layer::glow {',
                 '  line-cap: round;',
@@ -225,7 +258,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     var markerSuite = {
         symbolizer: 'marker',
         testCases: [{
-            property: 'marker-line-color',
+            description: 'should add defaults if marker symbolizer is present with `marker-line-color` property',
             input: [
                 '#layer {',
                 '  marker-line-color: white;',
@@ -238,7 +271,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'marker-line-color',
+            description: 'should add defaults if marker symbolizer is present with `marker-line-color` property',
             input: [
                 '#layer {',
                 '  marker-placement: interior;',
@@ -251,8 +284,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'marker-clip',
-            not: true,
+            description: 'should not add `marker-clip` default if marker symbolizer is present and `marker-clip` is already set to true',
             input: [
                 '#layer {',
                 '  marker-placement: interior;',
@@ -266,8 +298,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'marker-clip already defined',
-            not: true,
+            description: 'should not add `marker-clip` default if marker symbolizer is present and `marker-clip` is already set to false',
             input: [
                 '#layer {',
                 '  marker-clip: false;',
@@ -279,7 +310,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: ['marker-line-color', 'marker-line-color']. join(', '),
+            description: 'should add defaults if marker symbolizer is present in two different rules',
             input: [
                 '#layer {',
                 '  marker-line-color: white;',
@@ -299,7 +330,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'marker-line-color and marker-line-color in the same rule',
+            description: 'should add defaults if marker symbolizer is present with two different properties',
             input: [
                 '#layer {',
                 '  marker-line-color: white;',
@@ -314,7 +345,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'marker-line-color in ::glow symbolizer',
+            description: 'should add defaults if marker symbolizer is present for layer with `::glow` modifier',
             input: [
                 '#layer::glow {',
                 '  marker-line-color: white;',
@@ -332,7 +363,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     var shieldSuite = {
         symbolizer: 'shield',
         testCases: [{
-            property: 'shield-name',
+            description: 'should add defaults if shield symbolizer is present with `shield-name` property',
             input: [
                 '#layer {',
                 '  shield-name: "wadus";',
@@ -345,7 +376,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'shield-size',
+            description: 'should add defaults if shield symbolizer is present with `shield-size` property',
             input: [
                 '#layer {',
                 '  shield-size: 20;',
@@ -358,7 +389,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'shield-clip',
+            description: 'should not add `shield-clip` default if shield symbolizer is present and `shield-clip` is already set to true',
             not: true,
             input: [
                 '#layer {',
@@ -373,8 +404,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'shield-clip already defined',
-            not: true,
+            description: 'should not add `shield-clip` default if shield symbolizer is present and `shield-clip` is already set to false',
             input: [
                 '#layer {',
                 '  shield-clip: false;',
@@ -386,7 +416,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: ['shield-name', 'shield-size']. join(', '),
+            description: 'should add defaults if shield symbolizer is present in two different rules',
             input: [
                 '#layer {',
                 '  shield-name: "wadus";',
@@ -406,7 +436,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'shield-name and shield-size in the same rule',
+            description: 'should add defaults if shield symbolizer is present with two different properties',
             input: [
                 '#layer {',
                 '  shield-name: "wadus";',
@@ -421,7 +451,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'shield-name in ::glow symbolizer',
+            description: 'should add defaults if shield symbolizer is present for layer with `::glow` modifier',
             input: [
                 '#layer::glow {',
                 '  shield-name: "wadus";',
@@ -439,7 +469,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     var textSuite = {
         symbolizer: 'text',
         testCases: [{
-            property: 'text-spacing',
+            description: 'should add defaults if text symbolizer is present with `text-spacing` property',
             input: [
                 '#layer {',
                 '  text-spacing: 5;',
@@ -452,7 +482,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'text-halo-fill',
+            description: 'should add defaults if text symbolizer is present with `text-halo-fill` property',
             input: [
                 '#layer {',
                 '  text-halo-fill: #cf3;',
@@ -465,8 +495,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'text-clip',
-            not: true,
+            description: 'should not add `text-clip` default if text symbolizer is present and `text-clip` is already set to true',
             input: [
                 '#layer {',
                 '  text-halo-fill: #cf3;',
@@ -480,8 +509,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'text-clip already defined',
-            not: true,
+            description: 'should not add `text-clip` default if text symbolizer is present and `text-clip` is already set to false',
             input: [
                 '#layer {',
                 '  text-clip: false;',
@@ -493,7 +521,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: ['text-spacing', 'text-halo-fill']. join(', '),
+            description: 'should add defaults if text symbolizer is present in two different rules',
             input: [
                 '#layer {',
                 '  text-spacing: 5;',
@@ -513,7 +541,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'text-spacing and text-halo-fill in the same rule',
+            description: 'should add defaults if text symbolizer is present with two different properties',
             input: [
                 '#layer {',
                 '  text-spacing: 5;',
@@ -528,7 +556,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            property: 'text-spacing in ::glow symbolizer',
+            description: 'should add defaults if text symbolizer is present for layer with `::glow` modifier',
             input: [
                 '#layer::glow {',
                 '  text-spacing: 5;',
@@ -553,8 +581,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
             suite.testCases.forEach(function (testCase) {
-                var not = testCase.not ? 'not' : '';
-                it('should ' + not + ' add `polygon-clip: true` if ' + testCase.property + ' is present', function () {
+                it(testCase.description, function () {
                     var outputStyle = this.styleTrans.transform(testCase.input, '2.3.0', '3.0.12');
                     assert.equal(outputStyle, testCase.expected);
                 });
