@@ -594,12 +594,59 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         }]
     };
 
+    var buildingSuite = {
+        symbolizer: 'building',
+        testCases: [{
+            description: 'should add defaults if building symbolizer is present with `building-height` property',
+            input: [
+                '#layer {',
+                '  building-height: 17.2;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  building-height: 17.2;',
+                '  building-fill: white;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add `building-fill` default if building symbolizer is present and `building-fill` is already set to white',
+            input: [
+                '#layer {',
+                '  building-height: 0.2;',
+                '  building-fill: white;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  building-height: 0.2;',
+                '  building-fill: white;',
+                '}'
+            ].join('\n')
+        },{
+            description: 'should not add `building-fill` default if building symbolizer is present and `building-fill` is already set to #cf3',
+            input: [
+                '#layer {',
+                '  building-height: 9;',
+                '  building-fill: #cf3;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  building-height: 9;',
+                '  building-fill: #cf3;',
+                '}'
+            ].join('\n')
+        }]
+    };
+
     var suites = []
         .concat(polygonSuite)
         .concat(lineSuite)
         .concat(markerSuite)
         .concat(shieldSuite)
-        .concat(textSuite);
+        .concat(textSuite)
+        .concat(buildingSuite);
 
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
