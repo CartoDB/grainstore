@@ -52,6 +52,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
+            property: 'polygon-clip already defined',
+            not: true,
+            input: [
+                '#layer {',
+                '  polygon-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  polygon-clip: false;',
+                '}'
+            ].join('\n')
+        }, {
             property: ['polygon-fill', 'polygon-opacity']. join(', '),
             input: [
                 '#layer {',
@@ -143,6 +156,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  line-cap: round;',
                 '  line-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            property: 'line-clip already defined',
+            not: true,
+            input: [
+                '#layer {',
+                '  line-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-clip: false;',
                 '}'
             ].join('\n')
         }, {
@@ -240,6 +266,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
+            property: 'marker-clip already defined',
+            not: true,
+            input: [
+                '#layer {',
+                '  marker-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-clip: false;',
+                '}'
+            ].join('\n')
+        }, {
             property: ['marker-line-color', 'marker-line-color']. join(', '),
             input: [
                 '#layer {',
@@ -334,6 +373,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
+            property: 'shield-clip already defined',
+            not: true,
+            input: [
+                '#layer {',
+                '  shield-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  shield-clip: false;',
+                '}'
+            ].join('\n')
+        }, {
             property: ['shield-name', 'shield-size']. join(', '),
             input: [
                 '#layer {',
@@ -425,6 +477,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  text-halo-fill: #cf3;',
                 '  text-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            property: 'text-clip already defined',
+            not: true,
+            input: [
+                '#layer {',
+                '  text-clip: false;',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  text-clip: false;',
                 '}'
             ].join('\n')
         }, {
