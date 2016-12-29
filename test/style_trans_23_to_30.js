@@ -1104,6 +1104,47 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-clip: true;',
                 '}'
             ].join('\n')
+        }, {
+            description: 'should add defaults for turbo-cartocss outputs',
+            input: [
+                '#points {',
+                '  marker-fill: #fee5d9;',
+                '  [ scalerank = 6 ] {',
+                '    marker-fill: #fcae91',
+                '  }',
+                '  [ scalerank = 8 ] {',
+                '    marker-fill: #fb6a4a',
+                '  }',
+                '  [ scalerank = 4 ] {',
+                '    marker-fill: #de2d26',
+                '  }',
+                '  [ scalerank = 10 ] {',
+                '    marker-fill: #a50f15',
+                '  }',
+                '}',
+            ].join('\n'),
+            expected: [
+                '#points {',
+                '  marker-fill: #fee5d9;',
+                '  [ scalerank = 6 ] {',
+                '    marker-fill: #fcae91;',
+                '    marker-clip: true',
+                '  }',
+                '  [ scalerank = 8 ] {',
+                '    marker-fill: #fb6a4a;',
+                '    marker-clip: true',
+                '  }',
+                '  [ scalerank = 4 ] {',
+                '    marker-fill: #de2d26;',
+                '    marker-clip: true',
+                '  }',
+                '  [ scalerank = 10 ] {',
+                '    marker-fill: #a50f15;',
+                '    marker-clip: true',
+                '  }',
+                '  marker-clip: true',
+                '}',
+            ].join('\n')
         }];
 
         realScenarios.forEach(function (scenario) {
