@@ -1019,13 +1019,14 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             assert.equal(output, expected);
         });
 
-        it('should set defaults to road example with inline comments', function () {
+        it('should accept multiline comments: "/* ... */"', function () {
             var input = [
                 '#road {',
-                '  // testing comments',
+                '  /* [class="railway"] {',
+                '       ::glow { */',
                 '  [class="motorway"] {',
                 '    ::case {',
-                '      line-width: 5;',
+                '      line-width: 5; /* line-width: 10; */',
                 '      line-color: #d83;',
                 '    }',
                 '  }',
@@ -1033,37 +1034,37 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             ].join('\n');
             var expected = [
                 '#road {',
-                '  // testing comments',
+                '  /* [class="railway"] {',
+                '       ::glow { */',
                 '  [class="motorway"] {',
                 '    ::case {',
-                '      line-width: 5;',
+                '      line-width: 5; /* line-width: 10; */',
                 '      line-color: #d83;',
                 '      line-clip: true;',
                 '    }',
                 '  }',
                 '}'
             ].join('\n');
+
             var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
             assert.equal(output, expected);
         });
 
-        it('should set defaults to road example with multiline comments', function () {
+        it('should accept one line comments: "// ..."', function () {
             var input = [
                 '#road {',
-                '  /* testing comments',
-                '     multiline comments, I mean */',
+                '  // [class="railway"] {',
                 '  [class="motorway"] {',
                 '    ::case {',
                 '      line-width: 5;',
-                '      line-color: #d83;',
+                '      line-color: #d83;// line-color: #cf3;',
                 '    }',
                 '  }',
                 '}'
             ].join('\n');
             var expected = [
                 '#road {',
-                '  /* testing comments',
-                '     multiline comments, I mean */',
+                '  ',
                 '  [class="motorway"] {',
                 '    ::case {',
                 '      line-width: 5;',
@@ -1073,6 +1074,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  }',
                 '}'
             ].join('\n');
+
             var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
             assert.equal(output, expected);
         });
