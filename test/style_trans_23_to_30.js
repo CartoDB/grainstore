@@ -1078,5 +1078,48 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
             assert.equal(output, expected);
         });
+
+        it('should accept column atributtes', function () {
+            var input = [
+                'Map {',
+                '  buffer-size: 256;',
+                '}',
+                '#county_points_with_population {',
+                '  marker-fill-opacity: 0.1;',
+                '  marker-line-color:#FFFFFF;//#CF1C90;',
+                '  marker-line-width: 0;',
+                '  marker-line-opacity: 0.3;',
+                '  marker-placement: point;',
+                '  marker-type: ellipse;',
+                '  marker-width: [cartodb_id];',
+                '  [zoom=5]{marker-width: [cartodb_id]*2;}',
+                '  [zoom=6]{marker-width: [cartodb_id]*4;}',
+                '  marker-fill: #000000;',
+                '  marker-allow-overlap: true;',
+                '}'
+            ].join('\n');
+            var expected = [
+                'Map {',
+                '  buffer-size: 256;',
+                '}',
+                '#county_points_with_population {',
+                '  marker-fill-opacity: 0.1;',
+                '  marker-line-color:#FFFFFF;',
+                '  marker-line-width: 0;',
+                '  marker-line-opacity: 0.3;',
+                '  marker-placement: point;',
+                '  marker-type: ellipse;',
+                '  marker-width: [cartodb_id];',
+                '  [zoom=5]{marker-width: [cartodb_id]*2;marker-clip: true;}',
+                '  [zoom=6]{marker-width: [cartodb_id]*4;marker-clip: true;}',
+                '  marker-fill: #000000;',
+                '  marker-allow-overlap: true;',
+                '  marker-clip: true;',
+                '}'
+            ].join('\n');
+
+            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(output, expected);
+        });
     });
 });
