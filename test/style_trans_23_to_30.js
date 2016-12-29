@@ -931,8 +931,9 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     }.bind(this));
 
     describe('real scenarios', function () {
-        it('should set defaults for rules that contains symbolyzers', function () {
-            var input = [
+        var realScenarios = [{
+            description: 'should set defaults for rules that contains symbolyzers',
+            input: [
                 '#countries {',
                 '   ::outline {',
                 '       line-color: #85c5d3;',
@@ -943,8 +944,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '       polygon-fill: #fff;',
                 '   }',
                 '}'
-            ].join('\n');
-            var expected = [
+            ].join('\n'),
+            expected: [
                 '#countries {',
                 '   ::outline {',
                 '       line-color: #85c5d3;',
@@ -957,13 +958,10 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '       polygon-clip: true;',
                 '   }',
                 '}'
-            ].join('\n');
-            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(output, expected);
-        });
-
-        it('should set defaults to road example', function () {
-            var input = [
+            ].join('\n')
+        }, {
+            description: 'should set defaults to road example',
+            input: [
                 '#road {',
                 '  [class="motorway"] {',
                 '    ::case {',
@@ -986,8 +984,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-            var expected = [
+            ].join('\n'),
+            expected: [
                 '#road {',
                 '  [class="motorway"] {',
                 '    ::case {',
@@ -1014,13 +1012,10 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(output, expected);
-        });
-
-        it('should accept multiline comments: "/* ... */"', function () {
-            var input = [
+            ].join('\n')
+        }, {
+            description: 'should accept multiline comments: "/* ... */"',
+            input: [
                 '#road {',
                 '  /* [class="railway"] {',
                 '       ::glow { */',
@@ -1031,8 +1026,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-            var expected = [
+            ].join('\n'),
+            expected: [
                 '#road {',
                 '  /* [class="railway"] {',
                 '       ::glow { */',
@@ -1044,14 +1039,10 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-
-            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(output, expected);
-        });
-
-        it('should accept one line comments: "// ..."', function () {
-            var input = [
+            ].join('\n')
+        }, {
+            description: 'should accept one line comments: "// ..."',
+            input: [
                 '#road {',
                 '  // [class="railway"] {',
                 '  [class="motorway"] {',
@@ -1061,8 +1052,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-            var expected = [
+            ].join('\n'),
+            expected: [
                 '#road {',
                 '  ',
                 '  [class="motorway"] {',
@@ -1073,14 +1064,10 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    }',
                 '  }',
                 '}'
-            ].join('\n');
-
-            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(output, expected);
-        });
-
-        it('should accept column atributtes', function () {
-            var input = [
+            ].join('\n')
+        }, {
+            description: 'should accept column atributtes',
+            input: [
                 'Map {',
                 '  buffer-size: 256;',
                 '}',
@@ -1097,8 +1084,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-fill: #000000;',
                 '  marker-allow-overlap: true;',
                 '}'
-            ].join('\n');
-            var expected = [
+            ].join('\n'),
+            expected: [
                 'Map {',
                 '  buffer-size: 256;',
                 '}',
@@ -1116,10 +1103,14 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-allow-overlap: true;',
                 '  marker-clip: true;',
                 '}'
-            ].join('\n');
+            ].join('\n')
+        }];
 
-            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(output, expected);
+        realScenarios.forEach(function (scenario) {
+            it(scenario.description, function () {
+                var output = this.styleTrans.transform(scenario.input, '2.3.0', '3.0.12');
+                assert.equal(output, scenario.expected);
+            });
         });
     });
 });
