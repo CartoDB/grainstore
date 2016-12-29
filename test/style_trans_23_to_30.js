@@ -929,4 +929,37 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             }.bind(this));
         });
     }.bind(this));
+
+    describe('real scenarios', function () {
+        it('should set defaults for rules that contains symbolyzers', function () {
+            var input = [
+                '#countries {',
+                '   ::outline {',
+                '       line-color: #85c5d3;',
+                '       line-width: 2;',
+                '       line-join: round;',
+                '   }',
+                '   [GEOUNIT != "United States of America"]{',
+                '       polygon-fill: #fff;',
+                '   }',
+                '}'
+            ].join('\n');
+            var expected = [
+                '#countries {',
+                '   ::outline {',
+                '       line-color: #85c5d3;',
+                '       line-width: 2;',
+                '       line-join: round;',
+                '       line-clip: true;',
+                '   }',
+                '   [GEOUNIT != "United States of America"]{',
+                '       polygon-fill: #fff;',
+                '       polygon-clip: true;',
+                '   }',
+                '}'
+            ].join('\n');
+            var outputStyle = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(outputStyle, expected);
+        });
+    });
 });
