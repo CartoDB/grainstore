@@ -958,8 +958,123 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '   }',
                 '}'
             ].join('\n');
-            var outputStyle = this.styleTrans.transform(input, '2.3.0', '3.0.12');
-            assert.equal(outputStyle, expected);
+            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(output, expected);
+        });
+
+        it('should set defaults to road example', function () {
+            var input = [
+                '#road {',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '    }',
+                '    ::fill {',
+                '      line-width: 2.5;',
+                '      line-color: #fe3;',
+                '    }',
+                '  }',
+                '  [class="main"] {',
+                '    ::case {',
+                '      line-width: 4.5;',
+                '      line-color: #ca8;',
+                '    }',
+                '    ::fill {',
+                '      line-width: 2;',
+                '      line-color: #ffa;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var expected = [
+                '#road {',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '      line-clip: true;',
+                '    }',
+                '    ::fill {',
+                '      line-width: 2.5;',
+                '      line-color: #fe3;',
+                '      line-clip: true;',
+                '    }',
+                '  }',
+                '  [class="main"] {',
+                '    ::case {',
+                '      line-width: 4.5;',
+                '      line-color: #ca8;',
+                '      line-clip: true;',
+                '    }',
+                '    ::fill {',
+                '      line-width: 2;',
+                '      line-color: #ffa;',
+                '      line-clip: true;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(output, expected);
+        });
+
+        it('should set defaults to road example with inline comments', function () {
+            var input = [
+                '#road {',
+                '  // testing comments',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var expected = [
+                '#road {',
+                '  // testing comments',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '      line-clip: true;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(output, expected);
+        });
+
+        it('should set defaults to road example with multiline comments', function () {
+            var input = [
+                '#road {',
+                '  /* testing comments',
+                '     multiline comments, I mean */',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var expected = [
+                '#road {',
+                '  /* testing comments',
+                '     multiline comments, I mean */',
+                '  [class="motorway"] {',
+                '    ::case {',
+                '      line-width: 5;',
+                '      line-color: #d83;',
+                '      line-clip: true;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n');
+            var output = this.styleTrans.transform(input, '2.3.0', '3.0.12');
+            assert.equal(output, expected);
         });
     });
 });
