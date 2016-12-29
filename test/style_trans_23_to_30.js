@@ -3,7 +3,7 @@
 var assert = require('assert');
 var StyleTrans = require('../lib/grainstore/style_trans.js');
 
-describe.only('cartocss transformation from 2.3.x to 3.0.x', function() {
+describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     beforeEach(function() {
         this.styleTrans = new StyleTrans();
     });
