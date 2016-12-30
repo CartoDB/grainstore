@@ -537,6 +537,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  marker-line-color: white;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -550,6 +551,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  marker-placement: interior;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -564,6 +566,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  marker-placement: interior;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -576,6 +579,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  marker-clip: false;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -592,10 +596,12 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  marker-line-color: white;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}',
                 '#layer {',
                 '  marker-placement: interior;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -611,6 +617,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-line-color: white;',
                 '  marker-placement: interior;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }, {
@@ -624,6 +631,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  marker-line-color: white;',
                 '  marker-clip: true;',
+                '  marker-line-width: 1;',
                 '}'
             ].join('\n')
         }]
@@ -1097,8 +1105,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-placement: point;',
                 '  marker-type: ellipse;',
                 '  marker-width: [cartodb_id];',
-                '  [zoom=5]{marker-width: [cartodb_id]*2;marker-clip: true;}',
-                '  [zoom=6]{marker-width: [cartodb_id]*4;marker-clip: true;}',
+                '  [zoom=5]{marker-width: [cartodb_id]*2;marker-clip: true;marker-line-width: 1;}',
+                '  [zoom=6]{marker-width: [cartodb_id]*4;marker-clip: true;marker-line-width: 1;}',
                 '  marker-fill: #000000;',
                 '  marker-allow-overlap: true;',
                 '  marker-clip: true;',
@@ -1128,21 +1136,26 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-fill: #fee5d9;',
                 '  [ scalerank = 6 ] {',
                 '    marker-fill: #fcae91;',
-                '    marker-clip: true',
+                '    marker-clip: true;',
+                '    marker-line-width: 1',
                 '  }',
                 '  [ scalerank = 8 ] {',
                 '    marker-fill: #fb6a4a;',
-                '    marker-clip: true',
+                '    marker-clip: true;',
+                '    marker-line-width: 1',
                 '  }',
                 '  [ scalerank = 4 ] {',
                 '    marker-fill: #de2d26;',
-                '    marker-clip: true',
+                '    marker-clip: true;',
+                '    marker-line-width: 1',
                 '  }',
                 '  [ scalerank = 10 ] {',
                 '    marker-fill: #a50f15;',
-                '    marker-clip: true',
+                '    marker-clip: true;',
+                '    marker-line-width: 1',
                 '  }',
-                '  marker-clip: true',
+                '  marker-clip: true;',
+                '  marker-line-width: 1',
                 '}',
             ].join('\n')
         }];
