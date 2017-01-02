@@ -656,6 +656,7 @@ suite('mml_builder use_workers=' + useWorkers, function() {
   });
 
   // See https://github.com/Vizzuality/grainstore/issues/62
+  // skiping since carto#0.16.3 does not throw error
   test.skip('throws useful error message on invalid text-name', function(done) {
     var style = "#t { text-name: invalid; text-face-name:'Dejagnu'; }";
     var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
