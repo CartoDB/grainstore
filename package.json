@@ -23,7 +23,7 @@
     "es6-promise": "4.0.5",
     "generic-pool": "~2.2.0",
     "millstone": "0.6.17",
-    "postcss": "^5.2.8",
+    "postcss": "~5.2.8",
     "semver": "~5.0.3",
     "strip-css-singleline-comments": "^1.1.0",
     "underscore": "~1.6.0"
