@@ -1,5 +1,7 @@
-Version 1.4.1
-2016-mm-dd
+Version 1.5.0
+2017-01-27
+
+ - Support Mapnik Reference 3.0.x
 
 
 Version 1.4.0
