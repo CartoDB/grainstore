@@ -5,6 +5,8 @@ var libxmljs   = require('libxmljs');
 var step       = require('step');
 var http       = require('http');
 var fs         = require('fs');
+var carto      = require('carto');
+var semver     = require('semver');
 
 var server;
 
@@ -655,18 +657,20 @@ suite('mml_builder use_workers=' + useWorkers, function() {
     );
   });
 
-  // See https://github.com/Vizzuality/grainstore/issues/62
-  // skiping since carto#0.16.3 does not throw error
-  test.skip('throws useful error message on invalid text-name', function(done) {
-    var style = "#t { text-name: invalid; text-face-name:'Dejagnu'; }";
-    var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
-    mml_store.mml_builder({dbname: 'd', sql:'t', style:style}).toXML(function(err) {
-        assert.ok(err);
-        var re = /Invalid value for text-name/;
-        assert.ok(err.message.match(re), 'No match for ' + re + ' in "' + err.message + '"');
-        done();
+
+  if (semver.satisfies(new carto.Renderer().options.mapnik_version, '<=2.3.0')) {
+    // See https://github.com/Vizzuality/grainstore/issues/62
+    test('throws useful error message on invalid text-name', function (done) {
+        var style = "#t { text-name: invalid; text-face-name:'Dejagnu'; }";
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
+        mml_store.mml_builder({dbname: 'd', sql:'t', style:style}).toXML(function(err, xml) {
+            assert.ok(err);
+            var re = /Invalid value for text-name/;
+            assert.ok(err.message.match(re), 'No match for ' + re + ' in "' + err.message + '"');
+            done();
+        });
     });
-  });
+  }
 
   test('use exponential in filters', function(done) {
     var style =  "#t[a=1.2e-3] { polygon-fill: #000000; }";
