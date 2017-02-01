@@ -121,7 +121,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -138,7 +138,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-clip: true;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }]
@@ -157,7 +157,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-pattern-simplify-algorithm: zhao-saalfeld;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -170,7 +170,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -183,36 +183,36 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to global',
+            description: 'should not add `polygon-pattern-alignment` default if polygon-pattern symbolizer is present and `polygon-pattern-alignment` is already set to global',
             input: [
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
+                '  polygon-pattern-alignment: global;',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
+                '  polygon-pattern-alignment: global;',
                 '  polygon-pattern-clip: true;',
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to local',
+            description: 'should not add `polygon-pattern-alignment` default if polygon-pattern symbolizer is present and `polygon-pattern-alignment` is already set to local',
             input: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -229,12 +229,12 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}',
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -250,7 +250,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-opacity: 0.5;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -264,7 +264,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -294,7 +294,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-clip: true;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }]
