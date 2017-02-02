@@ -78,8 +78,8 @@ var mmls = new grainstore.MMLStore();
 
 // see mml_store.js for more customisation detail 
 var options = {
-  Map: {srid: 4326},
-  Datasource: {
+  map: {srid: 4326},
+  datasource: {
     user: "postgres",
     geometry_field: "my_geom"
   }   
@@ -91,16 +91,6 @@ mmlb.toXML(function(err, data){
 });
 
 
-// custom styles.
-var mmls = new grainstore.MMLStore();
-var mmlb = mmls.mml_builder(params);
-mmlb.toMML(function(err, data){
-    console.log(data) // => Carto ready MML
-});
-
-mmlb.toXML(function(err, data){
-    console.log(data); // => Mapnik XML of database with custom style
-});
 ```
 
 For more examples, see the tests.
