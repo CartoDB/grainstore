@@ -6,7 +6,7 @@ clean:
 
 TEST_SUITE := $(shell find ./test -name "*.js")
 
-test:
+test check:
 	NODE_ENV=test ./node_modules/.bin/mocha -u tdd -t 5000 $(TEST_SUITE) ${MOCHA_ARGS}
 
-.PHONY: test
+.PHONY: test check
