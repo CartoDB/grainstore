@@ -74,7 +74,7 @@ mmlb.toXML(function(err, data){
 
 
 // custom pg settings.
-var mmls = new GrainStore.MMLStore();
+var mmls = new grainstore.MMLStore();
 
 // see mml_store.js for more customisation detail 
 var options = {
@@ -92,7 +92,7 @@ mmlb.toXML(function(err, data){
 
 
 // custom styles.
-var mmls = new GrainStore.MMLStore();
+var mmls = new grainstore.MMLStore();
 var mmlb = mmls.mml_builder(params);
 mmlb.toMML(function(err, data){
     console.log(data) // => Carto ready MML
