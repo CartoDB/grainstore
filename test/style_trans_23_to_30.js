@@ -867,6 +867,58 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         }]
     };
 
+    var urlSuite = {
+        symbolizer: 'line-pattern',
+        testCases: [{
+            description: 'should handle url enclosed by simple quotes',
+            input: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url('https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg');",
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url('https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg');",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should handle url enclosed by double quotes',
+            input: [
+                '#layer {',
+                '  line-width: 5;',
+                '  line-pattern-file: url("https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg");',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-width: 5;',
+                '  line-pattern-file: url("https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg");',
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should handle url w/o quotes',
+            input: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }]
+    }
 
     var suites = []
         .concat(polygonSuite)
@@ -876,6 +928,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         .concat(markerSuite)
         .concat(shieldSuite)
         .concat(textSuite)
+        .concat(urlSuite)
 
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
@@ -1013,7 +1066,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             ].join('\n'),
             expected: [
                 '#road {',
-                '  ',
                 '  [class="motorway"] {',
                 '    ::case {',
                 '      line-width: 5;',
