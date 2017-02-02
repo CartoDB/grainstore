@@ -78,8 +78,8 @@ var mmls = new grainstore.MMLStore();
 
 // see mml_store.js for more customisation detail 
 var options = {
-  Map: {srid: 4326},
-  Datasource: {
+  map: {srid: 4326},
+  datasource: {
     user: "postgres",
     geometry_field: "my_geom"
   }   
