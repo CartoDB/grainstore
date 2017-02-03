@@ -917,6 +917,22 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
+        }, {
+            description: 'should handle url w/o quotes and comments',
+            input: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);//https://s3.amazonaws.com",
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
         }]
     }
 
