@@ -121,7 +121,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -138,7 +138,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-clip: true;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }]
@@ -157,7 +157,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-pattern-simplify-algorithm: zhao-saalfeld;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -170,7 +170,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -183,36 +183,36 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to global',
+            description: 'should not add `polygon-pattern-alignment` default if polygon-pattern symbolizer is present and `polygon-pattern-alignment` is already set to global',
             input: [
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
+                '  polygon-pattern-alignment: global;',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
-                '  polygon-pattern-aligment: global;',
+                '  polygon-pattern-alignment: global;',
                 '  polygon-pattern-clip: true;',
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add `polygon-pattern-aligment` default if polygon-pattern symbolizer is present and `polygon-pattern-aligment` is already set to local',
+            description: 'should not add `polygon-pattern-alignment` default if polygon-pattern symbolizer is present and `polygon-pattern-alignment` is already set to local',
             input: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  polygon-pattern-clip: false;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -229,12 +229,12 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}',
                 '#layer {',
                 '  polygon-pattern-opacity: 0.5;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -250,7 +250,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-opacity: 0.5;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -264,7 +264,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#layer::glow {',
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }, {
@@ -294,7 +294,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  polygon-pattern-simplify: 0.1;',
                 '  polygon-clip: true;',
                 '  polygon-pattern-clip: true;',
-                '  polygon-pattern-aligment: local;',
+                '  polygon-pattern-alignment: local;',
                 '}'
             ].join('\n')
         }]
@@ -867,51 +867,74 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         }]
     };
 
-    var buildingSuite = {
-        symbolizer: 'building',
+    var urlSuite = {
+        symbolizer: 'line-pattern',
         testCases: [{
-            description: 'should add defaults if building symbolizer is present with `building-height` property',
+            description: 'should handle url enclosed by simple quotes',
             input: [
                 '#layer {',
-                '  building-height: 17.2;',
+                '  line-width: 5;',
+                "  line-pattern-file: url('https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg');",
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
-                '  building-height: 17.2;',
-                '  building-fill: white;',
+                '  line-width: 5;',
+                "  line-pattern-file: url('https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg');",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add `building-fill` default if building symbolizer is present and `building-fill` is already set to white',
+            description: 'should handle url enclosed by double quotes',
             input: [
                 '#layer {',
-                '  building-height: 0.2;',
-                '  building-fill: white;',
+                '  line-width: 5;',
+                '  line-pattern-file: url("https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg");',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
-                '  building-height: 0.2;',
-                '  building-fill: white;',
+                '  line-width: 5;',
+                '  line-pattern-file: url("https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg");',
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
-        },{
-            description: 'should not add `building-fill` default if building symbolizer is present and `building-fill` is already set to #cf3',
+        }, {
+            description: 'should handle url w/o quotes',
             input: [
                 '#layer {',
-                '  building-height: 9;',
-                '  building-fill: #cf3;',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
-                '  building-height: 9;',
-                '  building-fill: #cf3;',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should handle url w/o quotes and comments',
+            input: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);//https://s3.amazonaws.com",
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  line-width: 5;',
+                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-clip: true;',
+                '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
         }]
-    };
+    }
 
     var suites = []
         .concat(polygonSuite)
@@ -921,7 +944,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         .concat(markerSuite)
         .concat(shieldSuite)
         .concat(textSuite)
-        .concat(buildingSuite);
+        .concat(urlSuite)
 
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
@@ -1059,7 +1082,6 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             ].join('\n'),
             expected: [
                 '#road {',
-                '  ',
                 '  [class="motorway"] {',
                 '    ::case {',
                 '      line-width: 5;',
