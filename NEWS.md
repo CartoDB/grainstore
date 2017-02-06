@@ -1,5 +1,9 @@
 Version 1.5.1
-2017-mm-dd
+2017-02-06
+
+ - Style translator, `building-fill` default color back to gray #122.
+ - Style translator, allow to use url without quotes #121.
+ - Style translator, fix typo #120.
 
 
 Version 1.5.0
