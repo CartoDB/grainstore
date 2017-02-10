@@ -41,9 +41,12 @@ describe('Style Transformer fails', function() {
     var scenarios = [].concat(polygonSuite)
 
     scenarios.forEach(function (scenario) {
-        it(scenario.description, function () {
-            var outputStyle = this.styleTrans.transform(scenario.input, scenario.from, scenario.to);
-            assert.equal(outputStyle, scenario.expected);
+        it(scenario.description, function (done) {
+            var outputStyle = this.styleTrans.transform(scenario.input, scenario.from, scenario.to, function (err, outputStyle) {
+                assert.ifError(err);
+                assert.equal(outputStyle, scenario.expected);
+                done();
+            });
         });
     }.bind(this));
 });
