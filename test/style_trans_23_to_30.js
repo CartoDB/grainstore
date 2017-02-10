@@ -949,12 +949,9 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
             suite.testCases.forEach(function (testCase) {
-                it(testCase.description, function (done) {
-                    this.styleTrans.transform(testCase.input, '2.3.0', '3.0.12', function (err, outputStyle) {
-                        assert.ifError(err);
-                        assert.equal(outputStyle, testCase.expected);
-                        done();
-                    });
+                it(testCase.description, function () {
+                    var outputStyle = this.styleTrans.transform(testCase.input, '2.3.0', '3.0.12');
+                    assert.equal(outputStyle, testCase.expected);
                 });
             }.bind(this));
         });
@@ -1177,12 +1174,9 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         }];
 
         realScenarios.forEach(function (scenario) {
-            it(scenario.description, function (done) {
-                this.styleTrans.transform(scenario.input, '2.3.0', '3.0.12', function (err, output) {
-                    assert.ifError(err);
-                    assert.equal(output, scenario.expected);
-                    done();
-                });
+            it(scenario.description, function () {
+                var output = this.styleTrans.transform(scenario.input, '2.3.0', '3.0.12');
+                assert.equal(output, scenario.expected);
             });
         });
     });
