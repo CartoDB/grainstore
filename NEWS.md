@@ -1,5 +1,7 @@
-Version 1.5.2
-2017-mm-dd
+Version 1.6.0
+2017-03-02
+ - Now MMLBuilder renders XMLs outside of the main event loop setting `use_workers` config param to `true` #132
+ - Allow overriding layer's SRID #126
 
 
 Version 1.5.1
