@@ -655,5 +655,49 @@ suite('mml_builder multilayer use_workers=' + useWorkers, function() {
         });
     });
 
+    test('Allows specifying per-layer SRID', function(done) {
+      var style0 = "#layer0 { marker-width:3; }";
+      var style1 = "#layer1 { marker-width:4; }";
+      var sql0 = 'SELECT ST_MakePoint(0,0)';
+      var sql1 = 'SELECT ST_MakePoint(1,1)';
+      var style_version0 = "2.0.2";
+      var style_version1 = "2.1.0";
+      var mml_store = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0'});
+
+      step(
+        function initBuilder() {
+          mml_store.mml_builder({
+                dbname: 'my_database',
+                sql:[sql0, sql1],
+                style: [style0, style1],
+                style_version: [style_version0, style_version1],
+                datasource_extend: [{srid:1001},{srid:1002}]
+              }).toXML(this);
+        },
+        function checkXML0(err, xml) {
+            if ( err ) {
+                throw err;
+            }
+            var xmlDoc = libxmljs.parseXmlString(xml);
+
+            var layer0 = xmlDoc.get("Layer[@name='layer0']");
+            assert.ok(layer0, "Layer0 not found in XML");
+            var srid0 = layer0.get("Datasource/Parameter[@name='srid']");
+            assert.ok(srid0, "Layer0.srid not found in XML");
+            assert.equal(srid0.text(), "1001");
+
+            var layer1 = xmlDoc.get("Layer[@name='layer1']");
+            assert.ok(layer1, "Layer1 not found in XML");
+            var srid1 = layer1.get("Datasource/Parameter[@name='srid']");
+            assert.ok(srid1, "Layer1.srid not found in XML");
+            assert.equal(srid1.text(), "1002");
+
+
+            return true;
+        },
+        done
+      );
+    });
+
 });
 });
