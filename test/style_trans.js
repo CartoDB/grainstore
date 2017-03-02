@@ -8,7 +8,7 @@ suite('style_trans', function() {
 
   //suiteSetup(function() { });
 
-  // No change from 2.0.0 to ~2.0.2 
+  // No change from 2.0.0 to ~2.0.2
   test('2.0.0 to ~2.0.2', function() {
     var style = "#tab[zoom=1] { marker-width:10; marker-height:20; }\n#tab[zoom=2] { marker-height:'6'; marker-width: '7'; }";
     var s = t.transform(style, '2.0.0', '2.0.2');

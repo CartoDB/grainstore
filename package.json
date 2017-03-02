@@ -18,6 +18,7 @@
     "Sandro Santilli <strk@vizzuality.com>"
   ],
   "dependencies": {
+    "async": "~2.1.4",
     "carto": "0.16.3",
     "debug": "~2.2.0",
     "generic-pool": "~2.2.0",
