@@ -1,5 +1,6 @@
 Version 1.6.1
 2017-mm-dd
+ - Define a default map maximum-extent property.
 
 
 Version 1.6.0
