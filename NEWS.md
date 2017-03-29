@@ -1,5 +1,6 @@
 Version 1.6.2
-2017-mm-dd
+2017-03-29
+ - Fix issue when creating unused workers at startup time #134.
 
 
 Version 1.6.1
