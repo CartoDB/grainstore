@@ -1246,7 +1246,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '}'
             ].join('\n')
         }, {
-            description: 'should not add defaults neither to the parent nor to the children rules',
+            description: 'should just add defaults to the parent rule but to the children rule',
             input: [
                 '#layer {',
                 '  marker-width: 4;',
