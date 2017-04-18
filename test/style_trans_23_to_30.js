@@ -1192,6 +1192,86 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-clip: true',
                 '}'
             ].join('\n')
+        }, {
+            description: 'should not add defaults when all parents have the symbolizer already defined',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  marker-clip: false;',
+                '  [pop_max > 0] {',
+                '    marker-clip: true;',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  marker-clip: false;',
+                '  [pop_max > 0] {',
+                '    marker-clip: true;',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should just add defaults to the root rule',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '  marker-clip: true',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add defaults neither to the parent nor to the children rules',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    marker-clip: true;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    marker-clip: true;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '  marker-clip: true',
+                '}'
+            ].join('\n')
         }];
 
         realScenarios.forEach(function (scenario) {
