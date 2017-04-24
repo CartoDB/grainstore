@@ -1,3 +1,8 @@
+Version 1.6.3
+2017-mm-dd
+ - While transforming styles from 2.3.x to 3.x version do not set property to default value if parent selector has the same property already defined #137.
+
+
 Version 1.6.2
 2017-03-29
  - Fix issue when creating unused workers at startup time #134.

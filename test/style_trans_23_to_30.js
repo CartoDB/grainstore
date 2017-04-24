@@ -1123,8 +1123,8 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  marker-placement: point;',
                 '  marker-type: ellipse;',
                 '  marker-width: [cartodb_id];',
-                '  [zoom=5]{marker-width: [cartodb_id]*2;marker-clip: true;}',
-                '  [zoom=6]{marker-width: [cartodb_id]*4;marker-clip: true;}',
+                '  [zoom=5]{marker-width: [cartodb_id]*2;}',
+                '  [zoom=6]{marker-width: [cartodb_id]*4;}',
                 '  marker-fill: #000000;',
                 '  marker-allow-overlap: true;',
                 '  marker-clip: true;',
@@ -1153,23 +1153,124 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '#points {',
                 '  marker-fill: #fee5d9;',
                 '  [ scalerank = 6 ] {',
-                '    marker-fill: #fcae91;',
-                '    marker-clip: true',
+                '    marker-fill: #fcae91',
                 '  }',
                 '  [ scalerank = 8 ] {',
-                '    marker-fill: #fb6a4a;',
-                '    marker-clip: true',
+                '    marker-fill: #fb6a4a',
                 '  }',
                 '  [ scalerank = 4 ] {',
-                '    marker-fill: #de2d26;',
-                '    marker-clip: true',
+                '    marker-fill: #de2d26',
                 '  }',
                 '  [ scalerank = 10 ] {',
-                '    marker-fill: #a50f15;',
-                '    marker-clip: true',
+                '    marker-fill: #a50f15',
                 '  }',
                 '  marker-clip: true',
                 '}',
+            ].join('\n')
+        }, { // see: https://github.com/CartoDB/grainstore/issues/136
+            description: 'should not add defaults when parent has symbolizer already defined',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [ pop_max > 10000 ] {',
+                '    marker-width: 8;',
+                '  }',
+                '  [ pop_max > 100000 ] {',
+                '    marker-width: 16;',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [ pop_max > 10000 ] {',
+                '    marker-width: 8;',
+                '  }',
+                '  [ pop_max > 100000 ] {',
+                '    marker-width: 16;',
+                '  }',
+                '  marker-clip: true',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should not add defaults when all parents have the symbolizer already defined',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  marker-clip: false;',
+                '  [pop_max > 0] {',
+                '    marker-clip: true;',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  marker-clip: false;',
+                '  [pop_max > 0] {',
+                '    marker-clip: true;',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should just add defaults to the root rule',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '  marker-clip: true',
+                '}'
+            ].join('\n')
+        }, {
+            description: 'should just add defaults to the parent rule but to the children rule',
+            input: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    marker-clip: true;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '}'
+            ].join('\n'),
+            expected: [
+                '#layer {',
+                '  marker-width: 4;',
+                '  [pop_max > 0] {',
+                '    marker-width: 8;',
+                '    marker-clip: true;',
+                '    [pop_max > 100] {',
+                '      marker-width: 16;',
+                '    }',
+                '  }',
+                '  marker-clip: true',
+                '}'
             ].join('\n')
         }];
 
