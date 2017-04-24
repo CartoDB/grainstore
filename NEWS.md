@@ -1,5 +1,5 @@
 Version 1.6.3
-2017-mm-dd
+2017-04-24
  - While transforming styles from 2.3.x to 3.x version do not set property to default value if parent selector has the same property already defined #137.
 
 
