@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "carto": "0.16.3",
-    "debug": "~2.2.0",
+    "debug": "~3.1.0",
     "generic-pool": "~2.2.0",
     "millstone": "0.6.17",
     "postcss": "~5.2.8",

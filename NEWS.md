@@ -1,5 +1,6 @@
 Version 1.6.4
 2017-mm-dd
+ - Upgrade debug to 3.1.0.
 
 
 Version 1.6.3
