@@ -42,7 +42,7 @@ npm install
 
 Dependencies
 ------------
-* node.js >=0.10
+* node.js >=6
 * npm
 
 
