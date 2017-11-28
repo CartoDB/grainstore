@@ -829,5 +829,28 @@ suite('mml_builder use_workers=' + useWorkers, function() {
         });
     });
 
+    test('can generate base mml without styles', function(done) {
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            sql: SAMPLE_SQL
+        });
+
+        mml_builder.toXML((err, xml) => {
+            if (err) {
+                return done(err);
+            }
+
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            var x = xmlDoc.get("//Parameter[@name='dbname']");
+            assert.ok(x);
+            assert.equal(x.text(), 'my_database');
+            x = xmlDoc.get("//Parameter[@name='table']");
+            assert.ok(x);
+            assert.equal(x.text(), SAMPLE_SQL);
+
+            done();
+        })
+    });
 });
 });
