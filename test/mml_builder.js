@@ -829,7 +829,7 @@ suite('mml_builder use_workers=' + useWorkers, function() {
         });
     });
 
-    test('can generate base mml without styles', function(done) {
+    test('can generate a valid xml without styles', function(done) {
         var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
         var mml_builder = mml_store.mml_builder({
             dbname: 'my_database',
