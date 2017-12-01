@@ -1,5 +1,6 @@
-Version 1.6.5
+Version 1.7.0
 2017-mm-dd
+ - Allow to generate a valid XML without styles (no cartocss)
 
 
 Version 1.6.4
