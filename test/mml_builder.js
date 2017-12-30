@@ -852,5 +852,99 @@ suite('mml_builder use_workers=' + useWorkers, function() {
             done();
         })
     });
+
+    suite('minzoom and maxzoom', function() {
+        const ZOOM_2_SCALE = {
+            0: 1000000000,
+            1: 500000000,
+            2: 200000000,
+            3: 100000000,
+            4: 50000000,
+            5: 25000000,
+            6: 12500000,
+            7: 6500000,
+            8: 3000000,
+            9: 1500000,
+           10: 750000,
+           11: 400000,
+           12: 200000,
+           13: 100000,
+           14: 50000,
+           15: 25000,
+           16: 12500,
+           17: 5000,
+           18: 2500,
+           19: 1500,
+           20: 750,
+           21: 500,
+           22: 250,
+           23: 100,
+           24: 50,
+           25: 25,
+           26: 12.5
+        };
+        const zoomScenarios = [
+            {
+                desc: 'sets layer minzoom',
+                zoom: { minzoom: 6 },
+                // Zooms properties are reversed, using scale denominator ranges.
+                expectedScale: { maxzoom: ZOOM_2_SCALE[6] }
+            },
+            {
+                desc: 'sets layer maxzoom',
+                zoom: { maxzoom: 12 },
+                // Zooms properties are reversed, using scale denominator ranges.
+                expectedScale: { minzoom: ZOOM_2_SCALE[13] }
+            },
+            {
+                desc: 'sets layer minzoom and maxzoom',
+                zoom: { minzoom: 6, maxzoom: 18 },
+                // Zooms properties are reversed, using scale denominator ranges.
+                expectedScale: {
+                    maxzoom: ZOOM_2_SCALE[6],
+                    minzoom: ZOOM_2_SCALE[19]
+                }
+            }
+        ];
+        const ZOOM_PROP_2_KEY = {
+            minzoom: 'maxzoom',
+            maxzoom: 'minzoom',
+        };
+        zoomScenarios.forEach(scenario => {
+            test(scenario.desc, function(done) {
+                const mmlStore = new grainstore.MMLStore({ use_workers: useWorkers });
+                const mml = mmlStore.mml_builder({
+                    dbname: 'd2',
+                    ids: ['layer-wadus'],
+                    zooms: [scenario.zoom],
+                    sql: SAMPLE_SQL,
+                    style: DEFAULT_POINT_STYLE
+                });
+
+                mml.toXML(function(err, xml) {
+                    if ( err ) { return done(err); }
+
+                    const xmlDoc = libxmljs.parseXmlString(xml);
+                    const layer = xmlDoc.get("//Layer[@name='layer-wadus']");
+                    assert.ok(layer);
+
+                    Object.keys(scenario.zoom).forEach(function(zoomProp) {
+                        // Zooms properties are reversed, using scale denominator ranges.
+                        const zoomAttrKey = ZOOM_PROP_2_KEY[zoomProp];
+                        const zoom = layer.attr(zoomAttrKey).value();
+                        const expectedScale = scenario.expectedScale[zoomAttrKey];
+                        assert.equal(
+                            zoom,
+                            expectedScale,
+                            `Unexpected scale value for '${zoomProp}': got ${zoom}, expected ${expectedScale}`
+                        );
+                    });
+
+                    return done();
+                });
+            });
+        });
+    });
+
 });
 });
