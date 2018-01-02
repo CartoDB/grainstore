@@ -1,5 +1,5 @@
 Version 1.8.0
-2017-mm-dd
+2018-01-02
  - Introduces support for minzoom and maxzoom in layers.
 
 
