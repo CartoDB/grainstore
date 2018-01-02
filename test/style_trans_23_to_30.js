@@ -1276,7 +1276,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
 
         realScenarios.forEach(function (scenario) {
             it(scenario.description, function () {
-                var output = this.styleTrans.transform(scenario.input, '2.3.0', '3.0.12');
+                var output = this.styleTrans.transform(scenario.input, '2.3.0', '3.0.13');
                 assert.equal(output, scenario.expected);
             });
         });
