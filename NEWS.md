@@ -1,5 +1,6 @@
 Version 1.8.1
-2018-mm-dd
+2018-01-11
+ - Fix: do not attempt to transform styles between mapnik v3.0.12 and v3.0.15
 
 
 Version 1.8.0
