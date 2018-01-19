@@ -946,5 +946,70 @@ suite('mml_builder use_workers=' + useWorkers, function() {
         });
     });
 
+
+    test('support global cache-features', function(done) {
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'd2',
+            ids: ['layer-features'],
+            "cache-features": true,
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE
+        });
+
+        mml_builder.toXML((err, xml) => {
+            if (err) { return done(err); }
+
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            const layer = xmlDoc.get("//Layer[@name='layer-features']");
+            assert.ok(layer);
+            assert.equal(layer.attr("cache-features").value(), "true");
+        });
+
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'd2',
+            ids: ['layer-features'],
+            "cache-features": false,
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE
+        });
+
+        mml_builder.toXML((err, xml) => {
+            if (err) { return done(err); }
+
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            const layer = xmlDoc.get("//Layer[@name='layer-features']");
+            assert.ok(layer);
+            assert.equal(layer.attr("cache-features").value(), "false");
+            done();
+        });
+    });
+
+    test('support per layer cache-features', function(done) {
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'd2',
+            ids: ['layer-features', ['other-layer']],
+            "cache-features": [true, false],
+            sql: [SAMPLE_SQL, SAMPLE_SQL],
+            style: DEFAULT_POINT_STYLE
+        });
+
+        mml_builder.toXML((err, xml) => {
+            if (err) { return done(err); }
+
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            var layer = xmlDoc.get("//Layer[@name='layer-features']");
+            assert.ok(layer);
+            assert.equal(layer.attr("cache-features").value(), "true");
+
+            var layer = xmlDoc.get("//Layer[@name='other-layer']");
+            assert.ok(layer);
+            assert.equal(layer.attr("cache-features").value(), "false");
+            done();
+        });
+    });
+
+
 });
 });
