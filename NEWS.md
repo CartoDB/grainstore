@@ -1,5 +1,5 @@
 Version 1.8.2
-yyyy-mm-dd
+2018-01-30
  - Add support for `minimum-scale-denominator`, `maximum-scale-denominator`, `queryable`, `clear-label-cache`, `cache-features`, `group-by`, `buffer-size` and `maximum-extent` options in layers. The options can be set for all layers (passing a single object as the parameter) or per layer (passing an array with as many objects as layers).
 
 
