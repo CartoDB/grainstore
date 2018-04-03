@@ -1,6 +1,6 @@
 Version 1.8.3
 2018-XX-XX
- -
+ - Add support for `markers_symbolizer_caches` parameter to allow disabling them. See https://github.com/CartoDB/mapnik/pull/43
 
 Version 1.8.2
 2018-01-30
