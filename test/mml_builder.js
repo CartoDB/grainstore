@@ -1042,7 +1042,7 @@ suite('mml_builder use_workers=' + useWorkers, function() {
             var xmlDoc = libxmljs.parseXmlString(xml);
             var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
             var markers_symbolizer_caches_disabled = xmlDoc.get(xpath);
-            assert.equal(markers_symbolizer_caches_disabled, undefined);
+            assert.equal(markers_symbolizer_caches_disabled.text(), "false");
         });
 
         var mml_builder = mml_store.mml_builder({
