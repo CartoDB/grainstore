@@ -1010,6 +1010,55 @@ suite('mml_builder use_workers=' + useWorkers, function() {
         });
     });
 
+    test('support per map markers_symbolizer_caches', function(done) {
+        var mml_store = new grainstore.MMLStore({ use_workers: useWorkers });
+
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE,
+            markers_symbolizer_caches: {
+                disabled: true
+            }
+        });
+        mml_builder.toXML((err, xml) => {
+            if (err)  { return done(err); }
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+            var markers_symbolizer_caches_disabled = xmlDoc.get(xpath);
+            assert.equal(markers_symbolizer_caches_disabled.text(), "true");
+        });
+
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE,
+            markers_symbolizer_caches: {
+                disabled: false
+            }
+        });
+        mml_builder.toXML((err, xml) => {
+            if (err)  { return done(err); }
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+            var markers_symbolizer_caches_disabled = xmlDoc.get(xpath);
+            assert.equal(markers_symbolizer_caches_disabled.text(), "false");
+        });
+
+        var mml_builder = mml_store.mml_builder({
+            dbname: 'my_database',
+            sql: SAMPLE_SQL,
+            style: DEFAULT_POINT_STYLE,
+        });
+        mml_builder.toXML((err, xml) => {
+            if (err)  { return done(err); }
+            var xmlDoc = libxmljs.parseXmlString(xml);
+            var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+            var markers_symbolizer_caches_disabled = xmlDoc.get(xpath);
+            assert.equal(markers_symbolizer_caches_disabled, undefined);
+            done();
+        });
+    });
 
 });
 });
