@@ -1,3 +1,7 @@
+Version 1.9.1
+2018-mm-dd
+ - Prevent from uncaught exception: do not disconnect child process if it's already disconnected.
+
 Version 1.9.0
 2018-04-05
  - Add support for `markers_symbolizer_caches` parameter to allow disabling them. See https://github.com/CartoDB/mapnik/pull/43
