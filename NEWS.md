@@ -1,5 +1,5 @@
 Version 1.9.1
-2018-mm-dd
+2018-10-23
  - Prevent from uncaught exception: do not disconnect child process if it's already disconnected.
 
 Version 1.9.0
