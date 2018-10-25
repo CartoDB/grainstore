@@ -1,3 +1,5 @@
+'use strict';
+
 var assert     = require('assert');
 var _          = require('underscore');
 var grainstore = require('../lib/grainstore');
@@ -25,7 +27,7 @@ test('can create new instance of mml_store', function() {
 
 test('cannot create new mml_builders with blank opts', function() {
   var mml_store = new grainstore.MMLStore();
-  assert.throws(function(){ 
+  assert.throws(function(){
     mml_store.mml_builder();
   }, Error, "Options must include dbname and table");
 });
