@@ -1,5 +1,5 @@
 Version 1.9.2
-2018-mm-dd
+2018-10-25
  - Make all modules to use strict mode semantics.
 
 Version 1.9.1
