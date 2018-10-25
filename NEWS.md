@@ -1,3 +1,7 @@
+Version 1.9.3
+2018-mm-dd
+
+
 Version 1.9.2
 2018-10-25
  - Make all modules to use strict mode semantics.
