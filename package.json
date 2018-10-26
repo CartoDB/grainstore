@@ -22,7 +22,6 @@
     "debug": "~3.1.0",
     "generic-pool": "~2.2.0",
     "millstone": "github:cartodb/millstone#v0.6.17-carto.2",
-    "mocha": "^3.5.3",
     "postcss": "~5.2.8",
     "postcss-scss": "0.4.0",
     "postcss-strip-inline-comments": "0.1.5",
@@ -31,6 +30,7 @@
   },
   "devDependencies": {
     "libxmljs": "~0.18.0",
+    "mocha": "^3.5.3",
     "step": "~0.0.5"
   },
   "scripts": {
