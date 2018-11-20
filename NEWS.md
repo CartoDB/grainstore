@@ -1,6 +1,8 @@
-Version 1.9.3
+Version 1.10.0
 2018-mm-dd
-
+ - Support Node.js 8 and 10.
+ - Use a forked version of millstone that is compatible with Node.js 10 LTS
+ - Add package-lock.json
 
 Version 1.9.2
 2018-10-25
