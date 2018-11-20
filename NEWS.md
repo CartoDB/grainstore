@@ -1,3 +1,6 @@
+Version 1.10.1
+2018-mm-dd
+
 Version 1.10.0
 2018-11-20
  - Support Node.js 8 and 10.
