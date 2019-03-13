@@ -1,5 +1,5 @@
 Version 1.11.0
-2018-mm-dd
+2019-03-13
 - Do not hang when child process is not able to generate a Mapnik XML
   - Set a default timeout of 5s, configurable through `worker_timeout` param. You can disable it by setting `worker_timeout: 0`
   - Handle ENOMEM error as special error (emits a custom event to the process)
