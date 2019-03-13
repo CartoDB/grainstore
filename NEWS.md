@@ -1,3 +1,6 @@
+Version 1.11.1
+2019-mm-dd
+
 Version 1.11.0
 2019-03-13
 - Do not hang when child process is not able to generate a Mapnik XML
