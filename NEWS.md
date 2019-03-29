@@ -1,5 +1,9 @@
-Version 1.11.1
-2019-mm-dd
+Version 2.0.0
+2019-03-dd
+
+- Drop support for Node.js 6 and 8
+- Handle uncaught exception when an error happens while creating child mml-builder process
+- Upgrade `libxmljs` to version 0.19.5
 
 Version 1.11.0
 2019-03-13
