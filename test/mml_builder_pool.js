@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const grainstore = require('../lib/grainstore');
+const MMLBuilder = require('../lib/grainstore/mml-builder/mml-builder.js');
 const DEFAULT_POINT_STYLE = `
   #layer {
     marker-fill: #FF6600;
@@ -69,4 +70,27 @@ suite('mml_builder pool', function () {
         return done();
       });
   });
+
+  test('can deal with ENOMEM in child fork', function(done) {
+    var myFork = function(whatever) {
+      throw Error('ENOMEM: ' + whatever);
+    }
+    MMLBuilder.resetWorkersPool();
+    const mml_store = new grainstore.MMLStore({ use_workers: true, worker_timeout: 1000 });
+    mml_store.mml_builder({
+        dbname: 'my_database',
+        sql: SAMPLE_SQL,
+        style: DEFAULT_POINT_STYLE,
+        fork_function: myFork
+    })
+      .toXML((err, xml) => {
+        MMLBuilder.resetWorkersPool();
+        if (err) {
+          assert.equal(err.message, 'Unable to generate Mapnik XML');
+          return done();
+        }
+        return done('Expected an error');
+      });
+  });
+
 });
