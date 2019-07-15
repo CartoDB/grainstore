@@ -1,5 +1,5 @@
 Version 2.0.1
-2019-mm-dd
+2019-07-15
 
 - Fix `TypeError: err.includes is not a function` #154
 - Update millstone to v0.6.17-carto.3
