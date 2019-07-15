@@ -1,6 +1,7 @@
 Version 2.0.1
 2019-mm-dd
 
+- Fix `TypeError: err.includes is not a function` #154
 
 Version 2.0.0
 2019-03-29
