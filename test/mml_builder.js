@@ -3,12 +3,14 @@
 var assert = require('assert');
 var _ = require('underscore');
 var grainstore = require('../lib/grainstore');
-var libxmljs = require('libxmljs');
 var step = require('step');
 var http = require('http');
 var fs = require('fs');
 var carto = require('carto');
 var semver = require('semver');
+
+const xml2js = require('xml2js');
+const xpath = require('xml2js-xpath');
 
 var server;
 
@@ -266,11 +268,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                 try {
                     assert.ok(_.isNull(err), _.isNull(err) ? '' : err.message);
                     assert.ok(output);
-                    var xmlDoc = libxmljs.parseXmlString(output);
-                    // assert.equal(output, '');
-                    var srs = xmlDoc.get('//PolygonSymbolizer/@fill');
-                    assert.equal(srs.value(), '#ffffff');
-                    done();
+                    xml2js.parseString(output, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
+                        const srs = xpath.find(xmlDoc, '//PolygonSymbolizer/@fill');
+                        assert.equal(srs[0].$.fill, '#ffffff');
+                        done();
+                    });
                 } catch (err) { done(err); }
             });
         });
@@ -302,10 +305,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlStore.mml_builder({ dbname: 'my_databaasez', sql: 'my_tablez', style: '#my_tablez {marker-fill: #000000;}' })
                 .toXML(function (err, data) {
                     if (err) { return done(err); }
-                    var xmlDoc = libxmljs.parseXmlString(data);
-                    var color = xmlDoc.get('//@fill');
-                    assert.equal(color.value(), '#000000');
-                    done();
+                    xml2js.parseString(data, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
+                        const color = xpath.find(xmlDoc, '//MarkersSymbolizer/@fill')[0];
+                        assert.equal(color.$.fill, '#000000');
+                        done();
+                    });
                 });
         });
 
@@ -319,14 +324,16 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     interactivity: 'a,b'
                 }).toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
-                assert.ok(x);
-                assert.equal(x.text(), 'layer0');
-                x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
-                assert.ok(x);
-                assert.equal(x.text(), 'a,b');
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+
+                    const layer = xpath.find(xmlDoc, "//Parameter[@name='interactivity_layer']")[0];
+                    assert.equal(layer._, 'layer0');
+
+                    const fields = xpath.find(xmlDoc, "//Parameter[@name='interactivity_fields']")[0];
+                    assert.equal(fields._, 'a,b');
+                    done();
+                });
             });
         });
 
@@ -340,12 +347,15 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     style: '#t [ zoom  >=  4 ] {marker-fill:red;}'
                 }).toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var xpath = '//MaxScaleDenominator';
-                var x = xmlDoc.get(xpath);
-                assert.ok(x, "Xpath '" + xpath + "' does not match " + xmlDoc);
-                assert.equal(x.text(), '50000000');
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+
+                    const x = xpath.find(xmlDoc, '//MaxScaleDenominator')[0];
+                    assert.ok(x, "Xpath '//MaxScaleDenominator' does not match " + xmlDoc);
+                    assert.equal(x, '50000000');
+
+                    done();
+                });
             });
         });
 
@@ -360,19 +370,23 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     style: ['#t [n="t\'q"] {marker-fill:red;}', '#t[n=\'t"q\'] {marker-fill:green;}']
                 }).toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var xpath = '//Filter';
-                var x = xmlDoc.find(xpath);
-                assert.equal(x.length, 2);
-                for (var i = 0; i < 2; ++i) {
-                    var f = x[i];
-                    var m = f.toString().match(/(['"])t(\\?)(["'])q(['"])/);
-                    assert.ok(m, 'Unexpected filter: ' + f.toString());
-                    assert.equal(m[1], m[4]); // opening an closing quotes are the same
-                    // internal quote must be different or escaped
-                    assert.ok(m[3] !== m[1] || m[2] === '\\', 'Unescaped quote ' + m[3] + ' found: ' + f.toString());
-                }
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+
+                    const x = xpath.find(xmlDoc, '//Filter');
+                    assert.equal(x.length, 2);
+
+                    for (var i = 0; i < 2; ++i) {
+                        var f = x[i];
+                        var m = f.toString().match(/(['"])t(\\?)(["'])q(['"])/);
+                        assert.ok(m, 'Unexpected filter: ' + f.toString());
+                        assert.equal(m[1], m[4]); // opening an closing quotes are the same
+                        // internal quote must be different or escaped
+                        assert.ok(m[3] !== m[1] || m[2] === '\\', 'Unescaped quote ' + m[3] + ' found: ' + f.toString());
+                    }
+
+                    done();
+                });
             });
         });
 
@@ -388,10 +402,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     var cb = this;
                     baseBuilder.toXML(function (err, xml) {
                         if (err) { cb(err); return; }
-                        var xmlDoc = libxmljs.parseXmlString(xml);
-                        var color = xmlDoc.get('//@fill');
-                        assert.equal(color.value(), '#111111');
-                        cb(null);
+                        xml2js.parseString(xml, (err, xmlDoc) => {
+                            if (err) { cb(err); return; }
+                            const color = xpath.find(xmlDoc, '//MarkersSymbolizer/@fill')[0];
+                            assert.equal(color.$.fill, '#111111');
+                            cb(null);
+                        });
                     });
                 },
                 function checkCustom1 (err) {
@@ -401,10 +417,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     var cb = this;
                     custBuilder.toXML(function (err, xml) {
                         if (err) { cb(err); return; }
-                        var xmlDoc = libxmljs.parseXmlString(xml);
-                        var color = xmlDoc.get('//@fill');
-                        assert.equal(color.value(), '#222222');
-                        cb(null);
+                        xml2js.parseString(xml, (err, xmlDoc) => {
+                            if (err) { cb(err); return; }
+                            const color = xpath.find(xmlDoc, '//MarkersSymbolizer/@fill')[0];
+                            assert.equal(color.$.fill, '#222222');
+                            cb(null);
+                        });
                     });
                 },
                 function checkCustom2 (err) {
@@ -414,10 +432,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     var cb = this;
                     mmlStore.mml_builder({ dbname: 'db', sql: 'tab', style: style3 }).toXML(function (err, xml) {
                         if (err) { cb(err); return; }
-                        var xmlDoc = libxmljs.parseXmlString(xml);
-                        var color = xmlDoc.get('//@fill');
-                        assert.equal(color.value(), '#333333');
-                        done();
+                        xml2js.parseString(xml, (err, xmlDoc) => {
+                            if (err) { cb(err); return; }
+                            const color = xpath.find(xmlDoc, '//MarkersSymbolizer/@fill')[0];
+                            assert.equal(color.$.fill, '#333333');
+                            done();
+                        });
                     });
                 }
             );
@@ -428,10 +448,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlStore.mml_builder({ dbname: 'my_databaasez', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
                 .toXML(function (err, data) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(data);
-                    var sql = xmlDoc.get("//Parameter[@name='table']");
-                    assert.equal(sql.text(), SAMPLE_SQL);
-                    done();
+                    xml2js.parseString(data, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
+                        const sql = xpath.find(xmlDoc, "//Parameter[@name='table']")[0];
+                        assert.equal(sql._, SAMPLE_SQL);
+                        done();
+                    });
                 });
         });
 
@@ -444,16 +466,18 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             });
             mmlStore.mml_builder({ dbname: 'd', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE }).toXML(function (err, data) {
                 assert.ok(data, err);
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var node = xmlDoc.get("//Parameter[@name='user']");
-                assert.equal(node.text(), 'u');
-                node = xmlDoc.get("//Parameter[@name='host']");
-                assert.equal(node.text(), 'h');
-                node = xmlDoc.get("//Parameter[@name='port']");
-                assert.equal(node.text(), '12');
-                node = xmlDoc.get("//Parameter[@name='password']");
-                assert.equal(node.text(), 'p');
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var node = xpath.find(xmlDoc, "//Parameter[@name='user']")[0];
+                    assert.equal(node._, 'u');
+                    node = xpath.find(xmlDoc, "//Parameter[@name='host']")[0];
+                    assert.equal(node._, 'h');
+                    node = xpath.find(xmlDoc, "//Parameter[@name='port']")[0];
+                    assert.equal(node._, '12');
+                    node = xpath.find(xmlDoc, "//Parameter[@name='password']")[0];
+                    assert.equal(node._, 'p');
+                    done();
+                });
             });
         });
 
@@ -462,18 +486,23 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlStore.mml_builder({ dbname: 'db', sql: 'SELECT * FROM my_face', style: DEFAULT_POINT_STYLE })
                 .toXML(function (err, data) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(data);
-                    var sql = xmlDoc.get("//Parameter[@name='table']");
-                    assert.equal(sql.text(), 'SELECT * FROM my_face');
-                    mmlStore.mml_builder({ dbname: 'db', sql: 'tab', style: DEFAULT_POINT_STYLE }).toXML(function (err, data) {
+                    xml2js.parseString(data, (err, xmlDoc) => {
                         if (err) { done(err); return; }
-                        var xmlDoc = libxmljs.parseXmlString(data);
-                        var sql = xmlDoc.get("//Parameter[@name='table']");
-                        assert.equal(sql.text(), 'tab');
-                        // NOTE: there's no need to explicitly delete style
-                        //       of mmlBuilder because it is an extension
-                        //       of mmlBuilder2 (extended by SQL)
-                        done();
+                        let sql = xpath.find(xmlDoc, "//Parameter[@name='table']")[0];
+                        assert.equal(sql._, 'SELECT * FROM my_face');
+
+                        mmlStore.mml_builder({ dbname: 'db', sql: 'tab', style: DEFAULT_POINT_STYLE }).toXML(function (err, data) {
+                            if (err) { done(err); return; }
+                            xml2js.parseString(data, (err, xmlDoc) => {
+                                if (err) { done(err); return; }
+                                sql = xpath.find(xmlDoc, "//Parameter[@name='table']")[0];
+                                assert.equal(sql._, 'tab');
+                                // NOTE: there's no need to explicitly delete style
+                                //       of mmlBuilder because it is an extension
+                                //       of mmlBuilder2 (extended by SQL)
+                                done();
+                            });
+                        });
                     });
                 });
         });
@@ -494,11 +523,13 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlStore.mml_builder({ dbname: 'my_databaasez', sql: 'SELECT * FROM my_face', style: DEFAULT_POINT_STYLE })
                 .toXML(function (err, data) {
                     if (err) { return done(err); }
-                    var xmlDoc = libxmljs.parseXmlString(data);
-                    var srs = xmlDoc.get('//@srs');
-                    assert.equal(srs.value().indexOf('+init=epsg:'), 0,
-                        '"' + srs.value() + '" does not start with "+init=epsg:"');
-                    done();
+                    xml2js.parseString(data, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
+                        const srs = xpath.find(xmlDoc, '//@srs');
+                        assert.equal(srs[0].$.srs.indexOf('+init=epsg:'), 0,
+                            '"' + srs[0].$.srs + '" does not start with "+init=epsg:"');
+                        done();
+                    });
                 });
         });
 
@@ -707,21 +738,25 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     if (err) {
                         throw err;
                     }
-                    var xmlDoc = libxmljs.parseXmlString(data);
-                    var node = xmlDoc.find('//Filter');
-                    assert.equal(node.length, 3);
-                    for (var i = 0; i < node.length; i++) {
-                        var txt = node[i].text();
-                        if (txt.match(/\[a\] =/)) {
-                            assert.equal(txt, '([a] = 0.0012)');
-                        } else if (txt.match(/\[b\] =/)) {
-                            assert.equal(txt, '([b] = 1200)');
-                        } else if (txt.match(/\[c\] =/)) {
-                            assert.equal(txt, '([c] = 23000)');
-                        } else {
-                            assert.fail('No match for ' + txt);
+                    xml2js.parseString(data, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
+
+                        const node = xpath.find(xmlDoc, '//Filter');
+                        assert.equal(node.length, 3);
+
+                        for (var i = 0; i < node.length; i++) {
+                            var txt = node[i];
+                            if (txt.match(/\[a\] =/)) {
+                                assert.equal(txt, '([a] = 0.0012)');
+                            } else if (txt.match(/\[b\] =/)) {
+                                assert.equal(txt, '([b] = 1200)');
+                            } else if (txt.match(/\[c\] =/)) {
+                                assert.equal(txt, '([c] = 23000)');
+                            } else {
+                                assert.fail('No match for ' + txt);
+                            }
                         }
-                    }
+                    });
                     return null;
                 },
                 function finish (err) {
@@ -787,11 +822,13 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
 
             mml.toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var format = xmlDoc.get("//Parameter[@name='format']");
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
 
-                assert.equal(format.text(), 'png32');
-                done();
+                    const format = xpath.find(xmlDoc, "//Parameter[@name='format']")[0];
+                    assert.equal(format._, 'png32');
+                    done();
+                });
             });
         });
 
@@ -819,12 +856,13 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
 
             mml.toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var layer = xmlDoc.get('//Layer');
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
 
-                assert.equal(layer.attr('name').value(), 'layer-name-wadus');
-
-                done();
+                    const layer = xpath.find(xmlDoc, '//Layer')[0];
+                    assert.equal(layer.$.name, 'layer-name-wadus');
+                    done();
+                });
             });
         });
 
@@ -839,14 +877,17 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             });
             mml.toXML(function (err, data) {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
-                assert.ok(x);
-                assert.equal(x.text(), 'layer-wadus');
-                x = xmlDoc.get("//Parameter[@name='interactivity_fields']");
-                assert.ok(x);
-                assert.equal(x.text(), 'a,b');
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+
+                    var x = xpath.find(xmlDoc, "//Parameter[@name='interactivity_layer']")[0];
+                    assert.ok(x);
+                    assert.equal(x._, 'layer-wadus');
+                    x = xpath.find(xmlDoc, "//Parameter[@name='interactivity_fields']")[0];
+                    assert.ok(x);
+                    assert.equal(x._, 'a,b');
+                    done();
+                });
             });
         });
 
@@ -862,15 +903,17 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     return done(err);
                 }
 
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                var x = xmlDoc.get("//Parameter[@name='dbname']");
-                assert.ok(x);
-                assert.equal(x.text(), 'my_database');
-                x = xmlDoc.get("//Parameter[@name='table']");
-                assert.ok(x);
-                assert.equal(x.text(), SAMPLE_SQL);
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var x = xpath.find(xmlDoc, "//Parameter[@name='dbname']")[0];
+                    assert.ok(x);
+                    assert.equal(x._, 'my_database');
+                    x = xpath.find(xmlDoc, "//Parameter[@name='table']")[0];
+                    assert.ok(x);
+                    assert.equal(x._, SAMPLE_SQL);
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -945,20 +988,22 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
                     mml.toXML(function (err, xml) {
                         if (err) { return done(err); }
 
-                        const xmlDoc = libxmljs.parseXmlString(xml);
-                        const layer = xmlDoc.get("//Layer[@name='layer-wadus']");
-                        assert.ok(layer);
+                        xml2js.parseString(xml, (err, xmlDoc) => {
+                            if (err) { done(err); return; }
+                            const layer = xpath.find(xmlDoc, '//Layer')[0].$;
+                            assert.equal(layer.name, 'layer-wadus');
 
-                        Object.keys(scenario.zoom).forEach(function (zoomProp) {
-                        // Zooms properties are reversed, using scale denominator ranges.
-                            const zoomAttrKey = ZOOM_PROP_2_KEY[zoomProp];
-                            const zoom = layer.attr(zoomAttrKey).value();
-                            const expectedScale = scenario.expectedScale[zoomAttrKey];
-                            assert.equal(
-                                zoom,
-                                expectedScale,
-                                `Unexpected scale value for '${zoomProp}': got ${zoom}, expected ${expectedScale}`
-                            );
+                            Object.keys(scenario.zoom).forEach(function (zoomProp) {
+                            // Zooms properties are reversed, using scale denominator ranges.
+                                const zoomAttrKey = ZOOM_PROP_2_KEY[zoomProp];
+                                const zoom = layer[zoomAttrKey];
+                                const expectedScale = scenario.expectedScale[zoomAttrKey];
+                                assert.equal(
+                                    zoom,
+                                    expectedScale,
+                                    `Unexpected scale value for '${zoomProp}': got ${zoom}, expected ${expectedScale}`
+                                );
+                            });
                         });
 
                         return done();
@@ -980,10 +1025,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
 
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                const layer = xmlDoc.get("//Layer[@name='layer-features']");
-                assert.ok(layer);
-                assert.equal(layer.attr('cache-features').value(), 'true');
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    const layer = xpath.find(xmlDoc, '//Layer')[0].$;
+                    assert.equal(layer.name, 'layer-features');
+                    assert.equal(layer['cache-features'], 'true');
+                });
             });
 
             mmlBuilder = mmlStore.mml_builder({
@@ -997,11 +1044,13 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
 
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                const layer = xmlDoc.get("//Layer[@name='layer-features']");
-                assert.ok(layer);
-                assert.equal(layer.attr('cache-features').value(), 'false');
-                done();
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    const layer = xpath.find(xmlDoc, '//Layer')[0].$;
+                    assert.equal(layer.name, 'layer-features');
+                    assert.equal(layer['cache-features'], 'false');
+                    done();
+                });
             });
         });
 
@@ -1018,15 +1067,18 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
 
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                var layer = xmlDoc.get("//Layer[@name='layer-features']");
-                assert.ok(layer);
-                assert.equal(layer.attr('cache-features').value(), 'true');
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    let layer = xpath.find(xmlDoc, '//Layer')[0].$;
+                    assert.equal(layer.name, 'layer-features');
+                    assert.equal(layer['cache-features'], 'true');
 
-                layer = xmlDoc.get("//Layer[@name='other-layer']");
-                assert.ok(layer);
-                assert.equal(layer.attr('cache-features').value(), 'false');
-                done();
+                    layer = xpath.find(xmlDoc, '//Layer')[1].$;
+                    assert.equal(layer.name, 'other-layer');
+                    assert.equal(layer['cache-features'], 'false');
+
+                    done();
+                });
             });
         });
 
@@ -1043,10 +1095,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             });
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
-                var markersSymbolizerCachesDisabled = xmlDoc.get(xpath);
-                assert.equal(markersSymbolizerCachesDisabled.text(), 'true');
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var xpathCaches = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+                    const markersSymbolizerCachesDisabled = xpath.find(xmlDoc, xpathCaches)[0];
+                    assert.equal(markersSymbolizerCachesDisabled._, 'true');
+                });
             });
 
             mmlBuilder = mmlStore.mml_builder({
@@ -1059,10 +1113,12 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             });
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
-                var markersSymbolizerCachesDisabled = xmlDoc.get(xpath);
-                assert.equal(markersSymbolizerCachesDisabled.text(), 'false');
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var xpathCaches = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+                    const markersSymbolizerCachesDisabled = xpath.find(xmlDoc, xpathCaches)[0];
+                    assert.equal(markersSymbolizerCachesDisabled._, 'false');
+                });
             });
 
             mmlBuilder = mmlStore.mml_builder({
@@ -1072,11 +1128,13 @@ var SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
             });
             mmlBuilder.toXML((err, xml) => {
                 if (err) { return done(err); }
-                var xmlDoc = libxmljs.parseXmlString(xml);
-                var xpath = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
-                var markersSymbolizerCachesDisabled = xmlDoc.get(xpath);
-                assert.equal(markersSymbolizerCachesDisabled, undefined);
-                done();
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var xpathCaches = "/Map/Parameters/Parameter[@name='markers_symbolizer_caches_disabled']";
+                    const markersSymbolizerCachesDisabled = xpath.find(xmlDoc, xpathCaches);
+                    assert.equal(markersSymbolizerCachesDisabled.length, 0);
+                    done();
+                });
             });
         });
     });

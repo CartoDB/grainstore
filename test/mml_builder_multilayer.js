@@ -2,10 +2,12 @@
 
 var assert = require('assert');
 var grainstore = require('../lib/grainstore');
-var libxmljs = require('libxmljs');
 var step = require('step');
 var http = require('http');
 var fs = require('fs');
+
+const xml2js = require('xml2js');
+const xpath = require('xml2js-xpath');
 
 var server;
 
@@ -72,29 +74,29 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
 
-                    var gf0 = layer0.get("Datasource/Parameter[@name='geometry_field']");
-                    assert.ok(gf0, 'geometry_field for layer0 not found in XML');
-                    assert.equal(gf0.text(), 'the_geom_webmercator'); // default
+                        let geomField = layer0.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                        assert.equal(geomField._, 'the_geom_webmercator');
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
 
-                    var gf1 = layer1.get("Datasource/Parameter[@name='geometry_field']");
-                    assert.ok(gf1, 'geometry_field for layer1 not found in XML');
-                    assert.equal(gf1.text(), 'the_geom_webmercator'); // default
+                        geomField = layer1.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                        assert.equal(geomField._, 'the_geom_webmercator');
 
-                    var style0 = xmlDoc.get("Style[@name='layer0']");
-                    assert.ok(style0, 'Style for layer0 not found in XML');
+                        const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer0');
+                        assert.ok(style0);
 
-                    var style1 = xmlDoc.get("Style[@name='layer1']");
-                    assert.ok(style1, 'Style for layer1 not found in XML');
+                        const style1 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer1');
+                        assert.ok(style1);
 
-                    done();
+                        done();
+                    });
                 }
             );
         });
@@ -117,23 +119,25 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var gf0 = layer0.get("Datasource/Parameter[@name='geometry_field']");
-                    assert.ok(gf0, 'geometry_field for layer0 not found in XML');
-                    assert.equal(gf0.text(), 'the_geom_webmercator'); // default
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
+                        assert.equal(layer0.Datasource.length, 1);
+                        let geomField = layer0.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                        assert.equal(geomField._, 'the_geom_webmercator');
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
+                        assert.equal(layer1.$.name, 'layer1');
 
-                    var gf1 = layer1.get("Datasource/Parameter[@name='geometry_field']");
-                    assert.ok(gf1, 'geometry_field for layer1 not found in XML');
-                    assert.equal(gf1.text(), 'g2');
+                        geomField = layer1.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                        assert.equal(geomField._, 'g2');
 
-                    done();
+                        done();
+                    });
                 }
             );
         });
@@ -169,27 +173,26 @@ var DEFAULT_POINT_STYLE = [
                     },
                     function checkXML0 (err, xml) {
                         if (err) { done(err); return; }
-                        var xmlDoc = libxmljs.parseXmlString(xml);
+                        xml2js.parseString(xml, (err, xmlDoc) => {
+                            if (err) { done(err); return; }
 
-                        var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                        assert.ok(layer0, 'Layer0 not found in XML');
-                        var ds0 = layer0.get('Datasource');
-                        assert.ok(ds0, 'Datasource for layer0 not found in XML');
-                        var gf0 = ds0.get("Parameter[@name='geometry_field']");
-                        assert.equal(gf0.text(), 'g', xmlDoc);
+                            const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                            assert.ok(layer0);
+                            assert.equal(layer0.Datasource.length, 1);
+                            const geomField = layer0.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                            assert.equal(geomField._, 'g');
 
-                        var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                        assert.ok(layer1, 'Layer1 not found in XML');
-                        var ds1 = layer1.get('Datasource');
-                        assert.ok(ds1, 'Datasource for layer1 not found in XML: ' + xmlDoc);
-                        var gf1 = ds1.get("Parameter[@name='raster_field']");
-                        assert.ok(gf1, 'raster_field for layer1 not found in: ' + ds1);
-                        assert.equal(gf1.text(), 'r');
-                        var typ1 = ds1.get("Parameter[@name='type']");
-                        assert.equal(typ1.text(), 'pgraster');
-                        assert.ok(!ds1.get("Parameter[@name='band']"));
+                            const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                            assert.ok(layer1);
+                            assert.equal(layer1.Datasource.length, 1);
 
-                        done();
+                            const rasterField = layer1.Datasource[0].Parameter.find(param => param.$.name === 'raster_field');
+                            const type = layer1.Datasource[0].Parameter.find(param => param.$.name === 'type');
+                            assert.equal(rasterField._, 'r');
+                            assert.equal(type._, 'pgraster');
+
+                            done();
+                        });
                     }
                 );
             });
@@ -222,48 +225,49 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
-                    var ds0 = layer0.get('Datasource');
-                    assert.ok(ds0, 'Datasource for layer0 not found in XML');
-                    var gf0 = ds0.get("Parameter[@name='geometry_field']");
-                    assert.equal(gf0.text(), 'g', xmlDoc);
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
+                        assert.equal(layer0.Datasource.length, 1);
+                        const geomField = layer0.Datasource[0].Parameter.find(param => param.$.name === 'geometry_field');
+                        assert.equal(geomField._, 'g');
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
-                    var ds1 = layer1.get('Datasource');
-                    assert.ok(ds1, 'Datasource for layer1 not found in XML: ' + xmlDoc);
-                    var gf1 = ds1.get("Parameter[@name='raster_field']");
-                    assert.ok(gf1, 'raster_field for layer1 not found in: ' + ds1);
-                    assert.equal(gf1.text(), 'r');
-                    var typ1 = ds1.get("Parameter[@name='type']");
-                    assert.equal(typ1.text(), 'pgraster');
-                    assert.ok(!ds1.get("Parameter[@name='band']"));
-                    assert.ok(!ds1.get("Parameter[@name='clip_rasters']"));
-                    var ovv1 = ds1.get("Parameter[@name='use_overviews']");
-                    assert.equal(ovv1.text(), '1');
-                    var scl1 = ds1.get("Parameter[@name='prescale_rasters']");
-                    assert.equal(scl1.text(), 'true');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
+                        assert.equal(layer1.Datasource.length, 1);
+                        let rasterField = layer1.Datasource[0].Parameter.find(param => param.$.name === 'raster_field');
+                        let type = layer1.Datasource[0].Parameter.find(param => param.$.name === 'type');
+                        let band = layer1.Datasource[0].Parameter.find(param => param.$.name === 'band');
+                        let clipCasters = layer1.Datasource[0].Parameter.find(param => param.$.name === 'clip_rasters');
+                        let useOverviews = layer1.Datasource[0].Parameter.find(param => param.$.name === 'use_overviews');
+                        let prescaleRasters = layer1.Datasource[0].Parameter.find(param => param.$.name === 'prescale_rasters');
+                        assert.equal(rasterField._, 'r');
+                        assert.equal(type._, 'pgraster');
+                        assert.equal(band, undefined);
+                        assert.equal(clipCasters, undefined);
+                        assert.equal(useOverviews._, '1');
+                        assert.equal(prescaleRasters._, 'true');
 
-                    var layer2 = xmlDoc.get("Layer[@name='layer2']");
-                    assert.ok(layer2, 'Layer2 not found in XML');
-                    var ds2 = layer2.get('Datasource');
-                    assert.ok(ds2, 'Datasource for layer2 not found in XML: ' + xmlDoc);
-                    var gf2 = ds2.get("Parameter[@name='raster_field']");
-                    assert.ok(gf2, 'raster_field for layer2 not found in: ' + ds2);
-                    assert.equal(gf2.text(), 'r2');
-                    var typ2 = ds2.get("Parameter[@name='type']");
-                    assert.equal(typ2.text(), 'pgraster');
-                    var bnd2 = ds2.get("Parameter[@name='band']");
-                    assert.equal(bnd2.text(), '1');
-                    var clp2 = ds2.get("Parameter[@name='clip_rasters']");
-                    assert.equal(clp2.text(), '1');
-                    assert.ok(!ds2.get("Parameter[@name='use_overviews']"));
-                    assert.ok(!ds2.get("Parameter[@name='prescale_rasters']"));
+                        const layer2 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer2');
+                        assert.ok(layer2);
+                        assert.equal(layer2.Datasource.length, 1);
+                        rasterField = layer2.Datasource[0].Parameter.find(param => param.$.name === 'raster_field');
+                        type = layer2.Datasource[0].Parameter.find(param => param.$.name === 'type');
+                        band = layer2.Datasource[0].Parameter.find(param => param.$.name === 'band');
+                        clipCasters = layer2.Datasource[0].Parameter.find(param => param.$.name === 'clip_rasters');
+                        useOverviews = layer2.Datasource[0].Parameter.find(param => param.$.name === 'use_overviews');
+                        prescaleRasters = layer2.Datasource[0].Parameter.find(param => param.$.name === 'prescale_rasters');
+                        assert.equal(rasterField._, 'r2');
+                        assert.equal(type._, 'pgraster');
+                        assert.equal(band._, '1');
+                        assert.equal(clipCasters._, '1');
+                        assert.equal(useOverviews, undefined);
+                        assert.equal(prescaleRasters, undefined);
 
-                    done();
+                        done();
+                    });
                 }
             );
         });
@@ -304,50 +308,41 @@ var DEFAULT_POINT_STYLE = [
                 password: wadusPass
             };
 
-            step(
-                function initBuilder () {
-                    mmlStore.mml_builder({
-                        dbuser: defaultUser,
-                        dbpassword: defaultPass,
-                        dbname: 'my_database',
-                        sql: [queryMakeLine, queryMakePoint],
-                        datasource_extend: [null, datasourceExtend],
-                        style: [styleLine, stylePoint],
-                        style_version: '2.3.0'
-                    }).toXML(this);
-                },
-                function validateXML (err, xml) {
-                    if (err) {
-                        throw err;
-                    }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+            mmlStore.mml_builder({
+                dbuser: defaultUser,
+                dbpassword: defaultPass,
+                dbname: 'my_database',
+                sql: [queryMakeLine, queryMakePoint],
+                datasource_extend: [null, datasourceExtend],
+                style: [styleLine, stylePoint],
+                style_version: '2.3.0'
+            }).toXML((err, xml) => {
+                if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
+                xml2js.parseString(xml, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
 
-                    var layer0Datasource = layer0.get('Datasource');
-                    assert.ok(layer0Datasource, 'Datasource for layer0 not found in XML');
-                    var layer1Datasource = layer1.get('Datasource');
-                    assert.ok(layer1Datasource, 'Datasource for layer1 not found in XML');
+                    const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                    assert.ok(layer0);
+                    assert.equal(layer0.Datasource.length, 1);
 
-                    var layer0User = layer0Datasource.get("Parameter[@name='user']");
-                    assert.equal(layer0User.text(), defaultUser, xml);
-                    var layer1User = layer1Datasource.get("Parameter[@name='user']");
-                    assert.equal(layer1User.text(), wadusUser, xml);
+                    const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                    assert.ok(layer1);
+                    assert.equal(layer1.Datasource.length, 1);
 
-                    var layer0Password = layer0Datasource.get("Parameter[@name='password']");
-                    assert.equal(layer0Password.text(), defaultPass, xml);
-                    var layer1Password = layer1Datasource.get("Parameter[@name='password']");
-                    assert.equal(layer1Password.text(), wadusPass, xml);
+                    let user = layer0.Datasource[0].Parameter.find(param => param.$.name === 'user');
+                    let password = layer0.Datasource[0].Parameter.find(param => param.$.name === 'password');
+                    assert.equal(user._, defaultUser);
+                    assert.equal(password._, defaultPass);
 
-                    return null;
-                },
-                function finish (err) {
-                    return done(err);
-                }
-            );
+                    user = layer1.Datasource[0].Parameter.find(param => param.$.name === 'user');
+                    password = layer1.Datasource[0].Parameter.find(param => param.$.name === 'password');
+                    assert.equal(user._, wadusUser);
+                    assert.equal(password._, wadusPass);
+
+                    return done();
+                });
+            });
         });
 
         test('error out on blank CartoCSS in a style array', function (done) {
@@ -397,43 +392,38 @@ var DEFAULT_POINT_STYLE = [
                     if (err) {
                         throw err;
                     }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
-                    var table0 = layer0.get("Datasource/Parameter[@name='table']");
-                    assert.ok(table0, 'Layer0.table not found in XML');
-                    var table0txt = table0.toString();
-                    assert.ok(
-                        table0txt.indexOf(sql0) !== -1,
-                        'Cannot find sql [' + sql0 + '] in table datasource, got ' + table0txt
-                    );
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
+                        assert.equal(layer0.Datasource.length, 1);
+                        const table0 = layer0.Datasource[0].Parameter.find(param => param.$.name === 'table');
+                        assert.ok(
+                            table0._.indexOf(sql0) !== -1,
+                            'Cannot find sql [' + sql0 + '] in table datasource, got ' + table0._
+                        );
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
-                    var table1 = layer1.get("Datasource/Parameter[@name='table']");
-                    assert.ok(table1, 'Layer1.table not found in XML');
-                    var table1txt = table1.toString();
-                    assert.ok(
-                        table1txt.indexOf(sql1) !== -1,
-                        'Cannot find sql [' + sql1 + '] in table datasource, got ' + table1txt
-                    );
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
+                        assert.equal(layer1.Datasource.length, 1);
+                        const table1 = layer1.Datasource[0].Parameter.find(param => param.$.name === 'table');
+                        assert.ok(
+                            table1._.indexOf(sql1) !== -1,
+                            'Cannot find sql [' + sql1 + '] in table datasource, got ' + table1._
+                        );
 
-                    var style0 = xmlDoc.get("Style[@name='layer0']");
-                    assert.ok(style0, 'Style for layer0 not found in XML');
-                    var style0txt = style0.toString();
-                    var re = /MarkersSymbolizer width="6"/;
-                    assert.ok(re.test(style0txt), 'Expected ' + re + ' -- got ' + style0txt);
+                        const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer0');
+                        const symb0 = style0.Rule.find(r => Object.prototype.hasOwnProperty.call(r, 'MarkersSymbolizer')).MarkersSymbolizer[0];
+                        assert.equal(symb0.$.width, 6);
 
-                    var style1 = xmlDoc.get("Style[@name='layer1']");
-                    assert.ok(style1, 'Style for layer1 not found in XML');
-                    var style1txt = style1.toString();
-                    re = /MarkersSymbolizer width="4"/;
-                    assert.ok(re.test(style1txt), 'Expected ' + re + ' -- got ' + style1txt);
+                        const style1 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer1');
+                        const symb1 = style1.Rule.find(r => Object.prototype.hasOwnProperty.call(r, 'MarkersSymbolizer')).MarkersSymbolizer[0];
+                        assert.equal(symb1.$.width, 4);
 
-                    return true;
-                },
-                done
+                        return done();
+                    });
+                }
             );
         });
 
@@ -453,21 +443,23 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
 
-                    var style0 = xmlDoc.get("Style[@name='layer0']");
-                    assert.ok(style0, 'Style for layer0 not found in XML');
+                        const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer0');
+                        assert.ok(style0);
 
-                    var style1 = xmlDoc.get("Style[@name='layer1']");
-                    assert.ok(style1, 'Style for layer1 not found in XML');
+                        const style1 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer1');
+                        assert.ok(style1);
 
-                    done();
+                        done();
+                    });
                 }
             );
         });
@@ -487,18 +479,21 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
 
-                    var style0 = xmlDoc.get("Style[@name='layer0']");
-                    assert.ok(style0, 'Style for layer0 not found in XML');
-                    var style0txt = style0.toString();
-                    var re = /MarkersSymbolizer fill="#ff0000" width="3"/;
-                    assert.ok(re.test(style0txt), 'Expected ' + re + ' -- got ' + style0txt);
+                        const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer0');
+                        assert.ok(style0);
 
-                    done();
+                        const symb0 = style0.Rule.find(r => Object.prototype.hasOwnProperty.call(r, 'MarkersSymbolizer')).MarkersSymbolizer[0];
+                        assert.equal(symb0.$.fill, '#ff0000');
+                        assert.equal(symb0.$.width, 3);
+
+                        done();
+                    });
                 }
             );
         });
@@ -519,21 +514,23 @@ var DEFAULT_POINT_STYLE = [
                 },
                 function checkXML0 (err, xml) {
                     if (err) { done(err); return; }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
 
-                    var style0 = xmlDoc.get("Style[@name='layer0']");
-                    assert.ok(style0, 'Style for layer0 not found in XML');
+                        const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer0');
+                        assert.ok(style0);
 
-                    var style1 = xmlDoc.get("Style[@name='layer1']");
-                    assert.ok(style1, 'Style for layer1 not found in XML');
+                        const style1 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer1');
+                        assert.ok(style1);
 
-                    done();
+                        done();
+                    });
                 }
             );
         });
@@ -597,27 +594,29 @@ var DEFAULT_POINT_STYLE = [
 
             mml.toXML(function (err, data) {
                 if (err) { done(err); return; }
-                var xmlDoc = libxmljs.parseXmlString(data);
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
 
-                var layer0 = xmlDoc.get("Layer[@name='layer-name-wadus']");
-                assert.ok(layer0, 'Layer0 not found in XML');
+                    const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer-name-wadus');
+                    assert.ok(layer0);
 
-                var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                assert.ok(layer1, 'Layer1 not found in XML');
+                    const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                    assert.ok(layer1);
 
-                var layer2 = xmlDoc.get("Layer[@name='layer-name-top']");
-                assert.ok(layer2, 'Layer2 not found in XML');
+                    const layer2 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer-name-top');
+                    assert.ok(layer2);
 
-                var style0 = xmlDoc.get("Style[@name='layer-name-wadus']");
-                assert.ok(style0, 'Style for layer0 not found in XML');
+                    const style0 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer-name-wadus');
+                    assert.ok(style0);
 
-                var style1 = xmlDoc.get("Style[@name='layer1']");
-                assert.ok(style1, 'Style for layer1 not found in XML');
+                    const style1 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer1');
+                    assert.ok(style1);
 
-                var style2 = xmlDoc.get("Style[@name='layer-name-top']");
-                assert.ok(style2, 'Style for layer1 not found in XML');
+                    const style2 = xpath.find(xmlDoc, '//Style').find(s => s.$.name === 'layer-name-top');
+                    assert.ok(style2);
 
-                done();
+                    done();
+                });
             });
         });
 
@@ -643,11 +642,13 @@ var DEFAULT_POINT_STYLE = [
 
             mml.toXML(function (err, data) {
                 if (err) { done(err); return; }
-                var xmlDoc = libxmljs.parseXmlString(data);
-                var x = xmlDoc.get("//Parameter[@name='interactivity_layer']");
-                assert.ok(x);
-                assert.equal(x.text(), 'layer-wadus-1');
-                done();
+                xml2js.parseString(data, (err, xmlDoc) => {
+                    if (err) { done(err); return; }
+                    var x = xpath.find(xmlDoc, "//Parameter[@name='interactivity_layer']")[0];
+                    assert.ok(x);
+                    assert.equal(x._, 'layer-wadus-1');
+                    done();
+                });
             });
         });
 
@@ -674,23 +675,24 @@ var DEFAULT_POINT_STYLE = [
                     if (err) {
                         throw err;
                     }
-                    var xmlDoc = libxmljs.parseXmlString(xml);
+                    xml2js.parseString(xml, (err, xmlDoc) => {
+                        if (err) { done(err); return; }
 
-                    var layer0 = xmlDoc.get("Layer[@name='layer0']");
-                    assert.ok(layer0, 'Layer0 not found in XML');
-                    var srid0 = layer0.get("Datasource/Parameter[@name='srid']");
-                    assert.ok(srid0, 'Layer0.srid not found in XML');
-                    assert.equal(srid0.text(), '1001');
+                        const layer0 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer0');
+                        assert.ok(layer0);
+                        assert.equal(layer0.Datasource.length, 1);
+                        const srid0 = layer0.Datasource[0].Parameter.find(param => param.$.name === 'srid');
+                        assert.equal(srid0._, '1001');
 
-                    var layer1 = xmlDoc.get("Layer[@name='layer1']");
-                    assert.ok(layer1, 'Layer1 not found in XML');
-                    var srid1 = layer1.get("Datasource/Parameter[@name='srid']");
-                    assert.ok(srid1, 'Layer1.srid not found in XML');
-                    assert.equal(srid1.text(), '1002');
+                        const layer1 = xpath.find(xmlDoc, '//Layer').find(l => l.$.name === 'layer1');
+                        assert.ok(layer1);
+                        assert.equal(layer1.Datasource.length, 1);
+                        const srid1 = layer1.Datasource[0].Parameter.find(param => param.$.name === 'srid');
+                        assert.equal(srid1._, '1002');
 
-                    return true;
-                },
-                done
+                        return done();
+                    });
+                }
             );
         });
     });
