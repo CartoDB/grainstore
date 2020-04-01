@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "libxmljs": "^0.19.5",
-    "mocha": "^3.5.3",
+    "mocha": "^5.2.0",
     "step": "~0.0.5"
   },
   "scripts": {
