@@ -40,7 +40,10 @@
     "step": "~0.0.5"
   },
   "scripts": {
-    "test": "make test"
+    "lint:fix": "eslint --fix lib/ test/",
+    "lint": "eslint lib/ test/",
+    "pretest": "npm run lint",
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --exit -R dot -u tdd -t 5000"
   },
   "engines": {
     "node": "^10.15.1"
