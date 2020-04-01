@@ -18,55 +18,55 @@ const DEFAULT_POINT_STYLE = `
 const SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
 
 suite('mml_builder pool', function () {
-  test('should fire timeout when "worker_timeout: 1"', function (done) {
-    const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 1 });
-    mmlStore
-      .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
-      .toXML((err) => {
-        assert.equal(err.message, 'Timeout fired while generating Mapnik XML');
-        done();
-      });
-  });
+    test('should fire timeout when "worker_timeout: 1"', function (done) {
+        const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 1 });
+        mmlStore
+            .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
+            .toXML((err) => {
+                assert.equal(err.message, 'Timeout fired while generating Mapnik XML');
+                done();
+            });
+    });
 
-  test('should disable timeout when "worker_timeout: 0"', function (done) {
-    const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 0 });
-    mmlStore
-      .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
-      .toXML((err, xml) => {
-        if (err) {
-          return done(err);
-        }
+    test('should disable timeout when "worker_timeout: 0"', function (done) {
+        const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 0 });
+        mmlStore
+            .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
+            .toXML((err, xml) => {
+                if (err) {
+                    return done(err);
+                }
 
-        assert.ok(xml.length > 0);
-        return done();
-      });
-  });
+                assert.ok(xml.length > 0);
+                return done();
+            });
+    });
 
-  test('should NOT fire timeout when "worker_timeout: 2000"', function (done) {
-    const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 2000 });
-    mmlStore
-      .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
-      .toXML((err, xml) => {
-        if (err) {
-          return done(err);
-        }
+    test('should NOT fire timeout when "worker_timeout: 2000"', function (done) {
+        const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 2000 });
+        mmlStore
+            .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
+            .toXML((err, xml) => {
+                if (err) {
+                    return done(err);
+                }
 
-        assert.ok(xml.length > 0);
-        return done();
-      });
-  });
+                assert.ok(xml.length > 0);
+                return done();
+            });
+    });
 
-  test('should NOT fire timeout when "worker_timeout: undefined"', function (done) {
-    const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: undefined });
-    mmlStore
-      .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
-      .toXML((err, xml) => {
-        if (err) {
-          return done(err);
-        }
+    test('should NOT fire timeout when "worker_timeout: undefined"', function (done) {
+        const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: undefined });
+        mmlStore
+            .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
+            .toXML((err, xml) => {
+                if (err) {
+                    return done(err);
+                }
 
-        assert.ok(xml.length > 0);
-        return done();
-      });
-  });
+                assert.ok(xml.length > 0);
+                return done();
+            });
+    });
 });

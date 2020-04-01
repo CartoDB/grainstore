@@ -3,8 +3,8 @@
 var assert = require('assert');
 var StyleTrans = require('../lib/grainstore/style_trans.js');
 
-describe('cartocss transformation from 2.3.x to 3.0.x', function() {
-    beforeEach(function() {
+describe('cartocss transformation from 2.3.x to 3.0.x', function () {
+    beforeEach(function () {
         this.styleTrans = new StyleTrans();
     });
 
@@ -906,13 +906,13 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             input: [
                 '#layer {',
                 '  line-width: 5;',
-                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  line-width: 5;',
-                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);',
                 '  line-clip: true;',
                 '  line-pattern-clip: true;',
                 '}'
@@ -922,19 +922,19 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
             input: [
                 '#layer {',
                 '  line-width: 5;',
-                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);//https://s3.amazonaws.com",
+                '  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);//https://s3.amazonaws.com',
                 '}'
             ].join('\n'),
             expected: [
                 '#layer {',
                 '  line-width: 5;',
-                "  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);",
+                '  line-pattern-file: url(https://s3.amazonaws.com/com.cartodb.users-assets.production/production/stephaniemongon/assets/20150923010945images-1.jpg);',
                 '  line-clip: true;',
                 '  line-pattern-clip: true;',
                 '}'
             ].join('\n')
         }]
-    }
+    };
 
     var suites = []
         .concat(polygonSuite)
@@ -944,7 +944,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
         .concat(markerSuite)
         .concat(shieldSuite)
         .concat(textSuite)
-        .concat(urlSuite)
+        .concat(urlSuite);
 
     suites.forEach(function (suite) {
         describe('for ' + suite.symbolizer + ' symbolizer', function () {
@@ -953,9 +953,9 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                     var outputStyle = this.styleTrans.transform(testCase.input, '2.3.0', '3.0.12');
                     assert.equal(outputStyle, testCase.expected);
                 });
-            }.bind(this));
+            });
         });
-    }.bind(this));
+    });
 
     describe('real scenarios', function () {
         var realScenarios = [{
@@ -1147,7 +1147,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '  [ scalerank = 10 ] {',
                 '    marker-fill: #a50f15',
                 '  }',
-                '}',
+                '}'
             ].join('\n'),
             expected: [
                 '#points {',
@@ -1165,7 +1165,7 @@ describe('cartocss transformation from 2.3.x to 3.0.x', function() {
                 '    marker-fill: #a50f15',
                 '  }',
                 '  marker-clip: true',
-                '}',
+                '}'
             ].join('\n')
         }, { // see: https://github.com/CartoDB/grainstore/issues/136
             description: 'should not add defaults when parent has symbolizer already defined',

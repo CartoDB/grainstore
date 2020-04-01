@@ -3,8 +3,8 @@
 var assert = require('assert');
 var StyleTrans = require('../lib/grainstore/style_trans.js');
 
-describe('Style Transformer fails', function() {
-    beforeEach(function() {
+describe('Style Transformer fails', function () {
+    beforeEach(function () {
         this.styleTrans = new StyleTrans();
     });
 
@@ -38,12 +38,12 @@ describe('Style Transformer fails', function() {
         ].join('\n')
     }];
 
-    var scenarios = [].concat(polygonSuite)
+    var scenarios = [].concat(polygonSuite);
 
     scenarios.forEach(function (scenario) {
         it(scenario.description, function () {
             var outputStyle = this.styleTrans.transform(scenario.input, scenario.from, scenario.to);
             assert.equal(outputStyle, scenario.expected);
         });
-    }.bind(this));
+    });
 });
