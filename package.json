@@ -15,7 +15,8 @@
   "author": "Vizzuality <contact@vizzuality.com> (http://vizzuality.com)",
   "contributors": [
     "Simon Tokumine <si@tinypla.net>",
-    "Sandro Santilli <strk@vizzuality.com>"
+    "Sandro Santilli <strk@vizzuality.com>",
+    "Daniel García Aubert <dgaubert@carto.com>"
   ],
   "dependencies": {
     "carto": "0.16.3",
@@ -44,7 +45,7 @@
     "lint:fix": "eslint --fix lib/ test/",
     "lint": "eslint lib/ test/",
     "pretest": "npm run lint",
-    "test": "NODE_ENV=test mocha --exit -R dot -u tdd -t 5000"
+    "test": "NODE_ENV=test mocha --exit -u tdd -t 5000"
   },
   "engines": {
     "node": "^10.15.1"

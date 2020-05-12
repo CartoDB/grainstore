@@ -1,3 +1,10 @@
+Version 3.0.0
+2020-mm-dd
+
+- Updates millstone to version v0.6.17-carto.4
+- Support Node.js 12
+- Drop support for Node.js < 12
+
 Version 2.0.1
 2019-07-15
 
