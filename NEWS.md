@@ -1,11 +1,12 @@
 Version 3.0.0
-2020-mm-dd
+2020-05-13
 
 - Updates millstone to version v0.6.17-carto.4
 - Support Node.js 12
 - Drop support for Node.js < 12
 - Upgrade `mocha` to version `7.1.2`
 - Uses the default BDD test style
+- Simplify CI configuration
 
 Version 2.0.1
 2019-07-15
