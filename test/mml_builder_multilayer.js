@@ -28,14 +28,14 @@ var DEFAULT_POINT_STYLE = [
 ].join('');
 
 [false, true].forEach(function (useWorkers) {
-    suite('mml_builder multilayer use_workers=' + useWorkers, function () {
+    describe('mml_builder multilayer use_workers=' + useWorkers, function () {
         var queryMakeLine = 'SELECT ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
         var queryMakePoint = 'SELECT ST_MakePoint(0,0)';
 
         var styleLine = '#layer1 { line-color:red; }';
         var stylePoint = '#layer0 { marker-width:3; }';
 
-        suiteSetup(function (done) {
+        before(function (done) {
             // Start a server to test external resources
             server = http.createServer(function (request, response) {
                 var filename = 'test/support/resources' + request.url;
@@ -54,11 +54,11 @@ var DEFAULT_POINT_STYLE = [
             server.listen(serverPort, done);
         });
 
-        suiteTeardown(function () {
+        after(function () {
             server.close();
         });
 
-        test('accept sql array with style array', function (done) {
+        it('accept sql array with style array', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '#layer1 { line-color:red; }';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
@@ -102,7 +102,7 @@ var DEFAULT_POINT_STYLE = [
         });
 
         // See http://github.com/CartoDB/grainstore/issues/92
-        test('accept sql array with style array and gcols array', function (done) {
+        it('accept sql array with style array and gcols array', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '#layer1 { line-color:red; }';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
@@ -157,7 +157,7 @@ var DEFAULT_POINT_STYLE = [
             ]
         ].forEach(function (gcols) {
             // See http://github.com/CartoDB/grainstore/issues/93
-            test('accept types in gcols', function (done) {
+            it('accept types in gcols', function (done) {
                 var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
 
                 step(
@@ -199,7 +199,7 @@ var DEFAULT_POINT_STYLE = [
         });
 
         // See http://github.com/CartoDB/grainstore/issues/93
-        test('accept rcolbands and extra_ds_opts arrays', function (done) {
+        it('accept rcolbands and extra_ds_opts arrays', function (done) {
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
 
             step(
@@ -272,7 +272,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('gcol with objects fails when name is not provided', function (done) {
+        it('gcol with objects fails when name is not provided', function (done) {
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
 
             step(
@@ -295,7 +295,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('datasource_extend option allows to have different datasources per layer', function (done) {
+        it('datasource_extend option allows to have different datasources per layer', function (done) {
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.3.0' });
 
             var defaultUser = 'default_user';
@@ -345,7 +345,7 @@ var DEFAULT_POINT_STYLE = [
             });
         });
 
-        test('error out on blank CartoCSS in a style array', function (done) {
+        it('error out on blank CartoCSS in a style array', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
@@ -370,7 +370,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('accept sql with style and style_version array', function (done) {
+        it('accept sql with style and style_version array', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '#layer1 { marker-width:4; }';
             var sql0 = 'SELECT ST_MakePoint(0,0)';
@@ -427,7 +427,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('layer name in style array is only a placeholder', function (done) {
+        it('layer name in style array is only a placeholder', function (done) {
             var style0 = '#layer { marker-width:3; }';
             var style1 = '#style { line-color:red; }';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
@@ -464,7 +464,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('layer name in single style is only a placeholder', function (done) {
+        it('layer name in single style is only a placeholder', function (done) {
             var style0 = '#layer { marker-width:3; } #layer[a=1] { marker-fill:#ff0000 }';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
 
@@ -498,7 +498,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('accept sql array with single style string', function (done) {
+        it('accept sql array with single style string', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '#layer1 { line-color:red; }';
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
@@ -535,7 +535,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('Error out on malformed interactivity', function (done) {
+        it('Error out on malformed interactivity', function (done) {
             var sql0 = 'SELECT 1 as a, 2 as b, ST_MakePoint(0,0)';
             var sql1 = 'SELECT 3 as a, 4 as b, ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
             var style0 = '#layer0 { marker-width:3; }';
@@ -563,7 +563,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('Error out on malformed layer', function (done) {
+        it('Error out on malformed layer', function (done) {
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers, mapnik_version: '2.1.0' });
 
             step(
@@ -583,7 +583,7 @@ var DEFAULT_POINT_STYLE = [
             );
         });
 
-        test('undefined layer id uses old `layer{index}` notation for layer name', function (done) {
+        it('undefined layer id uses old `layer{index}` notation for layer name', function (done) {
             var mmlStore = new grainstore.MMLStore({ use_workers: useWorkers });
             var mml = mmlStore.mml_builder({
                 dbname: 'my_db',
@@ -620,7 +620,7 @@ var DEFAULT_POINT_STYLE = [
             });
         });
 
-        test('Uses correct layer name for interactivity layer', function (done) {
+        it('Uses correct layer name for interactivity layer', function (done) {
             var sql0 = 'SELECT 1 as a, 2 as b, ST_MakePoint(0,0)';
             var sql1 = 'SELECT 3 as a, 4 as b, ST_MakeLine(ST_MakePoint(-10,-5),ST_MakePoint(10,-5))';
             var style0 = '#layer0 { marker-width:3; }';
@@ -652,7 +652,7 @@ var DEFAULT_POINT_STYLE = [
             });
         });
 
-        test('Allows specifying per-layer SRID', function (done) {
+        it('Allows specifying per-layer SRID', function (done) {
             var style0 = '#layer0 { marker-width:3; }';
             var style1 = '#layer1 { marker-width:4; }';
             var sql0 = 'SELECT ST_MakePoint(0,0)';

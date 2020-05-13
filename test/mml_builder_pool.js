@@ -17,8 +17,8 @@ const DEFAULT_POINT_STYLE = `
 `;
 const SAMPLE_SQL = 'SELECT ST_MakePoint(0,0)';
 
-suite('mml_builder pool', function () {
-    test('should fire timeout when "worker_timeout: 1"', function (done) {
+describe('mml_builder pool', function () {
+    it('should fire timeout when "worker_timeout: 1"', function (done) {
         const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 1 });
         mmlStore
             .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
@@ -28,7 +28,7 @@ suite('mml_builder pool', function () {
             });
     });
 
-    test('should disable timeout when "worker_timeout: 0"', function (done) {
+    it('should disable timeout when "worker_timeout: 0"', function (done) {
         const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 0 });
         mmlStore
             .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
@@ -42,7 +42,7 @@ suite('mml_builder pool', function () {
             });
     });
 
-    test('should NOT fire timeout when "worker_timeout: 2000"', function (done) {
+    it('should NOT fire timeout when "worker_timeout: 2000"', function (done) {
         const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: 2000 });
         mmlStore
             .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })
@@ -56,7 +56,7 @@ suite('mml_builder pool', function () {
             });
     });
 
-    test('should NOT fire timeout when "worker_timeout: undefined"', function (done) {
+    it('should NOT fire timeout when "worker_timeout: undefined"', function (done) {
         const mmlStore = new grainstore.MMLStore({ use_workers: true, worker_timeout: undefined });
         mmlStore
             .mml_builder({ dbname: 'my_database', sql: SAMPLE_SQL, style: DEFAULT_POINT_STYLE })

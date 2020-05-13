@@ -2,19 +2,4 @@ sudo: false
 
 language: node_js
 node_js:
-  - "10"
   - "12"
-
-matrix:
-  allow_failures:
-    - node_js: "12"
-
-env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-4.8
-      - g++-4.8
