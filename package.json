@@ -36,7 +36,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "mocha": "^5.2.0",
+    "mocha": "^7.1.2",
     "step": "~0.0.5",
     "xml2js": "^0.4.23",
     "xml2js-xpath": "^0.11.0"
@@ -45,7 +45,7 @@
     "lint:fix": "eslint --fix lib/ test/",
     "lint": "eslint lib/ test/",
     "pretest": "npm run lint",
-    "test": "NODE_ENV=test mocha --exit -u tdd -t 5000"
+    "test": "NODE_ENV=test mocha --exit -t 5000"
   },
   "engines": {
     "node": "^12.16.3",
