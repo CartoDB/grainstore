@@ -27,7 +27,7 @@
     "postcss-scss": "0.4.0",
     "postcss-strip-inline-comments": "0.1.5",
     "semver": "~5.0.3",
-    "underscore": "~1.6.0"
+    "underscore": "~1.12.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
